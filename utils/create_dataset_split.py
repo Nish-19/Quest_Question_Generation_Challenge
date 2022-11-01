@@ -3,11 +3,13 @@ import os
 import numpy as np
 import json
 import pathlib
+import hashlib
 
 
 SEED = 21
 np.random.seed(SEED)
 RAW_DIR = "./data/"
+DATA_HASH_PATH = "./code/utils/data_hash.json"
 NUM_CROSS_VAL_FOLDS = 5
 # TRAIN_RATIO = 0.85 = 170/201 stories = 6005 / 6989 samples
 # TRAIN_RATIO = 0.9 = 180/201 stories = 6276 / 6989 samples
@@ -45,13 +47,31 @@ def create_train_val_split(df, train_ratio=0.85):
     df_val = df_val.sample(frac=1, random_state=SEED).reset_index(drop=True)
     
     # Print stats
+    print("=== Stories ===")
     print("Num train stories: ", len(train_stories))
     print("Num val stories: ", len(val_stories))
     print("Percent train stories: ", len(train_stories)/len(stories))
+    print("Percent val stories: ", len(val_stories)/len(stories))
+    print("=== Samples ===")
     print("Num train samples: ", len(df_train))
     print("Num val samples: ", len(df_val))
     print("Percent train samples: ", len(df_train)/len(df))
+    print("Percent val samples: ", len(df_val)/len(df))
     
+    """
+    # Create data hash if data splits created for the first time
+    hash = {"train_val_split" : {}}
+    hash["train_val_split"]["train"] = hashlib.sha1(pd.util.hash_pandas_object(df_train).values).hexdigest() 
+    hash["train_val_split"]["val"] = hashlib.sha1(pd.util.hash_pandas_object(df_val).values).hexdigest() 
+    with open(DATA_HASH_PATH, "w") as f:
+        json.dump(hash, f, indent=4)
+    """
+    # Match data hash against original data hash
+    with open(DATA_HASH_PATH) as f:
+        hash = json.load(f)
+    assert hash["train_val_split"]["train"] == hashlib.sha1(pd.util.hash_pandas_object(df_train).values).hexdigest()
+    assert hash["train_val_split"]["val"] == hashlib.sha1(pd.util.hash_pandas_object(df_val).values).hexdigest()
+
     # Save data splits
     json_dirname = os.path.join(RAW_DIR, "train_val_split_json")
     csv_dirname = os.path.join(RAW_DIR, "train_val_split_csv")
