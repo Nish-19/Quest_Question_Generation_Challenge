@@ -129,13 +129,16 @@ val_dataset = FairyDataset(val_input_ids, val_attention_mask, val_labels)
 print('Created Pytorch Dataset')
 
 # %%
-def get_dataloader(batch_size, dataset):
-    return DataLoader(dataset=dataset, shuffle=True, batch_size = batch_size)
+def get_dataloader(batch_size, dataset, datatype='train'):
+    if type == 'train':
+        return DataLoader(dataset=dataset, shuffle=True, batch_size = batch_size)
+    else:
+        return DataLoader(dataset=dataset, batch_size = batch_size)
 
 # %%
 batch_size = 8
 train_dataloader = get_dataloader(batch_size, train_dataset)
-valid_dataloader = get_dataloader(batch_size, val_dataset)
+valid_dataloader = get_dataloader(batch_size, val_dataset, datatype='val')
 print('Loaded Dataloader!')
 
 # %% [markdown]
@@ -146,7 +149,10 @@ class FinetuneT5(pl.LightningModule):
     def __init__(self, lr=5e-5, num_train_epochs=5, warmup_steps=1000):
         super().__init__()
         self.model = T5ForConditionalGeneration.from_pretrained("t5-small")
+        self.hparams.max_epochs = num_train_epochs
         self.hparams.num_train_epochs = num_train_epochs
+        self.hparams.warmup_steps = warmup_steps
+        self.hparams.lr = lr
         self.save_hyperparameters()
     
     def forward(self, input_ids, attention_mask, labels=None):     
@@ -182,6 +188,12 @@ class FinetuneT5(pl.LightningModule):
         # create optimizer
         optimizer = AdamW(self.parameters(), lr=self.hparams.lr)
         # create learning rate scheduler
+        with open('debug.txt', 'w') as outfile:
+            print('In optmizer', file=outfile)
+            print(self.hparams.lr, file=outfile)
+            print(self.hparams.num_train_epochs, file=outfile)
+            print(self.hparams.warmup_steps, file=outfile)
+
         num_train_optimization_steps = self.hparams.num_train_epochs * len(train_dataloader)
         lr_scheduler = {'scheduler': get_linear_schedule_with_warmup(optimizer,
                                                     num_warmup_steps=self.hparams.warmup_steps,
@@ -203,12 +215,13 @@ class FinetuneT5(pl.LightningModule):
 wandb.login()
 
 # %%
-model = FinetuneT5(num_train_epochs=1)
+max_epochs = 5
+model = FinetuneT5(num_train_epochs=max_epochs, lr=3e-4)
 
 # %%
 # Trainig code
 
-wandb_logger = WandbLogger(name='FinetuneT5', project='Quest_Gen_Challenge')
+wandb_logger = WandbLogger(name='FinetuneT5_debug', project='Quest_Gen_Challenge')
 
 early_stop_callback = EarlyStopping(
     monitor='validation_loss',
@@ -224,11 +237,12 @@ lr_monitor = LearningRateMonitor(logging_interval='step')
 trainer = Trainer(gpus=1, 
                   default_root_dir="./Checkpoints", 
                   logger=wandb_logger, 
-                  callbacks=[early_stop_callback, lr_monitor])
+                  max_epochs=max_epochs)
+#                  callbacks=[early_stop_callback, lr_monitor])
 
 
 trainer.fit(model)
 
 # %%
 save_directory = './Checkpoints'
-model.save_pretrained(save_directory)
+model.model.save_pretrained(save_directory)
