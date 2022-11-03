@@ -36,33 +36,11 @@ def get_parallel_corpus(ip_df, story_df):
     
     return story, answer, question
 
-# %%
-story_file = '../../data/original/source_texts.csv'
-story_df = pd.read_csv(story_file)
-# Train-Val split
-train_file = '../../data/train_val_split_csv/train.csv'
-train_df = pd.read_csv(train_file)
-val_file = '../../data/train_val_split_csv/val.csv'
-val_df = pd.read_csv(val_file)
-
-train_story, train_answer, train_question = get_parallel_corpus(train_df, story_df)
-val_story, val_answer, val_question = get_parallel_corpus(val_df, story_df)
-
-# %%
 def get_stats(story, answer, question):
     print('Average story length:', statistics.mean([len(stry) for stry in story]))
     print('Average answer length:', statistics.mean([len(ans) for ans in answer]))
     print('Average question length:', statistics.mean([len(quest) for quest in question]))
 
-# %%
-# print stats
-print('Train Set')
-get_stats(train_story, train_answer, train_question)
-
-print('Valid Set')
-get_stats(val_story, val_answer, val_question)
-
-# %%
 # Constrcut t5 input 
 def construct_t5_input(story, answer):
     inps = []
@@ -72,12 +50,8 @@ def construct_t5_input(story, answer):
         inps.append(t5_input)
     return inps
 
-# %%
-train_inps = construct_t5_input(train_story, train_answer)
-val_inps = construct_t5_input(val_story, val_answer)
-
-# %%
-def get_t5_encoding(t5_inputs, answer):
+# Tokenization
+def get_t5_encoding(t5_inputs, question):
     tokenizer = T5Tokenizer.from_pretrained("t5-small")
     max_source_length, max_target_length = 512, 128
 
@@ -88,25 +62,17 @@ def get_t5_encoding(t5_inputs, answer):
                     )
     input_ids, attention_mask = inp_encoding.input_ids, inp_encoding.attention_mask
 
-    target_encoding = tokenizer(answer, padding='longest', 
+    target_encoding = tokenizer(question, padding='longest', 
                         max_length=max_target_length,
                         truncation=True,
                         return_tensors="pt"
                     )
-    
     labels = target_encoding.input_ids
-
     # 0 loss for pad tokens
     labels[labels == tokenizer.pad_token_id] = -100
-
     return input_ids, attention_mask, labels
 
-# %%
-train_input_ids, train_attention_mask, train_labels = get_t5_encoding(train_inps, train_answer)
-val_input_ids, val_attention_mask, val_labels = get_t5_encoding(val_inps, val_answer)
-print('Tokenized Data!')
-
-# %%
+# Pytorch Dataset
 class FairyDataset(Dataset):
     def __init__(self, input_ids, attn_masks, labels):
         self.input_ids = input_ids
@@ -123,26 +89,12 @@ class FairyDataset(Dataset):
     def __len__(self):
         return len(self.input_ids)
 
-# %%
-train_dataset = FairyDataset(train_input_ids, train_attention_mask, train_labels)
-val_dataset = FairyDataset(val_input_ids, val_attention_mask, val_labels)
-print('Created Pytorch Dataset')
-
-# %%
+# Dataset
 def get_dataloader(batch_size, dataset, datatype='train'):
     if type == 'train':
         return DataLoader(dataset=dataset, shuffle=True, batch_size = batch_size)
     else:
         return DataLoader(dataset=dataset, batch_size = batch_size)
-
-# %%
-batch_size = 8
-train_dataloader = get_dataloader(batch_size, train_dataset)
-valid_dataloader = get_dataloader(batch_size, val_dataset, datatype='val')
-print('Loaded Dataloader!')
-
-# %% [markdown]
-# # T5 Model with Pytorch Lightning
 
 # %%
 class FinetuneT5(pl.LightningModule):
@@ -210,6 +162,45 @@ class FinetuneT5(pl.LightningModule):
     def val_dataloader(self):
         return valid_dataloader
 
+# %%
+story_file = '../../data/original/source_texts.csv'
+story_df = pd.read_csv(story_file)
+# Train-Val split
+train_file = '../../data/train_val_split_csv/train.csv'
+train_df = pd.read_csv(train_file)
+val_file = '../../data/train_val_split_csv/val.csv'
+val_df = pd.read_csv(val_file)
+
+train_story, train_answer, train_question = get_parallel_corpus(train_df, story_df)
+val_story, val_answer, val_question = get_parallel_corpus(val_df, story_df)
+
+# %%
+# print stats
+print('Train Set')
+get_stats(train_story, train_answer, train_question)
+
+print('Valid Set')
+get_stats(val_story, val_answer, val_question)
+
+# %%
+train_inps = construct_t5_input(train_story, train_answer)
+val_inps = construct_t5_input(val_story, val_answer)
+
+# %%
+train_input_ids, train_attention_mask, train_labels = get_t5_encoding(train_inps, train_question)
+val_input_ids, val_attention_mask, val_labels = get_t5_encoding(val_inps, val_question)
+print('Tokenized Data!')
+
+# %%
+train_dataset = FairyDataset(train_input_ids, train_attention_mask, train_labels)
+val_dataset = FairyDataset(val_input_ids, val_attention_mask, val_labels)
+print('Created Pytorch Dataset')
+
+# %%
+batch_size = 8
+train_dataloader = get_dataloader(batch_size, train_dataset)
+valid_dataloader = get_dataloader(batch_size, val_dataset, datatype='val')
+print('Loaded Dataloader!')
 
 # %%
 wandb.login()
@@ -221,7 +212,7 @@ model = FinetuneT5(num_train_epochs=max_epochs, lr=3e-4)
 # %%
 # Trainig code
 
-wandb_logger = WandbLogger(name='FinetuneT5_debug', project='Quest_Gen_Challenge')
+wandb_logger = WandbLogger(name='FinetuneT5', project='Quest_Gen_Challenge')
 
 early_stop_callback = EarlyStopping(
     monitor='validation_loss',
@@ -234,7 +225,7 @@ early_stop_callback = EarlyStopping(
 lr_monitor = LearningRateMonitor(logging_interval='step')
 
 
-trainer = Trainer(gpus=1, 
+trainer = Trainer(accelerator='gpu', devices=1, 
                   default_root_dir="./Checkpoints", 
                   logger=wandb_logger, 
                   max_epochs=max_epochs)
