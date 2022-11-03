@@ -23,6 +23,5 @@ def load_dataset(data_folder="train_val_split_json", debug=False):
     if(debug):
         data["train"] = data["train"][:8]
         data["val"] = data["val"][:8]
-        data["test"] = data["test"][:8]
 
     return data

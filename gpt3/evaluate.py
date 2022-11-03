@@ -22,9 +22,9 @@ import argparse
 import json
 import time
 
-from code.private.utils.create_dataset_split import load_df, save_csv
-from code.private.gpt3.prepare_dataset import load_stories, clean_str, create_prompt, process_multiple_sections
-from code.private.gpt3.run import run_gpt3
+from code.utils.create_dataset_split import load_df, save_csv
+from code.gpt3.prepare_dataset import load_stories, clean_str, create_prompt, process_multiple_sections
+from code.gpt3.run import run_gpt3
 
 
 RAW_DIR = "./data"

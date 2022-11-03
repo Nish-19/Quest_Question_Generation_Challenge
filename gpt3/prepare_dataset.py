@@ -15,7 +15,7 @@ import collections
 import re
 import pathlib
 
-from code.private.utils.create_dataset_split import load_df
+from code.utils.create_dataset_split import load_df
 
 
 RAW_DIR = "./data/"
