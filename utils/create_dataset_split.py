@@ -21,8 +21,8 @@ def check_data_error(df):
     return df.isnull().values.any()
 
 
-def load_df(filename, raw_dir, nrows=None):
-    filename = os.path.join(raw_dir, filename)
+def load_df(filename, folder, nrows=None):
+    filename = os.path.join(folder, filename)
     df = pd.read_csv(filename, nrows=nrows)
     df = df.fillna("")
     

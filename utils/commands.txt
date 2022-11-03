@@ -1,0 +1,36 @@
+Finetune full model name: curie:ft-umass-amherst:curie-train-2022-11-03-00-04-39
+Finetune small model name: curie:ft-umass-amherst:curie-train-small-2022-11-02-18-12-00
+
+
+-> Local validation set:
+
+python -m code.private.gpt3.eval_local \
+    --model_name "curie:ft-umass-amherst:curie-train-2022-11-03-00-04-39" \
+    --eval_type "local_val" 
+
+
+Zero shot latest curie model:
+python -m code.private.gpt3.eval_local \
+    --model_name "text-curie-001" \
+    --eval_type "local_val" \
+    --add_instructions \
+    --stop "?"
+
+
+Zero shot latest davinci model:
+python -m code.private.gpt3.eval_local \
+    --model_name "text-davinci-002" \
+    --eval_type "local_val" \
+    --add_instructions \
+    --stop "?"
+
+
+
+->Public test leaderboad evaluation
+
+Finetuned curie model:
+python -m code.private.gpt3.eval_local \
+    --model_name "curie:ft-umass-amherst:curie-train-2022-11-03-00-04-39" \
+    --eval_type "leaderboard_public_test" \
+    --eval_folder "original" \
+    --eval_filename "test.csv" 
