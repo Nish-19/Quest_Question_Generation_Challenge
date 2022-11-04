@@ -1,6 +1,6 @@
 import os
 
-from code.private.utils.create_dataset_split import load_df
+from code.utils.create_dataset_split import load_df
 
 
 RAW_DIR = "./data/"
@@ -14,9 +14,9 @@ def explore_train_set(filepath):
     # Number of unique stories
     print("Number of unique stories: {}".format(len(df_train['source_title'].unique())))    
     # Stats for length of answer
-    print("Stats for length of answer:\n{}".format(df_train['answer'].apply(lambda x: len(x.split(" "))).describe(percentiles=[.25, .5, .75, .9, .95, .99])))
+    print("Stats for length of answer (words):\n{}".format(df_train['answer'].apply(lambda x: len(x.split(" "))).describe(percentiles=[.25, .5, .75, .9, .95, .99])))
     # Stats for length of question
-    print("Stats for length of question:\n{}".format(df_train['question'].apply(lambda x: len(x.split(" "))).describe(percentiles=[.25, .5, .75, .9, .95, .99])))
+    print("Stats for length of question (words):\n{}".format(df_train['question'].apply(lambda x: len(x.split(" "))).describe(percentiles=[.25, .5, .75, .9, .95, .99])))
     # Percentage of questions local (vs summary)
     print("Percentage of questions local (vs summary): {}".format(len(df_train[df_train['local_or_sum'] == 'local']) / len(df_train)))
     # Percentage of questions explicit (vs implicit)
@@ -33,7 +33,7 @@ def explore_test_set(filepath):
     # Number of unique stories
     print("Number of unique stories: {}".format(len(df_test['source_title'].unique())))
     # Stats for length of answer
-    print("Stats for length of answer:\n{}".format(df_test['answer'].apply(lambda x: len(x.split(" "))).describe(percentiles=[.25, .5, .75, .9, .95, .99])))
+    print("Stats for length of answer (words):\n{}".format(df_test['answer'].apply(lambda x: len(x.split(" "))).describe(percentiles=[.25, .5, .75, .9, .95, .99])))
 
 
 def explore_story_source_texts(filepath):
@@ -44,11 +44,11 @@ def explore_story_source_texts(filepath):
     # Stats for number of sections per story
     print("Stats for number of sections per story:\n{}".format(df_story['cor_section'].describe(percentiles=[.25, .5, .75, .9, .95, .99])))
     # Stats for length of section
-    print("Stats for length of section:\n{}".format(df_story['text'].apply(lambda x: len(x.split(" "))).describe(percentiles=[.25, .5, .75, .9, .95, .99])))
+    print("Stats for length of section (words):\n{}".format(df_story['text'].apply(lambda x: len(x.split(" "))).describe(percentiles=[.25, .5, .75, .9, .95, .99])))
     # Stats for length of story, one story contains many sections
     df_story['num_words_sec'] = df_story['text'].apply(lambda x: len(x.split(" ")))
     df_groupby_story = df_story.groupby('source_title')
-    print("Stats for length of story:\n{}".format(df_groupby_story.apply(lambda x: x["num_words_sec"].sum()).describe(percentiles=[.25, .5, .75, .9, .95, .99])))
+    print("Stats for length of story (words):\n{}".format(df_groupby_story.apply(lambda x: x["num_words_sec"].sum()).describe(percentiles=[.25, .5, .75, .9, .95, .99])))
     # TODO: why is mean story len of 1945 words != mean section len of 139 words X mean num of sections of 10.4?
 
 
