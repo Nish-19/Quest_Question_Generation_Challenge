@@ -1,4 +1,4 @@
-import sys
+import re
 import wandb, os
 from collections import defaultdict
 import statistics
@@ -18,11 +18,19 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # %%
 # load dataset
+def clean_str(text):
+    # Replace double quotes with single quotes
+    # Remove non breaking spaces (\u00A0), etc
+    text = re.sub(r"\s+", " ", text)
+
+    return text.strip()
+
+
 def get_parallel_corpus(ip_df, story_df):
     # hash stories and sections
     story_sec_hash = defaultdict(dict)
     for i, row in story_df.iterrows():
-        story_sec_hash[row['source_title']][row['cor_section']] = row['text']
+        story_sec_hash[row['source_title']][row['cor_section']] = clean_str(row['text'])
     
     story, answer, question = [], [], []
     for i, row in ip_df.iterrows():
@@ -31,8 +39,8 @@ def get_parallel_corpus(ip_df, story_df):
         for sec_num in sec_nums:
             story_str += story_sec_hash[row['source_title']][int(sec_num)]
         story.append(story_str)
-        answer.append(row['answer'])
-        question.append(row['question'])
+        answer.append(clean_str(row['answer']))
+        question.append(clean_str(row['question']))
     
     return story, answer, question
 
@@ -154,6 +162,7 @@ print('Beginning Decoding')
 val_preds = get_preds(val_outputs)
 print('Done Decoding!')
 preds_df = pd.DataFrame()
-preds_df['predictions'] = val_preds
+preds_df['prompt'] = val_inps
+preds_df['prediction'] = val_preds
 preds_df.to_excel('predictions.xlsx', index=False)
 print(val_preds)
