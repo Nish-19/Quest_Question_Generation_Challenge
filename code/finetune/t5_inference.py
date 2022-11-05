@@ -79,7 +79,7 @@ def get_t5_encoding(t5_inputs, answer):
 
 class FairyDataset(Dataset):
     def __init__(self, input_ids, attn_masks, labels):
-        self.input_ids = input_ids
+        self.input_i = input_ids
         self.attn_masks = attn_masks
         self.labels = labels
         
