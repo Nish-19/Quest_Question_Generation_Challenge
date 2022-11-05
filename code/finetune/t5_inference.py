@@ -12,9 +12,14 @@ from pytorch_lightning import Trainer
 from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.callbacks import EarlyStopping, LearningRateMonitor
 
+from code.utils.create_dataset_split import RAW_DIR, save_csv
+
 os.environ['WANDB_NOTEBOOK_NAME'] = 'FinetuneT5'
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+eval_folder = 'train_val_split_csv' # add to args
+file_name = 't5_small' # add to args
 
 # %%
 # load dataset
@@ -79,7 +84,7 @@ def get_t5_encoding(t5_inputs, answer):
 
 class FairyDataset(Dataset):
     def __init__(self, input_ids, attn_masks, labels):
-        self.input_i = input_ids
+        self.input_ids = input_ids
         self.attn_masks = attn_masks
         self.labels = labels
         
@@ -101,12 +106,12 @@ def get_dataloader(batch_size, dataset, datatype='train'):
 
 
 # %%
-story_file = '../../data/original/source_texts.csv'
+story_file = './data/original/source_texts.csv'
 story_df = pd.read_csv(story_file)
 # Train-Val split
-train_file = '../../data/train_val_split_csv/train.csv'
+train_file = './data/train_val_split_csv/train.csv'
 train_df = pd.read_csv(train_file)
-val_file = '../../data/train_val_split_csv/val.csv'
+val_file = './data/train_val_split_csv/val.csv'
 val_df = pd.read_csv(val_file)
 
 train_story, train_answer, train_question = get_parallel_corpus(train_df, story_df)
@@ -133,7 +138,7 @@ valid_dataloader = get_dataloader(batch_size, val_dataset, datatype='val')
 print('Loaded Dataloader!')
 
 # %%
-model = T5ForConditionalGeneration.from_pretrained('./Checkpoints').to(device)
+model = T5ForConditionalGeneration.from_pretrained('./code/finetune/Checkpoints').to(device)
 print('Successfully loaded saved checkpoint!')
 
 # %%
@@ -155,14 +160,20 @@ def get_preds(generated_tokens):
         val_preds.append(sample)
     return val_preds
 
-print('Beginning Generation')
+print('Begining Generation')
 val_outputs = get_generation(model, valid_dataloader)
 print('Done Generating!')
-print('Beginning Decoding')
+print('Begining Decoding')
 val_preds = get_preds(val_outputs)
 print('Done Decoding!')
 preds_df = pd.DataFrame()
+preds_df['attribute1'] = val_df['attribute1']
+preds_df['local_or_sum'] = val_df['local_or_sum']
+preds_df['ex_or_im'] = val_df['ex_or_im']
 preds_df['prompt'] = val_inps
-preds_df['prediction'] = val_preds
-preds_df.to_excel('predictions.xlsx', index=False)
-print(val_preds)
+preds_df['question'] = val_question
+preds_df['generated_question'] = val_preds
+output_path = os.path.join(RAW_DIR, "results/{}".format(eval_folder))
+if not os.path.exists(output_path):
+    os.mkdir(output_path)
+save_csv(preds_df, file_name, output_path)
