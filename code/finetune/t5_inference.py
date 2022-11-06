@@ -1,3 +1,8 @@
+'''
+python -m code.finetune.t5_inference -N t5_small
+'''
+
+import argparse
 import re
 import wandb, os
 from collections import defaultdict
@@ -13,13 +18,12 @@ from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.callbacks import EarlyStopping, LearningRateMonitor
 
 from code.utils.create_dataset_split import RAW_DIR, save_csv
+from code.finetune.t5_finetune import FinetuneT5
 
 os.environ['WANDB_NOTEBOOK_NAME'] = 'FinetuneT5'
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-eval_folder = 'train_val_split_csv' # add to args
-file_name = 't5_small' # add to args
 
 # %%
 # load dataset
@@ -104,44 +108,6 @@ def get_dataloader(batch_size, dataset, datatype='train'):
     else:
         return DataLoader(dataset=dataset, batch_size = batch_size)
 
-
-# %%
-story_file = './data/original/source_texts.csv'
-story_df = pd.read_csv(story_file)
-# Train-Val split
-train_file = './data/train_val_split_csv/train.csv'
-train_df = pd.read_csv(train_file)
-val_file = './data/train_val_split_csv/val.csv'
-val_df = pd.read_csv(val_file)
-
-train_story, train_answer, train_question = get_parallel_corpus(train_df, story_df)
-val_story, val_answer, val_question = get_parallel_corpus(val_df, story_df)
-
-# %%
-train_inps = construct_t5_input(train_story, train_answer)
-val_inps = construct_t5_input(val_story, val_answer)
-
-# %%
-train_input_ids, train_attention_mask, train_labels = get_t5_encoding(train_inps, train_question)
-val_input_ids, val_attention_mask, val_labels = get_t5_encoding(val_inps, val_question)
-print('Tokenized Data!')
-
-# %%
-train_dataset = FairyDataset(train_input_ids, train_attention_mask, train_labels)
-val_dataset = FairyDataset(val_input_ids, val_attention_mask, val_labels)
-print('Created Pytorch Dataset')
-
-# %%
-batch_size = 8
-train_dataloader = get_dataloader(batch_size, train_dataset)
-valid_dataloader = get_dataloader(batch_size, val_dataset, datatype='val')
-print('Loaded Dataloader!')
-
-# %%
-model = T5ForConditionalGeneration.from_pretrained('./code/finetune/Checkpoints').to(device)
-print('Successfully loaded saved checkpoint!')
-
-# %%
 # Generate from saved model
 def get_generation(model, val_dataloader):
     val_outputs = []
@@ -160,20 +126,74 @@ def get_preds(generated_tokens):
         val_preds.append(sample)
     return val_preds
 
-print('Begining Generation')
-val_outputs = get_generation(model, valid_dataloader)
-print('Done Generating!')
-print('Begining Decoding')
-val_preds = get_preds(val_outputs)
-print('Done Decoding!')
-preds_df = pd.DataFrame()
-preds_df['attribute1'] = val_df['attribute1']
-preds_df['local_or_sum'] = val_df['local_or_sum']
-preds_df['ex_or_im'] = val_df['ex_or_im']
-preds_df['prompt'] = val_inps
-preds_df['question'] = val_question
-preds_df['generated_question'] = val_preds
-output_path = os.path.join(RAW_DIR, "results/{}".format(eval_folder))
-if not os.path.exists(output_path):
-    os.mkdir(output_path)
-save_csv(preds_df, file_name, output_path)
+def add_params():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-B", "--batch_size", type=int, default=8, help="Batch size for training the T5 Model")
+    parser.add_argument("-N", "--run_name", type=str, default="t5-small", help="Name of the Run (Used in storing the model)")
+    parser.add_argument("-F", "--eval_folder", type=str, default="train_val_split_csv", help="Evaluation Folder where output is saved")
+    params = parser.parse_args()
+    
+    return params
+
+
+# %%
+if __name__=='__main__':
+    args = add_params()
+
+    story_file = './data/original/source_texts.csv'
+    story_df = pd.read_csv(story_file)
+    # Train-Val split
+    train_file = './data/train_val_split_csv/train.csv'
+    train_df = pd.read_csv(train_file)
+    val_file = './data/train_val_split_csv/val.csv'
+    val_df = pd.read_csv(val_file)
+
+    train_story, train_answer, train_question = get_parallel_corpus(train_df, story_df)
+    val_story, val_answer, val_question = get_parallel_corpus(val_df, story_df)
+
+    # %%
+    train_inps = construct_t5_input(train_story, train_answer)
+    val_inps = construct_t5_input(val_story, val_answer)
+
+    # %%
+    train_input_ids, train_attention_mask, train_labels = get_t5_encoding(train_inps, train_question)
+    val_input_ids, val_attention_mask, val_labels = get_t5_encoding(val_inps, val_question)
+    print('Tokenized Data!')
+
+    # %%
+    train_dataset = FairyDataset(train_input_ids, train_attention_mask, train_labels)
+    val_dataset = FairyDataset(val_input_ids, val_attention_mask, val_labels)
+    print('Created Pytorch Dataset')
+
+    # %%
+    batch_size = 8
+    train_dataloader = get_dataloader(batch_size, train_dataset)
+    valid_dataloader = get_dataloader(batch_size, val_dataset, datatype='val')
+    print('Loaded Dataloader!')
+
+    # %%
+    # Load the Generative Head 
+    # search for ckpt file
+    search_dir = os.path.join('./code/finetune/Checkpoints', args.run_name)
+    for file in os.listdir(search_dir):
+        ckpt_file = os.path.join(search_dir, file)
+    model = FinetuneT5.load_from_checkpoint(ckpt_file).model.to(device)
+    print('Successfully loaded the saved checkpoint!')
+
+    print('Begining Generation')
+    val_outputs = get_generation(model, valid_dataloader)
+    print('Done Generating!')
+    print('Begining Decoding')
+    val_preds = get_preds(val_outputs)
+    print('Done Decoding!')
+    preds_df = pd.DataFrame()
+    preds_df['attribute1'] = val_df['attribute1']
+    preds_df['local_or_sum'] = val_df['local_or_sum']
+    preds_df['ex_or_im'] = val_df['ex_or_im']
+    preds_df['prompt'] = val_inps
+    preds_df['question'] = val_question
+    preds_df['generated_question'] = val_preds
+    output_path = os.path.join(RAW_DIR, "results/{}".format(args.eval_folder))
+    if not os.path.exists(output_path):
+        os.mkdir(output_path)
+    save_csv(preds_df, args.run_name, output_path)
