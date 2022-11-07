@@ -6,6 +6,7 @@ python -m code.finetune.t5_finetune \
 '''
 
 # %%
+import sys
 import re
 import wandb, os
 from collections import defaultdict
@@ -18,10 +19,12 @@ from transformers import T5Tokenizer, T5ForConditionalGeneration
 from transformers import AdamW, get_linear_schedule_with_warmup
 import pytorch_lightning as pl
 from pytorch_lightning import Trainer
+from pytorch_lightning.strategies.ddp import DDPStrategy
 from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.callbacks import EarlyStopping, LearningRateMonitor, ModelCheckpoint
 
 os.environ['WANDB_NOTEBOOK_NAME'] = 'FinetuneT5'
+wandb.login()
 
 # %%
 def clean_str(text):
@@ -64,9 +67,20 @@ def construct_t5_input(story, answer):
         inps.append(t5_input)
     return inps
 
+def get_token_len_stats(model_name, inputs):
+    tokenizer = T5Tokenizer.from_pretrained(model_name)
+    total_len, max_len = 0, -1
+    for inp in inputs:
+        inp_len = len(tokenizer(inp).input_ids)
+        total_len += inp_len 
+        if inp_len > max_len:
+            max_len = inp_len
+    avg_len = total_len / len(inputs)
+    return avg_len, max_len
+
 # Tokenization
-def get_t5_encoding(t5_inputs, question):
-    tokenizer = T5Tokenizer.from_pretrained("t5-small")
+def get_t5_encoding(model_name, t5_inputs, question):
+    tokenizer = T5Tokenizer.from_pretrained(model_name)
     max_source_length, max_target_length = 512, 128
 
     inp_encoding = tokenizer(t5_inputs, padding='longest', 
@@ -112,9 +126,11 @@ def get_dataloader(batch_size, dataset, datatype='train'):
 
 # %%
 class FinetuneT5(pl.LightningModule):
-    def __init__(self, model_name, lr=3e-4, num_train_epochs=5, warmup_steps=1000):
+    def __init__(self, model_name, training_dl, valid_dl, lr=3e-4, num_train_epochs=5, warmup_steps=1000):
         super().__init__()
         self.model = T5ForConditionalGeneration.from_pretrained(model_name)
+        self.training_dataloader = training_dl
+        self.valid_dataloader = valid_dl
         self.hparams.max_epochs = num_train_epochs
         self.hparams.num_train_epochs = num_train_epochs
         self.hparams.warmup_steps = warmup_steps
@@ -160,7 +176,7 @@ class FinetuneT5(pl.LightningModule):
             print(self.hparams.num_train_epochs, file=outfile)
             print(self.hparams.warmup_steps, file=outfile)
 
-        num_train_optimization_steps = self.hparams.num_train_epochs * len(train_dataloader)
+        num_train_optimization_steps = self.hparams.num_train_epochs * len(self.training_dataloader)
         lr_scheduler = {'scheduler': get_linear_schedule_with_warmup(optimizer,
                                                     num_warmup_steps=self.hparams.warmup_steps,
                                                     num_training_steps=num_train_optimization_steps),
@@ -171,10 +187,10 @@ class FinetuneT5(pl.LightningModule):
         return {"optimizer": optimizer, "lr_scheduler": lr_scheduler}
     
     def train_dataloader(self):
-        return train_dataloader
+        return self.training_dataloader
 
     def val_dataloader(self):
-        return valid_dataloader
+        return self.valid_dataloader
 
 # %%
 
@@ -183,6 +199,7 @@ def add_params():
     parser.add_argument("-B", "--batch_size", type=int, default=8, help="Batch size for training the T5 Model")
     parser.add_argument("-L", "--learning_rate", type=float, default=3e-4, help="Learning Rate for training the T5 Model")
     parser.add_argument("-E", "--num_epochs", type=int, default=5, help="Total Number of Epochs")
+    parser.add_argument("-D", "--num_devices", type=int, default=1, help="Devices used for training")
     parser.add_argument("-M", "--model_name", type=str, default="t5-small", help="Variant of the T5 model for finetuning")
     parser.add_argument("-N", "--run_name", type=str, default="t5-small", help="Name of the Run (Used in storing the model)")
     params = parser.parse_args()
@@ -208,11 +225,19 @@ if __name__ == '__main__':
     train_inps = construct_t5_input(train_story, train_answer)
     val_inps = construct_t5_input(val_story, val_answer)
 
+    # avg_tr_tk_len, max_tr_tk_len = get_token_len_stats(args.model_name, train_inps)
+    # avg_val_tk_len, max_val_tk_len = get_token_len_stats(args.model_name, val_inps)
 
-    train_input_ids, train_attention_mask, train_labels = get_t5_encoding(train_inps, train_question)
-    val_input_ids, val_attention_mask, val_labels = get_t5_encoding(val_inps, val_question)
+    # with open('token_stats.txt', 'w') as outfile:
+    #     print('Average tokenized train length:', avg_tr_tk_len, file=outfile)
+    #     print('Max Train Token Length:', max_tr_tk_len, file=outfile)
+    #     print('Average tokenized val length:', avg_val_tk_len, file=outfile)
+    #     print('Max Val Token Length:', max_tr_tk_len, file=outfile)
+    
+
+    train_input_ids, train_attention_mask, train_labels = get_t5_encoding(args.model_name, train_inps, train_question)
+    val_input_ids, val_attention_mask, val_labels = get_t5_encoding(args.model_name, val_inps, val_question)
     print('Tokenized Data!')
-
 
     train_dataset = FairyDataset(train_input_ids, train_attention_mask, train_labels)
     val_dataset = FairyDataset(val_input_ids, val_attention_mask, val_labels)
@@ -220,14 +245,14 @@ if __name__ == '__main__':
 
 
     batch_size = args.batch_size
-    train_dataloader = get_dataloader(batch_size, train_dataset)
+    training_dataloader = get_dataloader(batch_size, train_dataset)
     valid_dataloader = get_dataloader(batch_size, val_dataset, datatype='val')
     print('Loaded Dataloader!')
 
-    wandb.login()
-
     max_epochs = args.num_epochs
-    model = FinetuneT5(model_name = args.model_name, num_train_epochs=max_epochs, lr=args.learning_rate)
+    model = FinetuneT5(model_name = args.model_name, training_dl=training_dataloader, 
+        valid_dl=valid_dataloader, num_train_epochs=max_epochs, 
+        lr=args.learning_rate)
 
     # Trainig code
     wandb_logger = WandbLogger(name=args.run_name, project='Quest_Gen_Challenge')
@@ -245,11 +270,12 @@ if __name__ == '__main__':
     save_directory = os.path.join('./code/finetune/Checkpoints', args.run_name)
     save_checkpoint =  ModelCheckpoint(dirpath=save_directory, monitor='validation_loss', save_top_k=1)
 
-    trainer = Trainer(accelerator='gpu', devices=1, 
+    trainer = Trainer(accelerator='gpu', devices=args.num_devices, 
                     default_root_dir=save_directory, 
                     logger=wandb_logger, 
                     max_epochs=max_epochs,
-                    callbacks=[early_stop_callback, lr_monitor, save_checkpoint])
+                    callbacks=[early_stop_callback, lr_monitor, save_checkpoint],
+                    strategy = DDPStrategy(find_unused_parameters=False))
 
     trainer.fit(model)
 
