@@ -1,5 +1,5 @@
 '''
-python -m code.finetune.t5_inference -N t5_small
+python -m code.finetune.t5_inference -N t5_small -M t5-small
 '''
 
 import argparse
@@ -62,8 +62,8 @@ def construct_t5_input(story, answer):
         inps.append(t5_input)
     return inps
 
-def get_t5_encoding(t5_inputs, answer):
-    tokenizer = T5Tokenizer.from_pretrained("t5-small")
+def get_t5_encoding(model_name, t5_inputs, answer):
+    tokenizer = T5Tokenizer.from_pretrained(model_name)
     max_source_length, max_target_length = 512, 128
 
     inp_encoding = tokenizer(t5_inputs, padding='longest', 
@@ -118,8 +118,8 @@ def get_generation(model, val_dataloader):
             val_outputs.append(gen)
     return val_outputs
 
-def get_preds(generated_tokens):
-    tokenizer = T5Tokenizer.from_pretrained("t5-small")
+def get_preds(model_name, generated_tokens):
+    tokenizer = T5Tokenizer.from_pretrained(model_name)
     val_preds = []
     for inp in generated_tokens:
         sample = tokenizer.decode(inp, skip_special_tokens=True)
@@ -130,6 +130,7 @@ def add_params():
     parser = argparse.ArgumentParser()
     parser.add_argument("-B", "--batch_size", type=int, default=8, help="Batch size for training the T5 Model")
     parser.add_argument("-N", "--run_name", type=str, default="t5-small", help="Name of the Run (Used in storing the model)")
+    parser.add_argument("-M", "--model_name", default="t5-small", help="Variant of the T5 model for finetuning")
     parser.add_argument("-F", "--eval_folder", type=str, default="train_val_split_csv", help="Evaluation Folder where output is saved")
     params = parser.parse_args()
     
@@ -156,8 +157,8 @@ if __name__=='__main__':
     val_inps = construct_t5_input(val_story, val_answer)
 
     # %%
-    train_input_ids, train_attention_mask, train_labels = get_t5_encoding(train_inps, train_question)
-    val_input_ids, val_attention_mask, val_labels = get_t5_encoding(val_inps, val_question)
+    train_input_ids, train_attention_mask, train_labels = get_t5_encoding(args.model_name, train_inps, train_question)
+    val_input_ids, val_attention_mask, val_labels = get_t5_encoding(args.model_name, val_inps, val_question)
     print('Tokenized Data!')
 
     # %%
@@ -184,7 +185,7 @@ if __name__=='__main__':
     val_outputs = get_generation(model, valid_dataloader)
     print('Done Generating!')
     print('Begining Decoding')
-    val_preds = get_preds(val_outputs)
+    val_preds = get_preds(args.model_name, val_outputs)
     print('Done Decoding!')
     preds_df = pd.DataFrame()
     preds_df['attribute1'] = val_df['attribute1']
