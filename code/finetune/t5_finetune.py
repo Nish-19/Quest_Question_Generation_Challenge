@@ -126,7 +126,7 @@ def get_dataloader(batch_size, dataset, datatype='train'):
 
 # %%
 class FinetuneT5(pl.LightningModule):
-    def __init__(self, model_name, training_dl, valid_dl, lr=3e-4, num_train_epochs=5, warmup_steps=1000):
+    def __init__(self, model_name, training_dl=None, valid_dl=None, lr=3e-4, num_train_epochs=5, warmup_steps=1000):
         super().__init__()
         self.model = T5ForConditionalGeneration.from_pretrained(model_name)
         self.training_dataloader = training_dl
