@@ -109,11 +109,13 @@ def get_dataloader(batch_size, dataset, datatype='train'):
         return DataLoader(dataset=dataset, batch_size = batch_size)
 
 # Generate from saved model
-def get_generation(model, val_dataloader):
+def get_generation(model, val_dataloader, force_words_ids):
     val_outputs = []
     for step, batch in enumerate(val_dataloader):
         val_input_ids = batch['input_ids'].to(device)
-        generation = model.generate(val_input_ids)
+        # TODO: Force ? to occur in the sentence
+        generation = model.generate(val_input_ids, force_words_ids=force_words_ids, 
+                                    num_beams = 10)
         for gen in generation:
             val_outputs.append(gen)
     return val_outputs
@@ -181,8 +183,12 @@ if __name__=='__main__':
     model = FinetuneT5.load_from_checkpoint(ckpt_file).model.to(device)
     print('Successfully loaded the saved checkpoint!')
 
+    tokenizer = T5Tokenizer.from_pretrained(args.model_name)
+    force_tokens = ['?']
+    force_words_ids = tokenizer(force_tokens, add_special_tokens=False).input_ids
+
     print('Begining Generation')
-    val_outputs = get_generation(model, valid_dataloader)
+    val_outputs = get_generation(model, valid_dataloader, force_words_ids)
     print('Done Generating!')
     print('Begining Decoding')
     val_preds = get_preds(args.model_name, val_outputs)
