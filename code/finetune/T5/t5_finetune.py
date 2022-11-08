@@ -1,6 +1,6 @@
 # %%
 '''
-python -m code.finetune.t5_finetune \
+python -m code.finetune.T5.t5_finetune \
     -M t5-small \
     -N t5_small
 '''

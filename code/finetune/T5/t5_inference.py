@@ -1,5 +1,5 @@
 '''
-python -m code.finetune.t5_inference -N t5_small -M t5-small
+python -m code.finetune.T5.t5_inference -N t5_small -M t5-small
 '''
 
 import argparse
@@ -18,7 +18,7 @@ from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.callbacks import EarlyStopping, LearningRateMonitor
 
 from code.utils.create_dataset_split import RAW_DIR, save_csv
-from code.finetune.t5_finetune import FinetuneT5
+from code.finetune.T5.t5_finetune import FinetuneT5
 
 os.environ['WANDB_NOTEBOOK_NAME'] = 'FinetuneT5'
 
