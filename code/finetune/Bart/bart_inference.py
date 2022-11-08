@@ -112,14 +112,14 @@ def get_dataloader(batch_size, dataset, datatype='train'):
         return DataLoader(dataset=dataset, batch_size = batch_size)
 
 # Generate from saved model
-def get_generation(model, val_dataloader, force_words_ids, beam_search=True):
+def get_generation(model, val_dataloader, force_words_ids, beam_search=True, num_beams=3):
     val_outputs = []
     for step, batch in enumerate(val_dataloader):
         val_input_ids = batch['input_ids'].to(device)
         # TODO: Force ? to occur in the sentence
         if beam_search:
             generation = model.generate(val_input_ids, force_words_ids=force_words_ids, 
-                                        num_beams = 10)
+                                        num_beams = num_beams)
         else:
             generation = model.generate(val_input_ids)
         for gen in generation:
@@ -196,7 +196,7 @@ if __name__=='__main__':
     force_words_ids = tokenizer(force_tokens, add_special_tokens=False).input_ids
 
     print('Begining Generation')
-    val_outputs = get_generation(model, valid_dataloader, force_words_ids, args.beam_search)
+    val_outputs = get_generation(model, valid_dataloader, force_words_ids, args.beam_search, args.num_of_beams)
     print('Done Generating!')
     print('Begining Decoding')
     val_preds = get_preds(args.model_name, val_outputs)
