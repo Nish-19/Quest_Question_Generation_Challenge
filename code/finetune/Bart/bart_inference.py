@@ -2,7 +2,6 @@
 python -m code.finetune.Bart.bart_inference \
 -N bart_base -M facebook/bart-base \
 -BS -NB 5
-
 '''
 
 import argparse
@@ -119,9 +118,9 @@ def get_generation(model, val_dataloader, force_words_ids, beam_search=True, num
         # TODO: Force ? to occur in the sentence
         if beam_search:
             generation = model.generate(val_input_ids, force_words_ids=force_words_ids, 
-                                        num_beams = num_beams)
+                                        num_beams = num_beams, max_new_tokens=64)
         else:
-            generation = model.generate(val_input_ids)
+            generation = model.generate(val_input_ids, max_new_tokens=64)
         for gen in generation:
             val_outputs.append(gen)
     return val_outputs
