@@ -109,13 +109,16 @@ def get_dataloader(batch_size, dataset, datatype='train'):
         return DataLoader(dataset=dataset, batch_size = batch_size)
 
 # Generate from saved model
-def get_generation(model, val_dataloader, force_words_ids):
+def get_generation(model, val_dataloader, force_words_ids, beam_search=True, num_beams=3):
     val_outputs = []
     for step, batch in enumerate(val_dataloader):
         val_input_ids = batch['input_ids'].to(device)
         # TODO: Force ? to occur in the sentence
-        generation = model.generate(val_input_ids, force_words_ids=force_words_ids, 
-                                    num_beams = 10)
+        if beam_search:
+            generation = model.generate(val_input_ids, force_words_ids=force_words_ids, 
+                                        num_beams = num_beams, max_new_tokens=64)
+        else:
+            generation = model.generate(val_input_ids, max_new_tokens=64)
         for gen in generation:
             val_outputs.append(gen)
     return val_outputs
@@ -134,6 +137,9 @@ def add_params():
     parser.add_argument("-N", "--run_name", type=str, default="t5-small", help="Name of the Run (Used in storing the model)")
     parser.add_argument("-M", "--model_name", default="t5-small", help="Variant of the T5 model for finetuning")
     parser.add_argument("-F", "--eval_folder", type=str, default="train_val_split_csv", help="Evaluation Folder where output is saved")
+    parser.add_argument('-BS', '--beam_search', action=argparse.BooleanOptionalAction, help='Enables beam search')
+    parser.add_argument('-NB', '--num_of_beams', type=int, default=3, help="Number of beams for decoding")
+
     params = parser.parse_args()
     
     return params
@@ -188,7 +194,8 @@ if __name__=='__main__':
     force_words_ids = tokenizer(force_tokens, add_special_tokens=False).input_ids
 
     print('Begining Generation')
-    val_outputs = get_generation(model, valid_dataloader, force_words_ids)
+    val_outputs = get_generation(model, valid_dataloader, force_words_ids, args.beam_search, args.num_of_beams)
+    print('Done Generating!')
     print('Done Generating!')
     print('Begining Decoding')
     val_preds = get_preds(args.model_name, val_outputs)

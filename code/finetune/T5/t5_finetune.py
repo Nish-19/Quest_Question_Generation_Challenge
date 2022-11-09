@@ -157,7 +157,7 @@ class FinetuneT5(pl.LightningModule):
     
     def validation_step(self, batch, batch_idx):
         loss = self.common_step(batch, batch_idx)     
-        self.log("validation_loss", loss, on_epoch=True)
+        self.log("validation_loss", loss, on_epoch=True, sync_dist=True)
 
         return loss
     
