@@ -109,14 +109,18 @@ def get_dataloader(batch_size, dataset, datatype='train'):
         return DataLoader(dataset=dataset, batch_size = batch_size)
 
 # Generate from saved model
-def get_generation(model, val_dataloader, force_words_ids, beam_search=True, num_beams=3):
+def get_generation(model, val_dataloader, force_words_ids, decoding_strategy='B', num_beams=3, prob_p=0.9, num_samples=10):
     val_outputs = []
     for step, batch in enumerate(val_dataloader):
         val_input_ids = batch['input_ids'].to(device)
         # TODO: Force ? to occur in the sentence
-        if beam_search:
+        if decoding_strategy == 'B': # Beam search
             generation = model.generate(val_input_ids, force_words_ids=force_words_ids, 
                                         num_beams = num_beams, max_new_tokens=64)
+        elif decoding_strategy == 'N': # Nucleus Sampling
+            generation = model.generate(val_input_ids, do_sample=True, max_new_tokens=64,
+                                        top_p=prob_p, num_return_sequences=num_samples)
+
         else:
             generation = model.generate(val_input_ids, max_new_tokens=64)
         for gen in generation:
@@ -137,7 +141,9 @@ def add_params():
     parser.add_argument("-N", "--run_name", type=str, default="t5-small", help="Name of the Run (Used in storing the model)")
     parser.add_argument("-M", "--model_name", default="t5-small", help="Variant of the T5 model for finetuning")
     parser.add_argument("-F", "--eval_folder", type=str, default="train_val_split_csv", help="Evaluation Folder where output is saved")
-    parser.add_argument('-BS', '--beam_search', action=argparse.BooleanOptionalAction, help='Enables beam search')
+    parser.add_argument('-DS', '--decoding_strategy', type=str, default="G", help='Specify the decoding strategy (B-Beam Search, N-Nucleus sampling, G-Greedy)')
+    parser.add_argument("-P", "--p_sampling", type=float, default=0.9, help="Value of P used in the P-sampling")
+    parser.add_argument("-NS", "--num_of_samples", type=int, default=10, help="Number of samples to generate when using sampling")
     parser.add_argument('-NB', '--num_of_beams', type=int, default=3, help="Number of beams for decoding")
 
     params = parser.parse_args()
@@ -194,20 +200,36 @@ if __name__=='__main__':
     force_words_ids = tokenizer(force_tokens, add_special_tokens=False).input_ids
 
     print('Begining Generation')
-    val_outputs = get_generation(model, valid_dataloader, force_words_ids, args.beam_search, args.num_of_beams)
+    val_outputs = get_generation(model, valid_dataloader, force_words_ids, 
+                    args.decoding_strategy, args.num_of_beams, 
+                    args.p_sampling, args.num_of_samples)
     print('Done Generating!')
     print('Done Generating!')
     print('Begining Decoding')
     val_preds = get_preds(args.model_name, val_outputs)
     print('Done Decoding!')
+
+    # NOTE: Saving val_preds
+    val_df['prompt'] = val_inps
+    val_df['question'] = val_question
+    if args.decoding_strategy == 'N':
+        times = [args.num_of_samples for _ in range(len(val_df))]
+        new_val_df = val_df.loc[val_df.index.repeat(times)].reset_index(drop=True)
+        save_csv_name = 'nucleus_' + args.run_name + '_' + str(args.p_sampling)
+    else:
+        new_val_df = val_df
+        save_csv_name = args.run_name
+
+    # Save predictions
     preds_df = pd.DataFrame()
-    preds_df['attribute1'] = val_df['attribute1']
-    preds_df['local_or_sum'] = val_df['local_or_sum']
-    preds_df['ex_or_im'] = val_df['ex_or_im']
-    preds_df['prompt'] = val_inps
-    preds_df['question'] = val_question
+    preds_df['attribute1'] = new_val_df['attribute1']
+    preds_df['local_or_sum'] = new_val_df['local_or_sum']
+    preds_df['ex_or_im'] = new_val_df['ex_or_im']
+    preds_df['prompt'] = new_val_df['prompt']
+    preds_df['question'] = new_val_df['question']
     preds_df['generated_question'] = val_preds
+
     output_path = os.path.join(RAW_DIR, "results/{}".format(args.eval_folder))
     if not os.path.exists(output_path):
         os.mkdir(output_path)
-    save_csv(preds_df, args.run_name, output_path)
+    save_csv(preds_df, save_csv_name, output_path)
