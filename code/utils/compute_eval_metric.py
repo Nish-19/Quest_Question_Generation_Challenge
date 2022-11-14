@@ -22,6 +22,7 @@ BLEURT:  0.38770477067891174 (without normalization)
 """
 import sys
 import numpy as np
+import pandas as pd
 import evaluate
 import string
 import re
@@ -99,6 +100,29 @@ def grade_score_with_batching(df, bleurt, batch_size=64):
 
     return scores
 
+def report_pairidwise_preds(df_pred):
+    attr, ex_or_im, loc_or_sum = [], [], []
+    grp_wise_max_bluert = []
+    grp_pair_ids = df_pred.groupby('pair_id')
+    for grp_full in grp_pair_ids:
+        grp = grp_full[1]
+        max_score = max(grp['bleurt_score'])
+        print('max_score:', max_score)
+        grp_wise_max_bluert.append(max_score)
+        attr.append(grp['attribute1'].tolist()[0])
+        ex_or_im.append(grp['ex_or_im'].tolist()[0])
+        loc_or_sum.append(grp['local_or_sum'].tolist()[0])
+    
+    reduced_df = pd.DataFrame()
+    reduced_df['attribute1'] = attr
+    reduced_df['local_or_sum'] = loc_or_sum
+    reduced_df['ex_or_im'] = ex_or_im
+    reduced_df['bleurt_score'] = grp_wise_max_bluert
+    print('Mean BLEURT score:', np.mean(grp_wise_max_bluert))
+    print("Mean BLEURT grouped by question attribute type:\n", reduced_df.groupby('attribute1')['bleurt_score'].agg(['mean', 'count']))
+    print("Mean BLEURT grouped by question local vs summary:\n", reduced_df.groupby('local_or_sum')['bleurt_score'].agg(['mean', 'count']))
+    print("Mean BLEURT grouped by question explicit vs implicit:\n", reduced_df.groupby('ex_or_im')['bleurt_score'].agg(['mean', 'count']))
+
 
 def main():
     args = add_params()
@@ -116,18 +140,26 @@ def main():
     
     # Batching method
     bleurt_scores = grade_score_with_batching(df_pred, bleurt, args.batch_size)
+
+    # Groupwise preds
+    
+
     #print(bleurt_scores)
-    print("Mean BLEURT over all samples: ", np.mean(bleurt_scores))
+    # print("Mean BLEURT over all samples: ", np.mean(bleurt_scores))
 
     # Get average BLEURT scores per question type
     df_pred['bleurt_score'] = bleurt_scores
     df_pred['bleurt_score'] = df_pred['bleurt_score'].astype(float)
-    print("Mean BLEURT grouped by question attribute type:\n", df_pred.groupby('attribute1')['bleurt_score'].agg(['mean', 'count']))
-    print("Mean BLEURT grouped by question local vs summary:\n", df_pred.groupby('local_or_sum')['bleurt_score'].agg(['mean', 'count']))
-    print("Mean BLEURT grouped by question explicit vs implicit:\n", df_pred.groupby('ex_or_im')['bleurt_score'].agg(['mean', 'count']))
+
+    report_pairidwise_preds(df_pred)
+
+    # print("Mean BLEURT grouped by question attribute type:\n", df_pred.groupby('attribute1')['bleurt_score'].agg(['mean', 'count']))
+    # print("Mean BLEURT grouped by question local vs summary:\n", df_pred.groupby('local_or_sum')['bleurt_score'].agg(['mean', 'count']))
+    # print("Mean BLEURT grouped by question explicit vs implicit:\n", df_pred.groupby('ex_or_im')['bleurt_score'].agg(['mean', 'count']))
 
     # Save file with BLEURT scores
-    save_csv(df_pred, "{}_bluert".format(args.eval_filename.split(".")[0]), folder)
+    file_name, file_ext = os.path.splitext(args.eval_filename)
+    save_csv(df_pred, "{}_bluert".format(file_name), folder)
 
 
 if __name__ == '__main__':
