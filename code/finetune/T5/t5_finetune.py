@@ -59,13 +59,19 @@ def get_stats(story, answer, question):
     print('Average question length:', statistics.mean([len(quest) for quest in question]))
 
 # Constrcut t5 input 
-def construct_t5_input(story, answer):
+def construct_t5_input(story, answer, choice=1):
     inps = []
-    prefix = 'Generate question from story and answer: '
+    if choice == 1:
+        prefix = 'Generate question from story and answer: '
+    elif choice == 2:
+        prefix = 'Generate question: '
+    else:
+        prefix = ''
     for stry, ans in zip(story, answer):
         t5_input = prefix + ' The story is ' + stry + ' The answer is ' + ans 
         inps.append(t5_input)
     return inps
+
 
 def get_token_len_stats(model_name, inputs):
     tokenizer = T5Tokenizer.from_pretrained(model_name)
@@ -202,8 +208,8 @@ def add_params():
     parser.add_argument("-D", "--num_devices", type=int, default=1, help="Devices used for training")
     parser.add_argument("-M", "--model_name", type=str, default="t5-small", help="Variant of the T5 model for finetuning")
     parser.add_argument("-N", "--run_name", type=str, default="t5-small", help="Name of the Run (Used in storing the model)")
+    parser.add_argument("-P", "--prefix_choice", type=int, default=1, help="Choice of prefix used for the input construction - 1, 2, 3")
     params = parser.parse_args()
-    
     return params
 
 
@@ -222,8 +228,8 @@ if __name__ == '__main__':
     train_story, train_answer, train_question = get_parallel_corpus(train_df, story_df)
     val_story, val_answer, val_question = get_parallel_corpus(val_df, story_df)
 
-    train_inps = construct_t5_input(train_story, train_answer)
-    val_inps = construct_t5_input(val_story, val_answer)
+    train_inps = construct_t5_input(train_story, train_answer, args.prefix_choice)
+    val_inps = construct_t5_input(val_story, val_answer, args.prefix_choice)
 
     # avg_tr_tk_len, max_tr_tk_len = get_token_len_stats(args.model_name, train_inps)
     # avg_val_tk_len, max_val_tk_len = get_token_len_stats(args.model_name, val_inps)

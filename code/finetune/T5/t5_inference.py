@@ -54,9 +54,14 @@ def get_parallel_corpus(ip_df, story_df):
     return story, answer, question
 
 # Constrcut t5 input 
-def construct_t5_input(story, answer):
+def construct_t5_input(story, answer, choice=1):
     inps = []
-    prefix = 'Generate question from story and answer: '
+    if choice == 1:
+        prefix = 'Generate question from story and answer: '
+    elif choice == 2:
+        prefix = 'Generate question: '
+    else:
+        prefix = ''
     for stry, ans in zip(story, answer):
         t5_input = prefix + ' The story is ' + stry + ' The answer is ' + ans 
         inps.append(t5_input)
@@ -142,10 +147,10 @@ def add_params():
     parser.add_argument("-M", "--model_name", default="t5-small", help="Variant of the T5 model for finetuning")
     parser.add_argument("-F", "--eval_folder", type=str, default="train_val_split_csv", help="Evaluation Folder where output is saved")
     parser.add_argument('-DS', '--decoding_strategy', type=str, default="G", help='Specify the decoding strategy (B-Beam Search, N-Nucleus sampling, G-Greedy)')
-    parser.add_argument("-P", "--p_sampling", type=float, default=0.9, help="Value of P used in the P-sampling")
+    parser.add_argument("-PS", "--p_sampling", type=float, default=0.9, help="Value of P used in the P-sampling")
     parser.add_argument("-NS", "--num_of_samples", type=int, default=10, help="Number of samples to generate when using sampling")
     parser.add_argument('-NB', '--num_of_beams', type=int, default=3, help="Number of beams for decoding")
-
+    parser.add_argument("-PC", "--prefix_choice", type=int, default=1, help="Choice of prefix used for the input construction - 1, 2, 3")
     params = parser.parse_args()
     
     return params
@@ -167,8 +172,8 @@ if __name__=='__main__':
     val_story, val_answer, val_question = get_parallel_corpus(val_df, story_df)
 
     # %%
-    train_inps = construct_t5_input(train_story, train_answer)
-    val_inps = construct_t5_input(val_story, val_answer)
+    train_inps = construct_t5_input(train_story, train_answer, args.prefix_choice)
+    val_inps = construct_t5_input(val_story, val_answer, args.prefix_choice)
 
     # %%
     train_input_ids, train_attention_mask, train_labels = get_t5_encoding(args.model_name, train_inps, train_question)
@@ -215,13 +220,14 @@ if __name__=='__main__':
     if args.decoding_strategy == 'N':
         times = [args.num_of_samples for _ in range(len(val_df))]
         new_val_df = val_df.loc[val_df.index.repeat(times)].reset_index(drop=True)
-        save_csv_name = 'nucleus_' + args.run_name + '_' + str(args.p_sampling)
+        save_csv_name = 'nucleus_{:s}_{:.2f}'.format(args.run_name, args.p_sampling)
     else:
         new_val_df = val_df
         save_csv_name = args.run_name
 
     # Save predictions
     preds_df = pd.DataFrame()
+    preds_df['pair_id'] = new_val_df['pair_id']
     preds_df['attribute1'] = new_val_df['attribute1']
     preds_df['local_or_sum'] = new_val_df['local_or_sum']
     preds_df['ex_or_im'] = new_val_df['ex_or_im']
