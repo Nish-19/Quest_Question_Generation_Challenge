@@ -1,8 +1,10 @@
 """
 Run following command in virtual environment with tensorflow:
 
-srun --pty -p gpu-long --mem=16000 --partition=gypsum-rtx8000 --gres=gpu:1 bash
-module load cuda/10.1.243 && source env/bin/activate && cd qg_challenge/qg_challenge
+srun --pty -p gpu-long --mem=32000 --partition=gypsum-rtx8000 --gres=gpu:1 bash
+srun --pty -p gpu-long --mem=32000 --constraint="v100" --gres=gpu:1 bash
+
+module load cuda/10.1.243 && source /home/nigel_umass_edu/env/bin/activate && cd /home/nigel_umass_edu/qg_challenge
 
 Finetuned results:
 python -m code.utils.compute_eval_metric \
@@ -19,6 +21,39 @@ python -m code.utils.compute_eval_metric \
     --batch_size 64
 BLEURT:  0.31435113114766716
 BLEURT:  0.38770477067891174 (without normalization)
+
+
+T5 Nischal:
+python -m code.utils.compute_eval_metric \
+    --eval_folder train_val_split_csv \
+    --eval_filename t5_small_generation.csv \
+    --batch_size 64 \
+    --debug
+
+
+GPT2 finetuned with CLM loss on question only:
+python -m code.utils.compute_eval_metric \
+    --eval_folder gpt2/train_val_split_csv \
+    --eval_filename crisp-oath-102_20221110-184440_top_k_sampling.csv \
+    --batch_size 64
+
+Greedy: 0.41023254576252727
+Beam search: 0.4261451663403976
+top_k_sampling: 
+nucleus_sampling:
+nucleus_sampling_with_top_k: 0.3559514638187924
+
+GPT2 finetuned with CLM loss on all tokens:
+python -m code.utils.compute_eval_metric \
+    --eval_folder gpt2/train_val_split_csv \
+    --eval_filename different-donkey-103_20221110-184450_top_k_sampling.csv \
+    --batch_size 64
+
+Greedy: 
+Beam search: 0.4375158186047906
+top_k_sampling:
+nucleus_sampling:
+nucleus_sampling_with_top_k: 0.37089890807988196
 """
 
 import numpy as np
@@ -37,6 +72,7 @@ def add_params():
     parser.add_argument("--eval_folder", type=str, default="train_val_split_csv", help="Folder containing evaluation file relative to data folder")
     parser.add_argument("--eval_filename", type=str, default="val.csv", help="Evaluation filename with timestamp and .csv extension")
     parser.add_argument("--batch_size", type=int, default=64, help="Evaluation batch size for BLEURT model")
+    parser.add_argument('--debug', action='store_true', help='Debug mode evaluating on a small subset of 5 samples')
     params = parser.parse_args()
     
     return params
@@ -105,10 +141,13 @@ def main():
     
     # Load BLUERT metric
     bleurt = evaluate.load('bleurt', 'bleurt-20')
+
+    print(bleurt.compute(predictions=["Same question?", "Nigel rocks"], references=["Same question?", "Nigel rocks"]))
     
     # Load question generations
     folder = os.path.join(RAW_DIR, "results/{}".format(args.eval_folder))
-    df_pred = load_df(args.eval_filename, folder)#, nrows=10)
+    nrows = 5 if args.debug else None
+    df_pred = load_df(args.eval_filename, folder, nrows)
     
     # Non batching method
     #bleurt_list = grade_score(df_pred, bleurt)

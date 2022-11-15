@@ -2,13 +2,13 @@
 Run (finetuned) GPT-3 model for evaluation.
 
 For local validation set:
-python -m code.private.gpt3.eval_local \
+python -m code.gpt3.evaluate \
     --model_name "curie:ft-umass-amherst:curie-train-2022-11-03-00-04-39" \
     --eval_type "local_val" \
     --debug 
 
 For leaderboard public test set:
-python -m code.private.gpt3.eval_local \
+python -m code.gpt3.evaluate \
     --model_name "curie:ft-umass-amherst:curie-train-2022-11-03-00-04-39" \
     --eval_type "leaderboard_public_test" \
     --eval_folder "original" \
@@ -24,7 +24,7 @@ import time
 
 from code.utils.create_dataset_split import load_df, save_csv
 from code.gpt3.prepare_dataset import load_stories, clean_str, create_prompt, process_multiple_sections
-from code.gpt3.run import run_gpt3
+from code.gpt3.run_model import run_gpt3
 
 
 RAW_DIR = "./data"
@@ -41,7 +41,7 @@ def add_params():
     parser.add_argument('--add_instructions', action='store_true', help='Add instructions as a prefix to prompt if not using a finetuned model')
     # GPT-3 generation parameters
     parser.add_argument("--max_tokens", type=int, default=30, help="Maximum number of tokens to generate")
-    parser.add_argument("--temperature", type=float, default=0, help="Temperature for sampling")
+    parser.add_argument("--temperature", type=float, default=0.7, help="Temperature for sampling")
     parser.add_argument("--top_p", type=float, default=1, help="Top-p sampling")
     parser.add_argument("--n", type=int, default=1, help="Number of samples to generate")
     parser.add_argument("--stop", type=str, default='\n', help="Stop sequence")

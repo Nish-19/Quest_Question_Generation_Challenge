@@ -5,6 +5,8 @@ Load dataset splits for model training.
 import os
 import json
 
+from code.gpt3.prepare_dataset import load_stories
+
 
 RAW_DIR = "./data/"
 
@@ -21,7 +23,10 @@ def load_dataset(data_folder="train_val_split_json", debug=False):
 
     # Debug with less data
     if(debug):
-        data["train"] = data["train"][:8]
-        data["val"] = data["val"][:8]
+        data["train"] = data["train"][0:4]
+        data["val"] = data["val"][0:4]
+        
+    # Load stories
+    story_map = load_stories()
 
-    return data
+    return data, story_map

@@ -1,3 +1,10 @@
+srun --pty -p gpu-long --mem=32000 --partition=gypsum-rtx8000 --gres=gpu:2 bash
+srun --pty -p gpu-long --mem=32000 --partition=gypsum-2080ti --gres=gpu:1 bash
+srun --pty -p gpu-long --mem=32000 --constraint="v100" --gres=gpu:1 bash
+
+module load python/3.9.1 && module load cuda/11.0.1 && source /gypsum/home/nigel/naep/env/bin/activate && cd /home/nigel_umass_edu/qg_challenge
+
+
 Finetune full model name: curie:ft-umass-amherst:curie-train-2022-11-03-00-04-39
 Finetune small model name: curie:ft-umass-amherst:curie-train-small-2022-11-02-18-12-00
 
@@ -34,3 +41,170 @@ python -m code.private.gpt3.eval_local \
     --eval_type "leaderboard_public_test" \
     --eval_folder "original" \
     --eval_filename "test.csv" 
+
+
+
+
+
+
+Finetune GPT-2 XL model with CLM loss only on question tokens:
+python3.9 -m code.gpt2.train \
+    --name "gpt2-xl" \
+    --lm gpt2-xl \
+    --data_folder "train_val_split_json" \
+    --batch_size 4 \
+    --lm_loss_location "question" \
+    --log_wandb 
+
+
+Finetune GPT-2 XL model with CLM loss on all tokens:
+python3.9 -m code.gpt2.train \
+    --name "gpt2-xl" \
+    --lm gpt2-xl \
+    --data_folder "train_val_split_json" \
+    --batch_size 4 \
+    --lm_loss_location "all" \
+    --log_wandb 
+
+
+Debug:
+python3.9 -m code.gpt2.train \
+    --name "gpt2-trial" \
+    --lm gpt2 \
+    --data_folder "train_val_split_json" \
+    --batch_size 4 \
+    --lm_loss_location "question" \
+    --log_wandb \
+    --debug --iters 2 
+
+Debug:
+python3.9 -m code.gpt2.train \
+    --name "gpt2-trial" \
+    --lm gpt2 \
+    --data_folder "train_val_split_json" \
+    --batch_size 4 \
+    --lm_loss_location "all" \
+    --log_wandb \
+    --debug --iters 2 
+
+
+
+GPT-2 BLEURT eval:
+
+-> gpt2-xl/different-donkey-103 is all tokens
+CLM loss on all tokens
+
+Beam search:
+python3.9 -m code.gpt2.evaluate \
+    --finetuned \
+    --model_folder "gpt2-xl/different-donkey-103" \
+    --eval_type "local_val" \
+    --eval_folder "train_val_split_csv" \
+    --eval_filename "val.csv" \
+    --decoding_type "beam_search" \
+    --add_instructions \
+    --cuda 
+
+Greedy:
+python3.9 -m code.gpt2.evaluate \
+    --finetuned \
+    --model_folder "gpt2-xl/different-donkey-103" \
+    --eval_type "local_val" \
+    --eval_folder "train_val_split_csv" \
+    --eval_filename "val.csv" \
+    --decoding_type "greedy" \
+    --add_instructions \
+    --cuda 
+
+top_k_sampling:
+python3.9 -m code.gpt2.evaluate \
+    --finetuned \
+    --model_folder "gpt2-xl/different-donkey-103" \
+    --eval_type "local_val" \
+    --eval_folder "train_val_split_csv" \
+    --eval_filename "val.csv" \
+    --decoding_type "top_k_sampling" \
+    --add_instructions \
+    --cuda 
+
+nucleus_sampling:
+python3.9 -m code.gpt2.evaluate \
+    --finetuned \
+    --model_folder "gpt2-xl/different-donkey-103" \
+    --eval_type "local_val" \
+    --eval_folder "train_val_split_csv" \
+    --eval_filename "val.csv" \
+    --decoding_type "nucleus_sampling" \
+    --add_instructions \
+    --cuda 
+
+nucleus_sampling_with_top_k:
+python3.9 -m code.gpt2.evaluate \
+    --finetuned \
+    --model_folder "gpt2-xl/different-donkey-103" \
+    --eval_type "local_val" \
+    --eval_folder "train_val_split_csv" \
+    --eval_filename "val.csv" \
+    --decoding_type "nucleus_sampling_with_top_k" \
+    --add_instructions \
+    --cuda 
+
+
+-> gpt2-xl/crisp-oath-102 is question only
+CLM loss on question only
+
+
+Beam search:
+python3.9 -m code.gpt2.evaluate \
+    --finetuned \
+    --model_folder "gpt2-xl/crisp-oath-102" \
+    --eval_type "local_val" \
+    --eval_folder "train_val_split_csv" \
+    --eval_filename "val.csv" \
+    --decoding_type "beam_search" \
+    --add_instructions \
+    --cuda
+
+Greedy:
+python3.9 -m code.gpt2.evaluate \
+    --finetuned \
+    --model_folder "gpt2-xl/crisp-oath-102" \
+    --eval_type "local_val" \
+    --eval_folder "train_val_split_csv" \
+    --eval_filename "val.csv" \
+    --decoding_type "greedy" \
+    --add_instructions \
+    --cuda 
+
+top_k_sampling:
+python3.9 -m code.gpt2.evaluate \
+    --finetuned \
+    --model_folder "gpt2-xl/crisp-oath-102" \
+    --eval_type "local_val" \
+    --eval_folder "train_val_split_csv" \
+    --eval_filename "val.csv" \
+    --decoding_type "top_k_sampling" \
+    --add_instructions \
+    --cuda 
+
+nucleus_sampling:
+python3.9 -m code.gpt2.evaluate \
+    --finetuned \
+    --model_folder "gpt2-xl/crisp-oath-102" \
+    --eval_type "local_val" \
+    --eval_folder "train_val_split_csv" \
+    --eval_filename "val.csv" \
+    --decoding_type "nucleus_sampling" \
+    --add_instructions \
+    --cuda 
+
+nucleus_sampling_with_top_k:
+python3.9 -m code.gpt2.evaluate \
+    --finetuned \
+    --model_folder "gpt2-xl/crisp-oath-102" \
+    --eval_type "local_val" \
+    --eval_folder "train_val_split_csv" \
+    --eval_filename "val.csv" \
+    --decoding_type "nucleus_sampling_with_top_k" \
+    --add_instructions \
+    --cuda 
