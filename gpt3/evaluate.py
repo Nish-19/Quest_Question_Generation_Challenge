@@ -13,6 +13,25 @@ python -m code.gpt3.evaluate \
     --eval_type "leaderboard_public_test" \
     --eval_folder "original" \
     --eval_filename "test.csv" 
+
+In-context learning:
+python -m code.gpt3.evaluate \
+    --model_name "text-curie-001" \
+    --eval_type "local_val" \
+    --add_instructions \
+    --stop "?" \
+    --incontext \
+    --incontext_mode "random" \
+    --debug
+
+python -m code.gpt3.evaluate \
+    --model_name "code-davinci-002" \
+    --eval_type "local_val" \
+    --add_instructions \
+    --stop "?" \
+    --incontext \
+    --incontext_mode "all_types" \
+    --debug
 """
 
 import os
@@ -21,14 +40,16 @@ from tqdm import tqdm
 import argparse
 import json
 import time
+import numpy as np
 
 from code.utils.create_dataset_split import load_df, save_csv
-from code.gpt3.prepare_dataset import load_stories, clean_str, create_prompt, process_multiple_sections
+from code.gpt3.prepare_dataset import load_stories, clean_str, create_prompt
 from code.gpt3.run_model import run_gpt3
+from code.incontext.create_prompt_incontext import create_prompt_incontext
 
 
 RAW_DIR = "./data"
-
+MAX_PARALLEL_PROMPTS_CODEX = 20
 
 def add_params():
     parser = argparse.ArgumentParser()
@@ -39,33 +60,45 @@ def add_params():
     parser.add_argument("--eval_filename", type=str, default="val.csv", help="Evaluation filename")
     parser.add_argument('--debug', action='store_true', help='Debug mode evaluating on a small subset of 5 samples')
     parser.add_argument('--add_instructions', action='store_true', help='Add instructions as a prefix to prompt if not using a finetuned model')
+    #parser.add_argument('--batch', action='store_true', help='Batch prompts for generation to avoid rate limit on codex')
     # GPT-3 generation parameters
     parser.add_argument("--max_tokens", type=int, default=30, help="Maximum number of tokens to generate")
-    parser.add_argument("--temperature", type=float, default=0.7, help="Temperature for sampling")
+    parser.add_argument("--temperature", type=float, default=0, help="Temperature for sampling")
     parser.add_argument("--top_p", type=float, default=1, help="Top-p sampling")
     parser.add_argument("--n", type=int, default=1, help="Number of samples to generate")
     parser.add_argument("--stop", type=str, default='\n', help="Stop sequence")
-
+    # In-context learning parameters
+    parser.add_argument('--incontext', action='store_true', help='Use in-context learning')
+    parser.add_argument('--incontext_mode', type=str, default="random", choices=["random", "all_types", "retrieval"], help="In-context learning mode")
+    parser.add_argument("--num_incontext_ex", type=int, default=7, help="Number of incontext examples to use")
+    parser.add_argument('--pack_max', action='store_true', help='Pack with max number of in-context examples possible')
     params = parser.parse_args()
     
     return params
 
 
-def evaluate_gpt3(df_eval, story_map, args):
-    # Clean strings
-    df_eval["answer"] = df_eval["answer"].apply(clean_str)
-    df_eval["source_title"] = df_eval["source_title"].apply(clean_str)
-
-    # Some corresponding sections are a list of sections, we take only the first section
-    # TODO: use all sections specified in the list
-    df_eval = process_multiple_sections(df_eval)
-
+def evaluate_gpt3(df_eval, df_train, story_map, args):
+    tqdm.pandas()
     # Create prompt 
-    df_eval["prompt"] = df_eval.apply(lambda row: create_prompt(row, story_map, args.add_instructions), axis=1)
+    if( args.incontext ):
+        df_eval = df_eval.progress_apply(lambda row: create_prompt_incontext(row, story_map, df_train, args), axis=1)
+    else:
+        df_eval["prompt"] = df_eval.progress_apply(lambda row: create_prompt(row, story_map, args.add_instructions), axis=1)
 
     # Run GPT-3 model for prompt completion
-    tqdm.pandas()
+    # Batch prompts to avoid rate limit on Codex
+    # https://help.openai.com/en/articles/5955598-is-api-usage-subject-to-any-rate-limits
+    # https://github.com/openai/openai-cookbook/blob/main/examples/How_to_handle_rate_limits.ipynb
+    df_eval["generated_question"] = ""
+    for chunk in tqdm(np.split(df_eval, np.arange(MAX_PARALLEL_PROMPTS_CODEX, len(df_eval), MAX_PARALLEL_PROMPTS_CODEX))):
+        questions = run_gpt3(chunk["prompt"].tolist(), args)
+        chunk["generated_question"] = questions
+        df_eval.update(chunk)
+    
+    """
+    # Without batching prompts
     df_eval["generated_question"] = df_eval.progress_apply(lambda row: run_gpt3(row["prompt"], args), axis=1)
+    """
 
     return df_eval
 
@@ -73,6 +106,14 @@ def evaluate_gpt3(df_eval, story_map, args):
 def save_params(params, name, folder):
     with open(os.path.join(folder, f"{name}.json"), "w") as f:
         json.dump(params.__dict__, f, indent=2)
+
+
+def clean_data(df):
+    # Clean strings
+    for col in df.columns:
+        df[col] = df[col].astype(str).apply(clean_str)
+    
+    return df
 
 
 def main():
@@ -86,12 +127,18 @@ def main():
     story_map = load_stories()
     
     # Load evaluation set
-    nrows = 5 if args.debug else None
+    nrows = 10 if args.debug else None
     folder = os.path.join(RAW_DIR, args.eval_folder)
     df_eval = load_df(args.eval_filename, folder, nrows=nrows)
+    df_eval = clean_data(df_eval)
+
+    # Load train data for in-context samples
+    folder = os.path.join(RAW_DIR, "train_val_split_csv")
+    df_train = load_df("train.csv", folder)
+    df_train = clean_data(df_train)
     
     # Run GPT-3 model for evaluation
-    df_eval = evaluate_gpt3(df_eval, story_map, args)
+    df_eval = evaluate_gpt3(df_eval, df_train, story_map, args)
     
     # Save evaluation responses
     folder = os.path.join(RAW_DIR, "results/{}".format(args.eval_folder))

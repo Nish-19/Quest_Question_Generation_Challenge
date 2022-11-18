@@ -17,11 +17,11 @@ python -m code.private.gpt3.eval_local \
 
 
 Zero shot latest curie model:
-python -m code.private.gpt3.eval_local \
+python -m code.gpt3.evaluate \
     --model_name "text-curie-001" \
     --eval_type "local_val" \
     --add_instructions \
-    --stop "?"
+    --stop "?" 
 
 
 Zero shot latest davinci model:
@@ -208,3 +208,70 @@ python3.9 -m code.gpt2.evaluate \
     --decoding_type "nucleus_sampling_with_top_k" \
     --add_instructions \
     --cuda 
+
+
+
+In-context prompting:
+
+python -m code.gpt3.evaluate \
+    --model_name "code-davinci-002" \
+    --eval_type "local_val" \
+    --add_instructions \
+    --stop "?" \
+    --incontext \
+    --incontext_mode "all_types"
+
+
+python -m code.gpt3.evaluate \
+    --model_name "code-davinci-002" \
+    --eval_type "local_val" \
+    --add_instructions \
+    --stop "?" \
+    --incontext \
+    --incontext_mode "all_types" \
+    --pack_max 
+
+
+python -m code.gpt3.evaluate \
+    --model_name "code-davinci-002" \
+    --eval_type "local_val" \
+    --add_instructions \
+    --stop "?" \
+    --incontext \
+    --incontext_mode "random" 
+
+
+python -m code.gpt3.evaluate \
+    --model_name "code-davinci-002" \
+    --eval_type "local_val" \
+    --add_instructions \
+    --stop "?" \
+    --incontext \
+    --incontext_mode "random" \
+    --pack_max 
+
+
+python -m code.gpt3.evaluate \
+    --model_name "text-curie-001" \
+    --eval_type "local_val" \
+    --add_instructions \
+    --stop "?" \
+    --incontext \
+    --incontext_mode "all_types"
+
+
+python -m code.gpt3.evaluate \
+    --model_name "text-curie-001" \
+    --eval_type "local_val" \
+    --add_instructions \
+    --stop "?" \
+    --incontext \
+    --incontext_mode "random"
+
+
+Zero shot codex model:
+python -m code.gpt3.evaluate \
+    --model_name "code-davinci-002" \
+    --eval_type "local_val" \
+    --add_instructions \
+    --stop "?"

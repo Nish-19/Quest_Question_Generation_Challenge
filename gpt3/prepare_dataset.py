@@ -23,14 +23,14 @@ RAW_DIR = "./data/"
 PROMPT_END_TOKEN = "The question is:"
 SEP_TOKEN = "\n"
 COMPLETION_END_TOKEN = "\n"
-INSTRUCTIONS = "Write a question based on the story and answer below."
+INSTRUCTIONS = "Write a question based on the story and answer."
 
 
-def process_multiple_sections(df):
-    df["cor_section"] = df["cor_section"].apply(str)
-    df["cor_section"] = df["cor_section"].apply(lambda x: int(x.split(",")[0]))
+def get_story(row, story_map):
+    sections = str(row["cor_section"]).split(",")
+    story = " ".join([story_map[row["source_title"]][int(section)] for section in sections])
 
-    return df
+    return story
 
 
 def verify_length(df_train, max_words=1536):
@@ -39,7 +39,7 @@ def verify_length(df_train, max_words=1536):
     df_train["completion_len"] = df_train["completion"].apply(lambda x: len(x.split()))
     df_train["total_len"] = df_train["prompt_len"] + df_train["completion_len"]
     print(df_train[["prompt_len", "completion_len", "total_len"]].describe())
-    assert df_train["total_len"].max() <= 1536
+    assert df_train["total_len"].max() <= max_words
 
 
 def prepare_dataset(df_train, story_map):
@@ -53,10 +53,6 @@ def prepare_dataset(df_train, story_map):
         assert df_train["answer"].str.contains(tok).sum() == 0
         assert df_train["question"].str.contains(tok).sum() == 0
     
-    # Some corresponding sections are a list of sections, take only the first section
-    # TODO: use all sections specified in the list
-    df_train = process_multiple_sections(df_train)
-    
     # Create prompt and corresponding completion
     df_train["prompt"] = df_train.apply(lambda row: create_prompt(row, story_map), axis=1)
     df_train["completion"] = df_train.apply(lambda row: create_completion(row), axis=1)
@@ -69,7 +65,7 @@ def prepare_dataset(df_train, story_map):
 
 
 def create_prompt(row, story_map, add_instructions=False):
-    story = story_map[row["source_title"]][row["cor_section"]]
+    story = get_story(row, story_map)
     # Suffix prompt with PROMPT_END_TOKEN
     # Separate story and answer with SEP_TOKEN
     if( add_instructions ):
@@ -91,7 +87,6 @@ def create_completion(row):
 
 
 def clean_str(text):
-    # Replace double quotes with single quotes
     # Remove non breaking spaces (\u00A0), etc
     text = re.sub(r"\s+", " ", text)
 

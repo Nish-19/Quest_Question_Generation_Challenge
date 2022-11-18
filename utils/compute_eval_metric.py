@@ -14,21 +14,25 @@ python -m code.utils.compute_eval_metric \
 BLEURT:  0.49320319778005767
 BLEURT:  0.5448525935956617 (without normalization)
 
-Zero shot prompting results:
+
 python -m code.utils.compute_eval_metric \
     --eval_folder train_val_split_csv \
-    --eval_filename text-curie-001_20221103-030617.csv \
-    --batch_size 64
-BLEURT:  0.31435113114766716
-BLEURT:  0.38770477067891174 (without normalization)
+    --eval_filename code-davinci-002_20221118-030743.csv \
+    --batch_size 128
+
+GPT-3 Curie:
+zero shot = 0.30488806867563145
+incontext all = 0.29506806673376057
+incontext random = 0.2970815305105918 (need better prompt design for stories demarcation)
 
 
-T5 Nischal:
-python -m code.utils.compute_eval_metric \
-    --eval_folder train_val_split_csv \
-    --eval_filename t5_small_generation.csv \
-    --batch_size 64 \
-    --debug
+Codex:
+zero shot = 0.38967791111852096
+incontext all without pack_max = 0.47531837670935123
+incontext random without pack_max = 0.48398684873056363
+incontext all with pack_max = 0.4813110683779649
+incontext random with pack_max = 0.4757306356043593
+
 
 
 GPT2 finetuned with CLM loss on question only:
@@ -141,8 +145,6 @@ def main():
     
     # Load BLUERT metric
     bleurt = evaluate.load('bleurt', 'bleurt-20')
-
-    print(bleurt.compute(predictions=["Same question?", "Nigel rocks"], references=["Same question?", "Nigel rocks"]))
     
     # Load question generations
     folder = os.path.join(RAW_DIR, "results/{}".format(args.eval_folder))
