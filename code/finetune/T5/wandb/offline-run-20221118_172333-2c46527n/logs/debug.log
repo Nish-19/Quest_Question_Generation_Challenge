@@ -1,0 +1,23 @@
+2022-11-18 17:23:33,414 INFO    MainThread:78579 [wandb_setup.py:_flush():68] Configure stats pid to 78579
+2022-11-18 17:23:33,414 INFO    MainThread:78579 [wandb_setup.py:_flush():68] Loading settings from /home/zw16/.config/wandb/settings
+2022-11-18 17:23:33,414 INFO    MainThread:78579 [wandb_setup.py:_flush():68] Loading settings from /home/zw16/Quest_Question_Generation_Challenge-nischal/code/finetune/T5/wandb/settings
+2022-11-18 17:23:33,414 INFO    MainThread:78579 [wandb_setup.py:_flush():68] Loading settings from environment variables: {'_require_service': 'True', 'notebook_name': 'FinetuneT5'}
+2022-11-18 17:23:33,414 INFO    MainThread:78579 [wandb_setup.py:_flush():68] Inferring run settings from compute environment: {'program_relpath': 't5_finetune.py', 'program': 't5_finetune.py'}
+2022-11-18 17:23:33,414 INFO    MainThread:78579 [wandb_setup.py:_flush():68] Applying login settings: {'mode': 'offline'}
+2022-11-18 17:23:33,414 INFO    MainThread:78579 [wandb_init.py:_log_setup():476] Logging user logs to ./wandb/offline-run-20221118_172333-2c46527n/logs/debug.log
+2022-11-18 17:23:33,414 INFO    MainThread:78579 [wandb_init.py:_log_setup():477] Logging internal logs to ./wandb/offline-run-20221118_172333-2c46527n/logs/debug-internal.log
+2022-11-18 17:23:33,414 INFO    MainThread:78579 [wandb_init.py:init():516] calling init triggers
+2022-11-18 17:23:33,414 INFO    MainThread:78579 [wandb_init.py:init():520] wandb.init called with sweep_config: {}
+config: {}
+2022-11-18 17:23:33,414 INFO    MainThread:78579 [wandb_init.py:init():569] starting backend
+2022-11-18 17:23:33,414 INFO    MainThread:78579 [wandb_init.py:init():573] setting up manager
+2022-11-18 17:23:33,416 INFO    MainThread:78579 [backend.py:_multiprocessing_setup():104] multiprocessing start_methods=fork,spawn,forkserver, using: spawn
+2022-11-18 17:23:33,417 INFO    MainThread:78579 [wandb_init.py:init():580] backend started and connected
+2022-11-18 17:23:33,418 INFO    MainThread:78579 [wandb_init.py:init():658] updated telemetry
+2022-11-18 17:23:33,419 INFO    MainThread:78579 [wandb_init.py:init():728] starting run threads in backend
+2022-11-18 17:23:34,539 INFO    MainThread:78579 [wandb_run.py:_console_start():1980] atexit reg
+2022-11-18 17:23:34,539 INFO    MainThread:78579 [wandb_run.py:_redirect():1838] redirect: SettingsConsole.WRAP_RAW
+2022-11-18 17:23:34,540 INFO    MainThread:78579 [wandb_run.py:_redirect():1903] Wrapping output streams.
+2022-11-18 17:23:34,540 INFO    MainThread:78579 [wandb_run.py:_redirect():1925] Redirects installed.
+2022-11-18 17:23:34,540 INFO    MainThread:78579 [wandb_init.py:init():765] run started, returning control to user process
+2022-11-18 17:23:36,465 WARNING MsgRouterThr:78579 [router.py:message_loop():77] message_loop has been closed

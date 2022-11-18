@@ -1,0 +1,120 @@
+2022-11-10 15:48:37,654 INFO    StreamThr :15389 [internal.py:wandb_internal():88] W&B internal server running at pid: 15389, started at: 2022-11-10 15:48:37.653870
+2022-11-10 15:48:37,668 DEBUG   HandlerThread:15389 [handler.py:handle_request():139] handle_request: status
+2022-11-10 15:48:37,668 DEBUG   SenderThread:15389 [sender.py:send_request():317] send_request: status
+2022-11-10 15:48:37,685 INFO    WriterThread:15389 [datastore.py:open_for_write():75] open: ./wandb/offline-run-20221110_154837-2y5yn68s/run-2y5yn68s.wandb
+2022-11-10 15:48:37,686 DEBUG   HandlerThread:15389 [handler.py:handle_request():139] handle_request: run_start
+2022-11-10 15:48:37,692 DEBUG   HandlerThread:15389 [system_info.py:__init__():31] System info init
+2022-11-10 15:48:37,692 DEBUG   HandlerThread:15389 [system_info.py:__init__():46] System info init done
+2022-11-10 15:48:37,692 INFO    HandlerThread:15389 [system_monitor.py:start():150] Starting system monitor
+2022-11-10 15:48:37,696 INFO    SystemMonitor:15389 [system_monitor.py:_start():116] Starting system asset monitoring threads
+2022-11-10 15:48:37,696 INFO    HandlerThread:15389 [system_monitor.py:probe():168] Collecting system info
+2022-11-10 15:48:37,701 INFO    SystemMonitor:15389 [interfaces.py:start():168] Started cpu
+2022-11-10 15:48:37,705 INFO    SystemMonitor:15389 [interfaces.py:start():168] Started disk
+2022-11-10 15:48:37,710 INFO    SystemMonitor:15389 [interfaces.py:start():168] Started gpu
+2022-11-10 15:48:37,714 INFO    SystemMonitor:15389 [interfaces.py:start():168] Started memory
+2022-11-10 15:48:37,718 INFO    SystemMonitor:15389 [interfaces.py:start():168] Started network
+2022-11-10 15:48:37,770 DEBUG   HandlerThread:15389 [system_info.py:probe():195] Probing system
+2022-11-10 15:48:37,775 DEBUG   HandlerThread:15389 [git.py:repo():40] git repository is invalid
+2022-11-10 15:48:37,775 DEBUG   HandlerThread:15389 [system_info.py:probe():241] Probing system done
+2022-11-10 15:48:37,775 DEBUG   HandlerThread:15389 [system_monitor.py:probe():177] {'os': 'Linux-5.4.0-131-generic-x86_64-with-glibc2.17', 'python': '3.8.13', 'heartbeatAt': '2022-11-10T21:48:37.770307', 'startedAt': '2022-11-10T21:48:37.636785', 'docker': None, 'cuda': None, 'args': ('-N', 'flan-t5-xxl', '-M', 'google/flan-t5-xxl', '-B', '1'), 'state': 'running', 'program': 't5_finetune.py', 'codePath': 't5_finetune.py', 'host': 'terminator7', 'username': 'zw16', 'executable': '/home/zw16/anaconda3/envs/QG/bin/python', 'cpu_count': 128, 'cpu_count_logical': 128, 'cpu_freq': {'current': 3248.4053359375016, 'min': 1500.0, 'max': 2250.0}, 'cpu_freq_per_core': [{'current': 3247.847, 'min': 1500.0, 'max': 2250.0}, {'current': 3247.927, 'min': 1500.0, 'max': 2250.0}, {'current': 3247.766, 'min': 1500.0, 'max': 2250.0}, {'current': 3247.914, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.094, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.174, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.093, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.171, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.179, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.1, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.019, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.016, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.33, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.088, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.413, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.25, 'min': 1500.0, 'max': 2250.0}, {'current': 3247.782, 'min': 1500.0, 'max': 2250.0}, {'current': 3247.777, 'min': 1500.0, 'max': 2250.0}, {'current': 3247.772, 'min': 1500.0, 'max': 2250.0}, {'current': 3247.765, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.07, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.227, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.149, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.226, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.064, 'min': 1500.0, 'max': 2250.0}, {'current': 3248.975, 'min': 1500.0, 'max': 2250.0}, {'current': 3248.976, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.057, 'min': 1500.0, 'max': 2250.0}, {'current': 3246.56, 'min': 1500.0, 'max': 2250.0}, {'current': 3246.217, 'min': 1500.0, 'max': 2250.0}, {'current': 3246.216, 'min': 1500.0, 'max': 2250.0}, {'current': 3246.453, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.316, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.313, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.061, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.226, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.38, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.039, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.206, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.204, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.131, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.039, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.04, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.036, 'min': 1500.0, 'max': 2250.0}, {'current': 3247.83, 'min': 1500.0, 'max': 2250.0}, {'current': 3247.65, 'min': 1500.0, 'max': 2250.0}, {'current': 3247.82, 'min': 1500.0, 'max': 2250.0}, {'current': 3247.728, 'min': 1500.0, 'max': 2250.0}, {'current': 3248.928, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.101, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.014, 'min': 1500.0, 'max': 2250.0}, {'current': 3248.921, 'min': 1500.0, 'max': 2250.0}, {'current': 3247.608, 'min': 1500.0, 'max': 2250.0}, {'current': 3247.776, 'min': 1500.0, 'max': 2250.0}, {'current': 3247.683, 'min': 1500.0, 'max': 2250.0}, {'current': 3247.765, 'min': 1500.0, 'max': 2250.0}, {'current': 3248.913, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.085, 'min': 1500.0, 'max': 2250.0}, {'current': 3248.997, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.079, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.166, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.074, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.163, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.162, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.95, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.864, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.882, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.774, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.864, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.5, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.954, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.773, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.682, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.679, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.954, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.769, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.677, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.768, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.953, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.77, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.953, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.957, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.937, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.858, 'min': 1500.0, 'max': 2250.0}, {'current': 3246.943, 'min': 1500.0, 'max': 2250.0}, {'current': 3246.65, 'min': 1500.0, 'max': 2250.0}, {'current': 3246.927, 'min': 1500.0, 'max': 2250.0}, {'current': 3246.63, 'min': 1500.0, 'max': 2250.0}, {'current': 3248.341, 'min': 1500.0, 'max': 2250.0}, {'current': 3248.424, 'min': 1500.0, 'max': 2250.0}, {'current': 3248.428, 'min': 1500.0, 'max': 2250.0}, {'current': 3248.419, 'min': 1500.0, 'max': 2250.0}, {'current': 3248.324, 'min': 1500.0, 'max': 2250.0}, {'current': 3248.414, 'min': 1500.0, 'max': 2250.0}, {'current': 3247.929, 'min': 1500.0, 'max': 2250.0}, {'current': 3248.115, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.605, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.955, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.76, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.944, 'min': 1500.0, 'max': 2250.0}, {'current': 3248.291, 'min': 1500.0, 'max': 2250.0}, {'current': 3248.384, 'min': 1500.0, 'max': 2250.0}, {'current': 3248.385, 'min': 1500.0, 'max': 2250.0}, {'current': 3248.378, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.659, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.854, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.953, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.757, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.955, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.853, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.856, 'min': 1500.0, 'max': 2250.0}, {'current': 3248.475, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.954, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.72, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.954, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.719, 'min': 1500.0, 'max': 2250.0}, {'current': 3248.703, 'min': 1500.0, 'max': 2250.0}, {'current': 3248.237, 'min': 1500.0, 'max': 2250.0}, {'current': 3248.392, 'min': 1500.0, 'max': 2250.0}, {'current': 3248.534, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.798, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.952, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.642, 'min': 1500.0, 'max': 2250.0}, {'current': 3249.955, 'min': 1500.0, 'max': 2250.0}, {'current': 3247.456, 'min': 1500.0, 'max': 2250.0}, {'current': 3200.597, 'min': 1500.0, 'max': 2250.0}, {'current': 3247.454, 'min': 1500.0, 'max': 2250.0}, {'current': 3247.221, 'min': 1500.0, 'max': 2250.0}], 'disk': {'total': 7095.969635009766, 'used': 5591.051887512207}, 'gpu': 'Quadro RTX 8000', 'gpu_count': 8, 'gpu_devices': [{'name': 'Quadro RTX 8000', 'memory_total': 51539607552}, {'name': 'Quadro RTX 8000', 'memory_total': 51539607552}, {'name': 'Quadro RTX 8000', 'memory_total': 51539607552}, {'name': 'Quadro RTX 8000', 'memory_total': 51539607552}, {'name': 'Quadro RTX 8000', 'memory_total': 51539607552}, {'name': 'Quadro RTX 8000', 'memory_total': 51539607552}, {'name': 'Quadro RTX 8000', 'memory_total': 51539607552}, {'name': 'Quadro RTX 8000', 'memory_total': 51539607552}], 'memory': {'total': 1511.699062347412}}
+2022-11-10 15:48:37,776 INFO    HandlerThread:15389 [system_monitor.py:probe():178] Finished collecting system info
+2022-11-10 15:48:37,776 INFO    HandlerThread:15389 [system_monitor.py:probe():181] Publishing system info
+2022-11-10 15:48:37,776 DEBUG   HandlerThread:15389 [system_info.py:_save_pip():51] Saving list of pip packages installed into the current environment
+2022-11-10 15:48:37,776 DEBUG   HandlerThread:15389 [system_info.py:_save_pip():67] Saving pip packages done
+2022-11-10 15:48:37,776 DEBUG   HandlerThread:15389 [system_info.py:_save_conda():74] Saving list of conda packages installed into the current environment
+2022-11-10 15:48:38,700 DEBUG   HandlerThread:15389 [system_info.py:_save_conda():86] Saving conda packages done
+2022-11-10 15:48:38,702 INFO    HandlerThread:15389 [system_monitor.py:probe():183] Finished publishing system info
+2022-11-10 15:49:37,718 DEBUG   SystemMonitor:15389 [system_monitor.py:_start():130] Starting system metrics aggregation loop
+2022-11-10 15:50:35,489 DEBUG   SenderThread:15389 [sender.py:send():303] send: exit
+2022-11-10 15:50:35,489 INFO    SenderThread:15389 [sender.py:send_exit():442] handling exit code: 1
+2022-11-10 15:50:35,490 INFO    SenderThread:15389 [sender.py:send_exit():444] handling runtime: 117
+2022-11-10 15:50:35,490 INFO    SenderThread:15389 [sender.py:_save_file():1171] saving file wandb-summary.json with policy end
+2022-11-10 15:50:35,490 INFO    SenderThread:15389 [sender.py:send_exit():450] send defer
+2022-11-10 15:50:35,491 DEBUG   HandlerThread:15389 [handler.py:handle_request():139] handle_request: defer
+2022-11-10 15:50:35,491 INFO    HandlerThread:15389 [handler.py:handle_request_defer():162] handle defer: 0
+2022-11-10 15:50:35,491 DEBUG   SenderThread:15389 [sender.py:send_request():317] send_request: defer
+2022-11-10 15:50:35,491 INFO    SenderThread:15389 [sender.py:send_request_defer():459] handle sender defer: 0
+2022-11-10 15:50:35,492 INFO    SenderThread:15389 [sender.py:transition_state():463] send defer: 1
+2022-11-10 15:50:35,492 DEBUG   HandlerThread:15389 [handler.py:handle_request():139] handle_request: defer
+2022-11-10 15:50:35,492 INFO    HandlerThread:15389 [handler.py:handle_request_defer():162] handle defer: 1
+2022-11-10 15:50:35,492 INFO    HandlerThread:15389 [system_monitor.py:finish():160] Stopping system monitor
+2022-11-10 15:50:35,494 DEBUG   SystemMonitor:15389 [system_monitor.py:_start():137] Finished system metrics aggregation loop
+2022-11-10 15:50:35,494 DEBUG   SystemMonitor:15389 [system_monitor.py:_start():141] Publishing last batch of metrics
+2022-11-10 15:50:35,500 INFO    HandlerThread:15389 [interfaces.py:finish():173] Joined cpu
+2022-11-10 15:50:35,500 INFO    HandlerThread:15389 [interfaces.py:finish():173] Joined disk
+2022-11-10 15:50:36,324 INFO    HandlerThread:15389 [interfaces.py:finish():173] Joined gpu
+2022-11-10 15:50:36,324 INFO    HandlerThread:15389 [interfaces.py:finish():173] Joined memory
+2022-11-10 15:50:36,325 INFO    HandlerThread:15389 [interfaces.py:finish():173] Joined network
+2022-11-10 15:50:36,326 DEBUG   SenderThread:15389 [sender.py:send_request():317] send_request: defer
+2022-11-10 15:50:36,326 INFO    SenderThread:15389 [sender.py:send_request_defer():459] handle sender defer: 1
+2022-11-10 15:50:36,326 INFO    SenderThread:15389 [sender.py:transition_state():463] send defer: 2
+2022-11-10 15:50:36,327 DEBUG   HandlerThread:15389 [handler.py:handle_request():139] handle_request: defer
+2022-11-10 15:50:36,327 INFO    HandlerThread:15389 [handler.py:handle_request_defer():162] handle defer: 2
+2022-11-10 15:50:36,327 DEBUG   SenderThread:15389 [sender.py:send_request():317] send_request: defer
+2022-11-10 15:50:36,327 INFO    SenderThread:15389 [sender.py:send_request_defer():459] handle sender defer: 2
+2022-11-10 15:50:36,327 INFO    SenderThread:15389 [sender.py:transition_state():463] send defer: 3
+2022-11-10 15:50:36,327 DEBUG   HandlerThread:15389 [handler.py:handle_request():139] handle_request: defer
+2022-11-10 15:50:36,328 INFO    HandlerThread:15389 [handler.py:handle_request_defer():162] handle defer: 3
+2022-11-10 15:50:36,328 DEBUG   SenderThread:15389 [sender.py:send_request():317] send_request: defer
+2022-11-10 15:50:36,328 INFO    SenderThread:15389 [sender.py:send_request_defer():459] handle sender defer: 3
+2022-11-10 15:50:36,328 INFO    SenderThread:15389 [sender.py:transition_state():463] send defer: 4
+2022-11-10 15:50:36,328 DEBUG   HandlerThread:15389 [handler.py:handle_request():139] handle_request: defer
+2022-11-10 15:50:36,328 INFO    HandlerThread:15389 [handler.py:handle_request_defer():162] handle defer: 4
+2022-11-10 15:50:36,329 DEBUG   SenderThread:15389 [sender.py:send_request():317] send_request: defer
+2022-11-10 15:50:36,329 INFO    SenderThread:15389 [sender.py:send_request_defer():459] handle sender defer: 4
+2022-11-10 15:50:36,329 INFO    SenderThread:15389 [sender.py:transition_state():463] send defer: 5
+2022-11-10 15:50:36,329 DEBUG   HandlerThread:15389 [handler.py:handle_request():139] handle_request: defer
+2022-11-10 15:50:36,330 INFO    HandlerThread:15389 [handler.py:handle_request_defer():162] handle defer: 5
+2022-11-10 15:50:36,330 DEBUG   SenderThread:15389 [sender.py:send_request():317] send_request: defer
+2022-11-10 15:50:36,330 INFO    SenderThread:15389 [sender.py:send_request_defer():459] handle sender defer: 5
+2022-11-10 15:50:36,330 INFO    SenderThread:15389 [sender.py:transition_state():463] send defer: 6
+2022-11-10 15:50:36,330 DEBUG   HandlerThread:15389 [handler.py:handle_request():139] handle_request: defer
+2022-11-10 15:50:36,330 INFO    HandlerThread:15389 [handler.py:handle_request_defer():162] handle defer: 6
+2022-11-10 15:50:36,331 DEBUG   SenderThread:15389 [sender.py:send_request():317] send_request: defer
+2022-11-10 15:50:36,331 INFO    SenderThread:15389 [sender.py:send_request_defer():459] handle sender defer: 6
+2022-11-10 15:50:36,331 INFO    SenderThread:15389 [sender.py:transition_state():463] send defer: 7
+2022-11-10 15:50:36,331 DEBUG   HandlerThread:15389 [handler.py:handle_request():139] handle_request: defer
+2022-11-10 15:50:36,331 INFO    HandlerThread:15389 [handler.py:handle_request_defer():162] handle defer: 7
+2022-11-10 15:50:36,331 DEBUG   SenderThread:15389 [sender.py:send_request():317] send_request: defer
+2022-11-10 15:50:36,332 INFO    SenderThread:15389 [sender.py:send_request_defer():459] handle sender defer: 7
+2022-11-10 15:50:36,332 INFO    SenderThread:15389 [sender.py:transition_state():463] send defer: 8
+2022-11-10 15:50:36,332 DEBUG   HandlerThread:15389 [handler.py:handle_request():139] handle_request: defer
+2022-11-10 15:50:36,332 INFO    HandlerThread:15389 [handler.py:handle_request_defer():162] handle defer: 8
+2022-11-10 15:50:36,332 DEBUG   SenderThread:15389 [sender.py:send_request():317] send_request: defer
+2022-11-10 15:50:36,332 INFO    SenderThread:15389 [sender.py:send_request_defer():459] handle sender defer: 8
+2022-11-10 15:50:36,333 INFO    SenderThread:15389 [sender.py:transition_state():463] send defer: 9
+2022-11-10 15:50:36,333 DEBUG   HandlerThread:15389 [handler.py:handle_request():139] handle_request: defer
+2022-11-10 15:50:36,333 INFO    HandlerThread:15389 [handler.py:handle_request_defer():162] handle defer: 9
+2022-11-10 15:50:36,333 DEBUG   SenderThread:15389 [sender.py:send_request():317] send_request: defer
+2022-11-10 15:50:36,333 INFO    SenderThread:15389 [sender.py:send_request_defer():459] handle sender defer: 9
+2022-11-10 15:50:36,333 INFO    SenderThread:15389 [sender.py:transition_state():463] send defer: 10
+2022-11-10 15:50:36,334 DEBUG   HandlerThread:15389 [handler.py:handle_request():139] handle_request: defer
+2022-11-10 15:50:36,334 INFO    HandlerThread:15389 [handler.py:handle_request_defer():162] handle defer: 10
+2022-11-10 15:50:36,334 DEBUG   SenderThread:15389 [sender.py:send_request():317] send_request: defer
+2022-11-10 15:50:36,334 INFO    SenderThread:15389 [sender.py:send_request_defer():459] handle sender defer: 10
+2022-11-10 15:50:36,334 INFO    SenderThread:15389 [sender.py:transition_state():463] send defer: 11
+2022-11-10 15:50:36,334 DEBUG   HandlerThread:15389 [handler.py:handle_request():139] handle_request: defer
+2022-11-10 15:50:36,335 INFO    HandlerThread:15389 [handler.py:handle_request_defer():162] handle defer: 11
+2022-11-10 15:50:36,335 DEBUG   SenderThread:15389 [sender.py:send_request():317] send_request: defer
+2022-11-10 15:50:36,335 INFO    SenderThread:15389 [sender.py:send_request_defer():459] handle sender defer: 11
+2022-11-10 15:50:36,335 INFO    SenderThread:15389 [sender.py:transition_state():463] send defer: 12
+2022-11-10 15:50:36,336 DEBUG   HandlerThread:15389 [handler.py:handle_request():139] handle_request: defer
+2022-11-10 15:50:36,336 DEBUG   SenderThread:15389 [sender.py:send():303] send: final
+2022-11-10 15:50:36,336 INFO    HandlerThread:15389 [handler.py:handle_request_defer():162] handle defer: 12
+2022-11-10 15:50:36,336 DEBUG   SenderThread:15389 [sender.py:send_request():317] send_request: defer
+2022-11-10 15:50:36,337 INFO    SenderThread:15389 [sender.py:send_request_defer():459] handle sender defer: 12
+2022-11-10 15:50:36,338 DEBUG   HandlerThread:15389 [handler.py:handle_request():139] handle_request: poll_exit
+2022-11-10 15:50:36,338 DEBUG   SenderThread:15389 [sender.py:send_request():317] send_request: poll_exit
+2022-11-10 15:50:36,339 DEBUG   HandlerThread:15389 [handler.py:handle_request():139] handle_request: poll_exit
+2022-11-10 15:50:36,339 DEBUG   SenderThread:15389 [sender.py:send_request():317] send_request: poll_exit
+2022-11-10 15:50:36,340 DEBUG   HandlerThread:15389 [handler.py:handle_request():139] handle_request: server_info
+2022-11-10 15:50:36,340 DEBUG   SenderThread:15389 [sender.py:send_request():317] send_request: server_info
+2022-11-10 15:50:36,341 DEBUG   HandlerThread:15389 [handler.py:handle_request():139] handle_request: get_summary
+2022-11-10 15:50:36,342 DEBUG   HandlerThread:15389 [handler.py:handle_request():139] handle_request: sampled_history
+2022-11-10 15:50:36,343 INFO    MainThread:15389 [wandb_run.py:_footer_history_summary_info():3377] rendering history
+2022-11-10 15:50:36,343 INFO    MainThread:15389 [wandb_run.py:_footer_history_summary_info():3409] rendering summary
+2022-11-10 15:50:36,344 DEBUG   HandlerThread:15389 [handler.py:handle_request():139] handle_request: shutdown
+2022-11-10 15:50:36,344 INFO    HandlerThread:15389 [handler.py:finish():814] shutting down handler
+2022-11-10 15:50:37,336 INFO    WriterThread:15389 [datastore.py:close():279] close: ./wandb/offline-run-20221110_154837-2y5yn68s/run-2y5yn68s.wandb
+2022-11-10 15:50:37,341 INFO    SenderThread:15389 [sender.py:finish():1331] shutting down sender
+2022-11-10 15:50:37,347 INFO    MainThread:15389 [internal.py:handle_exit():78] Internal process exited

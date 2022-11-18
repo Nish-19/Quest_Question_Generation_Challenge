@@ -1,0 +1,4 @@
+name: qg-gen
+channels:
+  - defaults
+prefix: /home/zw16/.conda/envs/qg-gen

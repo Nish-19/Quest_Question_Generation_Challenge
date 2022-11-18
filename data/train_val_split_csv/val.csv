@@ -1,0 +1,985 @@
+pair_id,source_title,cor_section,answer,question,local_or_sum,attribute1,attribute2,ex_or_im
+7af103d7cede5f44,the-teapot,2,because it has a spout,why is the teapot the queen of the table?,local,causal relationship,,explicit
+ba62c70a5ddf5093,the-adventures-of-gilla-na-chreck-an-gour,2,"wouldn't let Tom be burned, nor scalded, nor wounded",What did the green ointment do?,local,action,,explicit
+512e49ec482a5151,the-coming-of-finn,3,took his weapons,What did the attendant do to the youth?,local,action,,explicit
+c911553640e45fe4,the-bones-of-djulung,6,the youngest,Who was busy and did not care about strangers?,local,character,,explicit
+42959550a07b5989,red-shoes,14,a beautiful green branch,What did the angel carry instead of a sword?,local,action,,explicit
+a7e0e000963955fa,the-tale-of-jemina-puddle-duck,6,so that she doesn't need to leave the next until the eggs are hatched,Why does Jemima decide to bring a bag of corn?,local,causal relationship,,implicit
+4b7b61dc422659bd,story-of-man-who-did-not-wish-to-die,13,No man had ever died there and sickness was a thing unknown.,What had never happened at the island within the memory of the islanders?,local,action,,explicit
+b51b4e30ad285fb6,the-coming-of-finn,8,Conn the Hundred-Fighter,Who reeled and tottered and strove in vain to keep his feet?,local,character,,explicit
+7c1d12123ce5568b,cinderella-or-the-little-glass-slipper,15,her two sisters,Who came knocking at the door?,local,character,,explicit
+006b5d6953b05d68,laotsze,3,only stuck out his tongue at him and would not say a word,What did Laotsze do when the guardian questioned him with regard to hidden knowledge?,local,action,,explicit
+ce66736265d559bd,the-adventures-of-gilla-na-chreck-an-gour,4,glad,How did the king feel when Tom made the princess laugh?,local,feeling,,explicit
+f3d0230cd2f254f4,troll-wife,4,gold and silver,What did the bridegroom see when he went into the room for the old folk?,local,action,,explicit
+e74e01c91cda56b1,leelinau-the-lost-daughter,7,"shouted ""Wa-ge-min!""",What did a young man do when Leelinau picked a crooked kind of corn?,local,action,,explicit
+c0b6b63e63855837,adventures-of-kintaro-golden-boy,11,They were wrestling for a long time.,Why did the animals stop wrestling?,local,causal relationship,,implicit
+dfda303670935312,adventures-of-kintaro-golden-boy,13,a woodcutter,Who was overlooking the stream?,local,character,,explicit
+148d592205ae53c2,the-bones-of-djulung,6,She was talented in growing the tree.,Why did the king want to marry the youngest daughter?,local,causal relationship,,implicit
+76f4b8a28a2752b6,the-bones-of-djulung,3,The fish was eaten by her sisters.,Why didn't the fish come after the youngest sister called for it?,local,causal relationship,,implicit
+6e9f5c24b8dd5fd5,cinderella-or-the-little-glass-slipper,14,The King's son had desired her.,Why did Cinderella go to the ball the next day?,local,causal relationship,,explicit
+82709e224ad15548,gray-eagle-and-his-five-brothers,8,thankful,How will Gray Eagle feel towards his brothers taking care of him?,local,feeling,prediction,implicit
+4d87f508499a53ea,osseo-the-son-of-the-evening-star,11,His aunts and uncles followed him in the form of birds.,"What happened to Osseo's son after he suddenly dropped upon a high, breezy island in a large lake?",local,outcome resolution,,explicit
+4ba93ce105045a5f,a-lost-paradise,4,Their good fortune would come to an end.,What would happen if the couple took off the cover?,local,outcome resolution,prediction,implicit
+6cb803cfc3b85ddf,laotsze,2,"He owed him seven million, two hundred thousand pieces of copper.",What happened when Laotsze did not pay his servant?,local,outcome resolution,,explicit
+6ff5b6e349ae552f,story-of-man-who-did-not-wish-to-die,"5,8",Jofuku was said to be the hermit's patron god.,Why did Sentaro go to the shrine of Jofuku?,summary,causal relationship,,implicit
+bc0a43c971025062,the-coming-of-finn,1,"the King of Ireland, Conn, the Hundred-Fighter",Who were the chiefs and mighty men with?,local,character,,explicit
+6c9d6176dc4d5350,the-tale-of-jemina-puddle-duck,7,two fox-hound puppies,What did collie trot down the village to look for?,local,action,,explicit
+36deef7646805838,wunzh-the-father-of-indian-corn,5,"The stranger ceased his efforts, and declared himself conquered.",What happened after Wunzh put forth his utmost powers?,local,outcome resolution,,explicit
+7e1a0a67d1455f51,leelinau-the-lost-daughter,"12,13",happy,How did Leelinau's parents feel about Leelinau going to meet her lover?,summary,feeling,,implicit
+8070a2efddcf5f1b,osseo-the-son-of-the-evening-star,"5,6,7",She was cursed.,Why did Oweenee turn into an aged and feeble woman?,summary,causal relationship,,implicit
+95cee7e42d725a53,momotaro-story-of-son-of-peach,52,washing clothes in a stream,What were the two beautiful damsels doing?,local,action,,explicit
+f5f1e65b3f8854e9,momotaro-story-of-son-of-peach,18,the stronghold of a band of devils,Who lived on the island?,local,character,,explicit
+ebb02b80438955b3,lord-of-hill-and-john-blessom,2,He was in a hurry.,Why was the man walking very fast?,local,causal relationship,,explicit
+7d99af5f3a8756f4,youth-who-wanted-to-win-daughter-of-mother-in-corner,1,"He would live happily ever after, and could sing and dance, and would not have to plague himself with work.",Why did the son want to marry the daughter of the mother in the corner?,local,causal relationship,,explicit
+8345d66dbc475071,wunzh-the-father-of-indian-corn,1,in a beautiful part of the country,Where was a poor Indian living with his wife and children?,local,setting,,explicit
+3b86166951e85337,the-adventures-of-gilla-na-chreck-an-gour,6,the foxy fellow,Who did not laugh during dinner?,local,character,,explicit
+8db0632d0f895a52,story-of-man-who-did-not-wish-to-die,"14,15",They could not die there.,Why did the poisons not work at the land of Perpetual Life?,summary,causal relationship,,implicit
+91b3433813ff5785,red-shoes,2,because the old lady thought they were ugly,Why were the shoes burnt?,local,causal relationship,,implicit
+7bcc785310b95be1,the-coming-of-finn,7,The man was not seen.,What happened after these things were given to FInn?,local,outcome resolution,,explicit
+7a083fa6ec595bf6,youth-who-wanted-to-win-daughter-of-mother-in-corner,"3,4",It was rat food.,Why did the youth have no great appetite for the food?,summary,causal relationship,,implicit
+f8700078bad55997,lord-of-hill-and-john-blessom,1,He was homesick.,Why was John going along in a low-spirited manner?,local,causal relationship,,explicit
+459cf2522c9251a0,lord-of-hill-and-john-blessom,2,cover a mile in twelve steps,What could the man's horse do?,local,action,,explicit
+eba0a609893450e3,cinderella-or-the-little-glass-slipper,"11, 12",Cinderella asked if she had to go there in these nasty rags.,"Why did the godmother turn Cinderella's clothes into cloth of gold and silver, all beset with jewels?",summary,causal relationship,,implicit
+49e648e65c8f5ac1,the-coming-of-finn,6,Allen was impossible to defeat.,Why was the king willing to give anything to Finn as a reward?,local,causal relationship,,implicit
+9fdb3bf5d05b5293,the-coming-of-finn,1,the Eve of Samhain,What was also called All Hallows' Eve?,local,action,,explicit
+3283e166e93452a3,cinderella-or-the-little-glass-slipper,4,the King's son,Who gave a ball and invited all persons of fashion to it?,local,character,,explicit
+b1be3c239349520e,laotsze,1,Laotsze,Who was really older than heaven and earth put together?,local,character,,explicit
+4cfc56eb25155879,story-of-man-who-did-not-wish-to-die,10,a little crane made of paper,What would carry Sentaro to the country of Perpetual Life?,local,action,,explicit
+75b81cf69e3f54ab,momotaro-story-of-son-of-peach,11,It felt even heavier than before.,How was the peach different from before?,local,character,,explicit
+d0c0c51f6f0853d7,laotsze,4,Laotsze took away the life-giving talisman.,Why did the servant suddenly collapse and turn into a heap of bones?,local,causal relationship,,implicit
+53d9ab966a3459f8,youth-who-wanted-to-win-daughter-of-mother-in-corner,6,jump over a puddle to a clump of grass,What did the youth need to do to not dirty his shoes?,local,action,,explicit
+71d3c90390685afb,red-shoes,7,the shoes danced to the left,What happened when Karen wanted to dance to the right?,local,outcome resolution,,explicit
+042eda2c63f35897,red-shoes,11,sad,How did Karen feel during the whole week?,local,feeling,,explicit
+f2c627322f7652fc,red-shoes,14,the church,What building came to the girl?,local,setting,action,explicit
+0bf2e744241450b0,osseo-the-son-of-the-evening-star,4,a great rock,Where did Osseo breathe his morning and his evening prayer?,local,setting,,explicit
+2bc7c7976a2b520c,the-coming-of-finn,2,A strange figure entered the chamber.,What happened after they heard voices?,local,outcome resolution,,explicit
+07062b6bbb57520b,adventures-of-kintaro-golden-boy,2,they looked upon Kintaro as their master,Why did the animals act as servants and messengers?,local,causal relationship,,explicit
+7aae19aa4d5453d8,storks,3,Peter,which boy did not join in the singing?,local,character,,explicit
+565fba1b413f57b8,lord-of-hill-and-john-blessom,1,Copenhagen,Where had John Blessom gone down to?,local,setting,,explicit
+1adb1caeae0656eb,the-tale-of-bad-mice,3,a lovely dinner,What was laid upon the table?,local,action,,explicit
+a487d179a8d951b6,youth-who-wanted-to-win-daughter-of-mother-in-corner,12,astonished,How did the youth feel when he saw the maiden?,local,feeling,,explicit
+5b8001ed710a52e2,the-dangerous-reward,8,Hu-Wu-Bau's father thought of his little grand-children and called them to him.,Why did Hu-Wu-Bau's children die?,local,causal relationship,,explicit
+0e83be6a2ffd5920,the-top-and-ball,7,Morocco,What was the ball made out of?,local,character,,explicit
+5556fa169c675d31,the-adventures-of-gilla-na-chreck-an-gour,3,to please the princess,Why were there wrestling and rinka-fadhas?,local,causal relationship,,explicit
+2944389462a25809,the-adventures-of-gilla-na-chreck-an-gour,9,He made her laugh three times.,Why did the princess put her hands into Tom's hands?,local,causal relationship,,implicit
+8875ae36f7d4555a,the-bones-of-djulung,4,"He was telling her that Djulung was dead, killed and eaten by her sisters. His bones lay buried under the kitchen fire.",Why did the cock crow so loudly?,local,causal relationship,,explicit
+19cfb81e808d517f,the-adventures-of-gilla-na-chreck-an-gour,8,how it would burn the hands off of Tom,What did the little vagabond think about?,local,action,,explicit
+f882bd1dd9cd52e8,mr-korbes,1,a cat,Who did the cock and the hen encounter?,local,action,,explicit
+a620e228941555ec,brother-sister,9,the fawn,Who did the maiden insist on bringing with her to the castle?,local,character,,explicit
+3aaac130787b53cc,the-adventures-of-gilla-na-chreck-an-gour,"4,5,6",to get rid of Tom,Why did Redhead put so many challenges against Tom?,summary,causal relationship,,implicit
+b7c51d974e0c560f,the-coming-of-finn,6,his father,Who was the original owner of the girdle and instruments of divination and magic?,local,character,,explicit
+4254a98ba83b5599,the-top-and-ball,1,red and yellow,What colors did the little boy paint the playthings?,local,action,,explicit
+1ded7a4454c65295,momotaro-story-of-son-of-peach,52,They are captives of the Demon King.,Why were the maidens crying?,local,causal relationship,,explicit
+41708a7c0ac25387,story-of-man-who-did-not-wish-to-die,19,It was made of paper.,Why did the storm cause the crane to crumple up and fall?,local,causal relationship,,implicit
+5d58943347d55223,the-origin-of-the-robin,1,He was ordered to lie down upon a clean mat in a little lodge expressly provided for him.,What happened to Iadilla after he visited the sweating-lodge and bath?,local,outcome resolution,,explicit
+35d4c497a99b5491,troll-wife,"1,2",He had often heard of the maiden who was so beautiful.,Why did the son ride up into the hills?,summary,causal relationship,,explicit
+9a2be7e2f12a54f7,youth-who-wanted-to-win-daughter-of-mother-in-corner,13,a hideous rat-hole,Where did the youth think the princess had lived?,local,setting,,explicit
+e9b6ee78bd985ac1,the-coming-of-finn,4,burn Tara,What did Allen do every year?,local,action,,explicit
+dec69e928e145398,brother-sister,15,the daughter,Who was sent into the wood and devoured by wild beasts?,local,character,,explicit
+b931dd6ea64f56da,momotaro-story-of-son-of-peach,18,They disobey his laws.,How were the band of devils disloyal to the Emperor?,local,action,,explicit
+79cf7f50f44c56f7,the-origin-of-the-robin,6,flew away into a neighboring wood,What did Iadilla do after he caroled one of his sweetest songs?,local,outcome resolution,,explicit
+52fb19ec8cfb5eb5,the-origin-of-the-robin,1,Iadilla would receive food and the blessing of his father.,What did the old man promise Iadilla after twelve days of fasting?,local,action,,explicit
+d2e1adca26e75722,the-bones-of-djulung,3,a lovely fat fish,What did one of the sisters see after she followed the youngest sister?,local,action,,explicit
+e0485f62954e58f0,a-lost-paradise,"5, 6",She was thinking about what was inside the soup-tureen.,Why was the wife so silent?,summary,causal relationship,,implicit
+a7365e9d1b2656c7,momotaro-story-of-son-of-peach,17,go away at once,What did Momotaro request?,local,action,,explicit
+e6aa3ceb0809595d,the-adventures-of-gilla-na-chreck-an-gour,2,"curled his club at the little boys, and he set off along the yalla highroad to the town of Dublin",What happened after Tom kissed his mother?,local,outcome resolution,,explicit
+7d6bc66859a45e84,story-of-man-who-did-not-wish-to-die,19,Sentaro was awakened.,What happened because Sentaro was screaming?,local,outcome resolution,,explicit
+f98f551e15da5c8d,the-adventures-of-gilla-na-chreck-an-gour,3,Nothing amused her.,Why did the princess not smile when she was in the gallery?,local,causal relationship,,implicit
+3f8bfe2eec2f5ad2,the-adventures-of-gilla-na-chreck-an-gour,2,The King of Dublin's daughter was so melancholy that she didn't give a laugh for seven years.,What was proclaimed about the King of Dublin's daughter?,local,action,,explicit
+580f9a44d5b05845,cinderella-or-the-little-glass-slipper,12,"The coach would be a pumpkin again. Her horses, coachman, footmen, and clothes would become just as they were before.",Why did the godmother command Cinderella not to stay till after midnight?,local,causal relationship,,explicit
+ba8bdf5500c85748,twelve-brothers,12,"gave no answer, but nodded slightly with her head",What did the girl do when the King asked her to be his wife?,local,action,,explicit
+7610d1e3d3b858fe,the-flying-ogre,"5, 6",The stranger told him that the girl was a flying ogre.,Why did the monk did not dare to deceive the stranger?,summary,causal relationship,,implicit
+69577b81ec555952,the-coming-of-finn,6,twenty nails of gold of Arabia,What was in the spear?,local,action,,explicit
+8c5d6b8595055f19,the-coming-of-finn,2,scared,How did the soldiers feel hearing the tread of a giant?,local,feeling,,implicit
+ca2b0c198afc57c2,the-bones-of-djulung,4,"got up, and took up the large stone under the fire. She was creeping out carried the bones to the cave by the fountain, where she dug a hole and buried them anew",What did the youngest sister do after she knew what the crow was saying?,local,action,,explicit
+6ac57a37cdf55136,momotaro-story-of-son-of-peach,59,admiration,How did the whole country feel about Momotaro?,local,feeling,,explicit
+f4c26cff44a45637,the-adventures-of-gilla-na-chreck-an-gour,2,He had neither prayers nor catechism no more nor the others.,Why did the next giant give Tom a bottle of green ointment?,local,causal relationship,,explicit
+873a3d1db9f75183,cinderella-or-the-little-glass-slipper,18,"The gentleman found it went on very easily, and fitted her as if it had been made of wax.","What happened after the gentleman obliged Cinderella to sit down, and, putting the slipper to her foot?",local,outcome resolution,,explicit
+c62abeab4b0f5e9e,story-of-man-who-did-not-wish-to-die,12,the proprietor,Who helped Sentaro arrange everything that was necessary?,local,character,,explicit
+e063f023286d58bd,gray-eagle-and-his-five-brothers,2,search for him,What did the falcons do when their elder brother did not return?,local,action,,explicit
+ab2ee9d160ca561e,the-adventures-of-gilla-na-chreck-an-gour,8,to see Tom and the flail,Why was there such running and racing at home?,local,causal relationship,,explicit
+25f4268409a957d0,momotaro-story-of-son-of-peach,"38,39",The one who first begins a quarrel will be discharged on the spot.,Why did the animals promise to stop quarreling?,summary,causal relationship,,explicit
+ce36e3361c7e578d,the-origin-of-the-robin,1,ambitious,How did the old man feel about his son reaching the age to make the long and final fast?,local,feeling,,explicit
+fb5dfc2a78a854a2,the-origin-of-the-robin,3,It was for Iadilla's glory.,Why did the father encourage Iadilla to persevere?,local,causal relationship,,implicit
+7af1e2678112510b,troll-wife,3,stood as though rooted to the spot,What did the dragoon do when the old man told him to take the girl?,local,action,,explicit
+6cb72cf4d9ab5395,the-tale-of-bad-mice,8,to sweep the Dollies' house before anybody is awake,Why does Hunca Munca come to the two doll's house every morning?,local,causal relationship,,implicit
+ae76b06b751d5e8a,youth-who-wanted-to-win-daughter-of-mother-in-corner,3,unsure,How will the youth feel about the food provided by the rat?,local,prediction,feeling,implicit
+fc3c5479e1de50c7,adventures-of-kintaro-golden-boy,"18,19",Kintaro was very strong.,Why did the woodcutter think Kintaro would make a good samurai?,summary,causal relationship,,implicit
+9699b79d067f5b30,momotaro-story-of-son-of-peach,"18,46",the stronghold of a band of devils,What island did Momotaro and the animals see from the bow?,summary,setting,,explicit
+2c0d971fea6358f0,the-origin-of-the-robin,1,Iadilla,Who was the only son of an old man?,local,character,,explicit
+486eb2923bda580f,story-of-man-who-did-not-wish-to-die,"7,8",The hunter gave him an odd answer.,Why was Sentaro irritated?,summary,causal relationship,,implicit
+e340827dfc535f45,the-teapot,5,because it wasn't good enough for the flower,why was the pot thrown into the yard?,local,causal relationship,,implicit
+7164b79ebf4353e6,cinderella-or-the-little-glass-slipper,9,"scooped out all the inside of it, having left nothing but the rind; which done, she struck it with her wand, and the pumpkin was instantly turned into a fine coach, gilded all over with gold",What did the godmother do after Cinderella brought a pumpkin to her?,local,action,,explicit
+a59bf1283c325037,story-of-man-who-did-not-wish-to-die,10,the country of Perpetual Life,Where did Jofuku send Sentaro?,local,setting,,explicit
+359108fb034f558e,the-origin-of-the-robin,"4,5,6",Iadilla will leave his father.,How will Iadilla make his father suffer?,summary,action,prediction,implicit
+a5c11c16e0dd5934,laotsze,5,"Laotsze taught him the art of eternal life, and left him his teachings.",Why did the guardian adore Laotsze as his master?,local,causal relationship,,explicit
+de289e8d4eb454da,leelinau-the-lost-daughter,3,repaired the Manitowok,What did Leelinau do when she wished to solicit her spirits to procure pleasant dreams?,local,action,,explicit
+67d688003d355533,lord-of-hill-and-john-blessom,2,a skull on a pole,What did John spy when they began to hurry on?,local,action,,explicit
+b0ac9f97c5c559c7,brother-sister,1,Their stepmother was mean to them.,Why did the two decide to leave?,local,causal relationship,,implicit
+8da86edc9c445f01,lord-of-hill-and-john-blessom,4,a giant,Who stood in the midst of it all?,local,character,,explicit
+91faf9380f9c5539,red-shoes,1,little shoes,What did the old shoemaker's wife make for the little girl?,local,action,,explicit
+8a0024bf49e85c91,story-of-man-who-did-not-wish-to-die,5,one of the Emperor's best junks,What was Jofuku given?,local,action,,explicit
+f28f0a0e60e95db3,story-of-man-who-did-not-wish-to-die,20,to test Sentaro,Why did Jofuku send Sentaro to the land of Perpetual life in a dream?,local,causal relationship,,implicit
+b60c0c2e670f50a2,osseo-the-son-of-the-evening-star,"2,3",It was the only thing Osseo owned.,Why did people make a special mock of the walking-staff?,summary,causal relationship,,implicit
+b839039e784d5c35,gray-eagle-and-his-five-brothers,2,in the upper branches of a sycamore-tree,Where did the falcons find their elder brother?,local,setting,,explicit
+dc8019f50e085717,storks,1,because he stood so still,why might someone think the stork was carved in marble?,local,causal relationship,,implicit
+b017ee534b98587f,momotaro-story-of-son-of-peach,12,Heaven had compassion on them.,What happened because the man and his wife lamented that they had no child?,local,outcome resolution,,explicit
+f4729f31e18a52e7,troll-wife,"5,6",his wife,Who was a better farrier out of the dragoon and his wife?,summary,character,,explicit
+7fe5af7da5375925,osseo-the-son-of-the-evening-star,7,laborious tasks,What did the voice say females would no longer be doomed to do?,local,action,,explicit
+5346dfb3cb935ff3,story-of-man-who-did-not-wish-to-die,4,lived forever,"What happened to those who drank the ""Elixir of Life""?",local,outcome resolution,,explicit
+aa09933344495ee2,the-adventures-of-gilla-na-chreck-an-gour,1,He'll win every battle he ever fights with it.,What will the club do as long as Tom keeps from sin?,local,action,prediction,explicit
+6d141ff10d1e587f,momotaro-story-of-son-of-peach,16,bothered,How did the old man feel towards Momotaro's words?,local,feeling,,explicit
+9889342264625cc7,red-shoes,8,an angel,Who did Karen see as she danced past the open church door?,local,character,,explicit
+d63d3f0795ac5b13,brother-sister,6,glad and merry,How did the fawn feel when he left the hosue?,local,feeling,,explicit
+818399b00a5f5537,momotaro-story-of-son-of-peach,12,They were astonished at what they saw.,Why did the old man and woman fall to the ground?,local,causal relationship,,explicit
+5c9cca147ea95f69,adventures-of-kintaro-golden-boy,"4,5",It was wide.,Why was the plain a nice place to have a good romp together?,summary,causal relationship,,implicit
+25bb8bc095615e5a,wunzh-the-father-of-indian-corn,1,Wunzh,Who was the poor Indian's eldest son?,local,character,,explicit
+eca793d64f555863,a-lost-paradise,6,Just raise one corner so that she may peep.,What did the wife suggest after her husband refused to lift the lid?,local,action,,explicit
+75ad98fb61e657ce,youth-who-wanted-to-win-daughter-of-mother-in-corner,1,There was not a single blessed useful thing he would do.,What happened because the son was so lazy and slow?,local,outcome resolution,,explicit
+7c8f03a7708a59ee,the-dangerous-reward,"5, 6",The Lord of the Mountain will listen to his prayer.,What will happen when Hu-Wu-Bau begs to the Lord of the Mountain?,summary,prediction,outcome resolution,explicit
+147d3ec955aa5df1,leelinau-the-lost-daughter,"13,14",Leelinau was nowhere to be seen.,Why were Leelinau's parents worried?,summary,causal relationship,,explicit
+e39e09d5bb19554b,youth-who-wanted-to-win-daughter-of-mother-in-corner,11,"a clear, beautiful voice",What did the youth hear once after walking in advance?,local,action,,explicit
+f3d1e61dc69a5ac2,the-adventures-of-gilla-na-chreck-an-gour,"2,3",try to make the King of Dublin's daughter laugh,What will Tom do when he goes to Dublin?,summary,action,prediction,implicit
+6bf2490d0e6b5173,twelve-brothers,3,very angry,How did the brothers feel when they heard about the red flag?,local,feeling,,explicit
+f00b726a91295dca,troll-wife,6,She had a great deal of strength in her fingers.,How was the wife able to bend the horse-shoe in her own hands?,local,action,,explicit
+c7ba7f045d9154d5,the-tale-of-bad-mice,4,"pudding, the lobsters, the pears, and the oranges",What did Tom Thumb and Hunca Munca break up?,local,action,,explicit
+84533c1f87eb57b6,story-of-man-who-did-not-wish-to-die,13,He had a great dread of death.,How was Sentaro unlike the other people on the island?,local,character,action,explicit
+75c022ad5da45ddd,troll-wife,2,It lit up every road.,What happened because such a fire burned in the herdsman's hut?,local,outcome resolution,,explicit
+2841903bcdfe549c,momotaro-story-of-son-of-peach,4,The water was crystal clear.,How could the woman see tiny fish and pebbles in the water?,local,causal relationship,,explicit
+831f8b24b2175ce0,the-constable,4,The man had been sent out by the Judge of the Dead to fetch him.,Why was the man sent to Dung's district?,local,causal relationship,,explicit
+014b8d41376b5b20,story-of-man-who-did-not-wish-to-die,4,send someone there,What will the Emperor do because he learned of the hermits on Horaizan?,local,prediction,action,implicit
+7ea0b4612a795ca9,twelve-brothers,2,"go into the wood, and let one of them always sit on the highest tree they can find, keeping watch on the tower of the castle",What did the Queen tell her son to do with his eleven brothers?,local,action,,explicit
+73316914e40e5f7b,adventures-of-kintaro-golden-boy,6,the bear,Who was the strongest animal?,local,character,,explicit
+83a6e37452535f6a,gray-eagle-and-his-five-brothers,4,They will die.,What will happen to the falcons if their elder brother dies?,local,prediction,outcome resolution,explicit
+527bdb2aec7e5d28,youth-who-wanted-to-win-daughter-of-mother-in-corner,3,to win her,What did the rat think the youth was doing there?,local,action,,explicit
+b7d7684c8b855b13,story-of-man-who-did-not-wish-to-die,13,"They were all tired of their long, long lives.",Why did the other people long for death?,local,causal relationship,,explicit
+330f848946a65ed4,momotaro-story-of-son-of-peach,7,clapped her hands,What did the woman do as she sang?,local,action,,explicit
+57448df12dca5b0f,red-shoes,1,an old lady,Who was in the carriage?,local,character,,explicit
+132d116c96d15158,red-shoes,4,in the church,Where did Karen wear the shoes?,local,setting,,explicit
+71e18823a1085b24,the-adventures-of-gilla-na-chreck-an-gour,6,Tom gave him a warning.,Why was the wolf never seen in Dublin again?,local,causal relationship,,implicit
+49bb40bcd9ef5037,troll-wife,5,dissatisfied,How did the dragoon's wife feel about her husband's ability as a farrier?,local,feeling,,implicit
+00a2d8a90317563b,a-lost-paradise,2,"There was no furniture in the room at all, not even a chair.",What did the king notice after he entered the house?,local,action,,explicit
+1dc79fddce3b58fc,adventures-of-kintaro-golden-boy,18,the strange pair were evenly matched,Why did the old man declare it a drawn game?,local,causal relationship,,explicit
+b5321c824bf65ca6,the-coming-of-finn,1,in his palace at Tara,Where did the king sit at supper?,local,setting,,explicit
+cb6efe5e54435be7,gray-eagle-and-his-five-brothers,6,the second brother,Who was assigned the duty of physician?,local,character,,explicit
+a6277ccec2e1581e,the-adventures-of-gilla-na-chreck-an-gour,1,"fixed him in the ash-hole, near the fire, and piled the warm ashes about him",What did the old woman do to warm her son?,local,action,,explicit
+1fd9b9d8f6245610,the-tale-of-jemina-puddle-duck,1,She does not have the patience to sit on a nest for twenty-eight days.,Why was Mrs. Rebeccah Puddle-duck willing to leave the hatching to someone else?,local,causal relationship,,implicit
+ca709e848cab5ddc,the-coming-of-finn,8,two-thirds of the torches fell to the ground,What happened to the torches after the fairy tune was played?,local,outcome resolution,,explicit
+fad659a6272850ae,the-top-and-ball,3,either because it longed to fly upwards or from having a Spanish cork in its body,Why did the ball leap higher than before whenever it touched the earth?,local,causal relationship,,explicit
+c7f8daf88858520d,story-of-man-who-did-not-wish-to-die,"1,2,3",He also wanted to live a long time.,Why did Sentaro think of people who had lived a long time?,summary,causal relationship,,implicit
+fd8a7acc093a5f11,troll-wife,1,a dragoon,Who was the couple's son?,local,character,,explicit
+23036ae5bfc15b12,a-lost-paradise,"4, 6",The wife will be curious what is inside the soup-tureen.,What will happen after the king warns the couple to not open the lid?,summary,prediction,outcome resolution,implicit
+02144d5bda885142,the-bones-of-djulung,1,bathe,What did the youngest sister decide to do one morning?,local,action,,explicit
+34a4e943ceec504f,the-teapot,5,the flower deserved a better pot,what did someone say about the pot one day?,local,action,,explicit
+d8be1364bf38598f,the-constable,4,ordered that Wang's property and life be shortened,How did the Lord of the Great Mountain settle the problem?,local,action,,explicit
+010b4453a0115ce4,mr-korbes,3,The egg wrapped itself in the towel.,What did the egg do in Mr. Korbes's house?,local,action,,explicit
+c918ec0bb6365e9d,cinderella-or-the-little-glass-slipper,"12, 16",It was after midnight.,"Why did Cinderella wear her nasty old clothes, having nothing left her of all her finery?",summary,causal relationship,,implicit
+02028c65d72257a6,the-bones-of-djulung,2,He had never tasted anything so nice.,Why did the fish gobble up the rice greedily?,local,causal relationship,,explicit
+456e8089bccc5564,youth-who-wanted-to-win-daughter-of-mother-in-corner,7,woolen thread,What did the rat give the youth to return home?,local,action,,explicit
+d08030338fd45eeb,momotaro-story-of-son-of-peach,2,the hills,Where did the man cut grass?,local,setting,,explicit
+55aa0f86330250c9,the-adventures-of-gilla-na-chreck-an-gour,"5,6",the wolf,Who had his eyes on Redhead?,summary,character,,explicit
+3745ddbae2875a4e,the-dangerous-reward,7,bring happiness to his family,What was Hu-Wu-Bau's father's duty as the field god?,local,action,,explicit
+5a6d118250505440,the-teapot,3,the spout and handle snapped off,what happened when the teapot fell?,local,outcome resolution,,explicit
+865a518b4dc258df,the-origin-of-the-robin,3,He was hungry.,Why did Iadilla moan?,local,causal relationship,,implicit
+06b42b63aeda5980,the-origin-of-the-robin,1,The old man wanted to accomplish his wish.,Why did the old man think it was necessary to make Iadilla fast much longer than any of those renowned for their power or wisdom?,local,causal relationship,,explicit
+89804fa3bbac5122,the-teapot,1,the lid's imperfections,what did others talk about?,local,action,,explicit
+b4f3a20f412255ca,leelinau-the-lost-daughter,9,the chief's son,Who did Iagoo picture as the corn-taker?,local,character,,explicit
+63a827c93b1b554c,adventures-of-kintaro-golden-boy,14,He wanted to know who his father was.,Why did the woodcutter follow Kintaro?,local,causal relationship,,implicit
+3333b9b164bd504e,the-coming-of-finn,1,Art the Solitary,Who was the king's only son?,local,character,,explicit
+4c97f971249350f4,the-coming-of-finn,4,in the haunted mountains of lieve Guillon in the north,Where did the enchanter live?,local,setting,,explicit
+69df6c3a0ae55a72,adventures-of-kintaro-golden-boy,3,put his arms round the creature's neck,What did Kintaro do to show the deer that its long horns did not frighten him?,local,action,,explicit
+9d2d1e2a4a1b5c7c,brother-sister,"8,9",to ask for the maiden's hand in marriage,Why did the King go to the little house?,summary,causal relationship,,implicit
+bf0a78c6554a5b5d,cinderella-or-the-little-glass-slipper,15,She needed to pretend she was at home.,Why did Cinderella rub her eyes and stretch herself as if she had been just woken out of her sleep?,local,causal relationship,,implicit
+7b9a1ca3082f521e,momotaro-story-of-son-of-peach,55,He knew that his enemy was stronger than mortal man.,Why did the chief of devils surrender?,local,causal relationship,,explicit
+ff548499e7ea5b71,adventures-of-kintaro-golden-boy,2,grew up all alone in the mountain wilds,Why was Kintaro unlike the other boys?,local,causal relationship,,explicit
+217fdca78e6c5bc5,the-adventures-of-gilla-na-chreck-an-gour,8,"Tom gave him such a welt of it on the side of his head that he broke off one of his horns, and made him roar like a divel as he was.",What happened after one fellow tried to seize the flail?,local,outcome resolution,,explicit
+beaf0a307d655fbc,the-tale-of-bad-mice,7,the cradle and some of Lucinda's clothes and some useful pots and pans,What did Hunca Munca have?,local,action,,explicit
+bcef5bb1b4d556b1,the-coming-of-finn,13,The heads of men slain in battle were always brought away for trophies.,Why did the captains ask about Midna's head?,local,causal relationship,,explicit
+52bd7a8acc515780,rose-of-evening,"19, 20",travel home,What will happen when Aduan jumps from the tall tree?,summary,prediction,outcome resolution,explicit
+af52619483bd5e5b,rose-of-evening,11,unhappy,How did Mother Hia feel when Aduan was sick?,local,feeling,,explicit
+037c328133b45342,the-adventures-of-gilla-na-chreck-an-gour,2,melancholy,How did the King of Dublin's daughter feel?,local,feeling,,explicit
+590199f9da9850a5,the-coming-of-finn,11,the enchanter's head,What did Finn return to Tara?,local,action,,explicit
+214564dd42475ef1,gray-eagle-and-his-five-brothers,"10,11",White Owl wanted someone else to find the food.,Why did White Owl steal from Peepi?,summary,causal relationship,,implicit
+5a0baca04b7658a2,adventures-of-kintaro-golden-boy,"17,18",He wanted to know who was stronger.,Why did the woodcutter want to wrestle?,summary,causal relationship,,implicit
+b889cd1efffd5aa6,the-adventures-of-gilla-na-chreck-an-gour,5,He began to play like vengeance.,What did Tom do after he pulled out his flute?,local,outcome resolution,action,explicit
+b88781e779545d3a,osseo-the-son-of-the-evening-star,9,in the Evening Star,Where did Osseo's father live?,local,setting,,explicit
+58be36efe58b5b55,mr-korbes,4,He reached the housedoor the mill-stone jumpted up and struck him dead.,What happened to Mr. Korbes at the end?,local,outcome resolution,,explicit
+f3915513adee529f,gray-eagle-and-his-five-brothers,9,Peepi always came home with an empty game-bag.,Why did Gray Eagle demand to know the cause of Peepi's ill-luck?,local,causal relationship,,explicit
+dc18b565ac5b5460,leelinau-the-lost-daughter,10,spent a lot of time with it,Why will Leelinau love the spirit as a lover?,local,action,prediction,implicit
+926caf5f99ca5ab2,troll-wife,1,on a homestead up in Hadeland,Where did the old couple live?,local,setting,,explicit
+c1ed017403c1507f,the-adventures-of-gilla-na-chreck-an-gour,1,down by the iron forge near Enniscorthy,Where did the old woman live?,local,setting,,explicit
+594942f34f5b514f,the-adventures-of-gilla-na-chreck-an-gour,5,in the palace yard,Where was the wolf walking?,local,setting,,explicit
+2ce58ac39dd45853,story-of-man-who-did-not-wish-to-die,8,show him the way to the hermit who could give him what he wanted so much to find,What did Sentaro want from Jofuku?,local,action,,explicit
+2ed78d45348d5731,momotaro-story-of-son-of-peach,50,to make themselves took more terrible,Why did the devils put on tiger skin trousers?,local,causal relationship,,explicit
+5313b090db695940,the-adventures-of-gilla-na-chreck-an-gour,9,"He let a roar out of him as if heaven and earth were coming together, and kept flinging his arms about and dancing that it was pitiful to look at him.",What happened after Redhead's fingers hardly touched the flail?,local,outcome resolution,,explicit
+f784063772bb57e3,rose-of-evening,9,a garment of five colors and a carbuncle set in golden threads of fish-beard for a hair-jewel,What did the Dragon Prince give Aduan?,local,action,,explicit
+3c7a99a1bf015a48,momotaro-story-of-son-of-peach,21,the cakes were made,When was Momotaro ready to start his long journey?,local,action,,explicit
+d89bc68dc23150f4,youth-who-wanted-to-win-daughter-of-mother-in-corner,4,excited,How did the youth feel when the rat allowed him to go above?,local,feeling,,implicit
+f88493774a345c08,rose-of-evening,24,"Aduan's old mother cherished the hope that, after all, perhaps her son had not died.",Why did Aduan's mother dig up her son's grave?,local,causal relationship,,explicit
+2c84ea52361a5977,the-adventures-of-gilla-na-chreck-an-gour,5,"Tom looked a different person with fine clothes and a nice green birredh over his long, curly hair; and besides, he'd got one laugh out of her.",Why did the princess feel not well pleased?,local,causal relationship,,explicit
+659f39c3a0675785,troll-wife,5,go into the smithy herself and shoe the horse,What did the dragoon's wife do because he could not get the horse-shoe to fit?,local,action,,explicit
+c5aceffe187757da,youth-who-wanted-to-win-daughter-of-mother-in-corner,"1,2",She could not afford to care for him anymore.,Why did the mother think the youth's idea was not a bad idea?,summary,causal relationship,,implicit
+dd02b5bf44ba573c,the-origin-of-the-robin,5,"The young man, with the quickness of a bird, flew to the top of the lodge and perched himself on the highest pole.",What happened after the old man broke in?,local,outcome resolution,,explicit
+77436267cc0b5884,laotsze,2,acquired all sorts of magic powers,How did Laotsze extend his life-span?,local,action,,explicit
+0959cd7736da5f14,adventures-of-kintaro-golden-boy,12,amazed,How did the animals feel when they saw Kintaro pull out the tree?,local,feeling,,implicit
+52988d451c475fa9,the-coming-of-finn,14,"the son of Cool, the son of Trenmor, the son of Basna",Who was Finn?,local,character,,explicit
+3d827e5a69aa5662,the-coming-of-finn,14,the Fian leadership of Fail,What did Finn claim as his inheritance?,local,action,,explicit
+2e00be651e795345,the-origin-of-the-robin,"4,5,6",remorseful,How will the father feel after Iadilla flies away?,summary,feeling,prediction,implicit
+711c741129a258de,a-lost-paradise,5,the charcoal burner,Who was getting rosier and plumper each day?,local,character,,implicit
+0889bd6cbec05f9b,the-adventures-of-gilla-na-chreck-an-gour,5,up in their gallery,"Where were the King, Queen, and princess safe?",local,setting,,explicit
+7d7e15ab43685fa3,brother-sister,6,"Little sister, let me in.",What did the fawn say when he returned to the little house?,local,action,,explicit
+c45d00a0d8255ab4,a-lost-paradise,6,She refused to eat.,Why was the husband concerned about his wife?,local,causal relationship,,implicit
+3c5fe66c87675839,story-of-man-who-did-not-wish-to-die,1,He had inherited a small fortune from his father and lived on this.,Why could Sentaro spend his time carelessly and without any serious thoughts of work?,local,causal relationship,,explicit
+4bd367dc79065b9b,the-adventures-of-gilla-na-chreck-an-gour,2,"Some of the little boys had no more manners nor if they were Dublin jackeens, and put out their tongues at Tom's club and Tom's goat-skin.",Why did Tom stop walking down street in the heel of the evening?,local,causal relationship,,explicit
+f11ef5ddc44a5852,the-constable,9,sad,How did Wang's wife feel about her husband's death?,local,feeling,,implicit
+c1ac399d83fe56b6,the-tale-of-jemina-puddle-duck,9,They gobbled up all the eggs.,What did the puppiess do?,local,action,,explicit
+1ac4bfa2e31b5918,the-constable,9,the inn-keeper's mother,Who met Wang in the Nether World?,local,character,,explicit
+255bbb69d05b5d1c,the-coming-of-finn,5,All subsided upon the grass in deep slumber.,What happened to the soldiers after they heard the fairy music?,local,outcome resolution,,explicit
+9bcb66279a635776,the-origin-of-the-robin,2,He had fasted for nine days.,Why did Iadilla's dreams forbade evil?,local,causal relationship,,implicit
+fc55c9be1562506c,the-origin-of-the-robin,6,"Iadilla will cheer his father by his songs, and strive to inspire in others the joy and lightsomeness of heart he feels in his present state.",How will Iadilla compensate his father's loss of glory?,local,action,prediction,explicit
+7d6822de04b65b23,youth-who-wanted-to-win-daughter-of-mother-in-corner,9,Both of them would starve to death.,What did the mother say would happen if the son did not look for work?,local,outcome resolution,action,explicit
+445aa01a32d0590b,the-tale-of-jemina-puddle-duck,5,The shed was almost quite full of feather.,why was the shed almost suffocating?,local,causal relationship,,explicit
+dc2a673893755759,rose-of-evening,"10, 11",He will be sick with longing.,What will happen to Aduan after he meets Rose of Evening?,summary,prediction,outcome resolution,implicit
+1b289202c2c05cc4,brother-sister,1,their stepmother,Who were the brother and sister living with after their mom died?,local,character,,explicit
+57bdb45315eb57ae,youth-who-wanted-to-win-daughter-of-mother-in-corner,6,The youth was handsomely dressed and made a good showing.,Why did the mother think it would be a good idea for the youth to go to the mother in the corner?,local,causal relationship,,explicit
+b22c10ae2235504f,the-adventures-of-gilla-na-chreck-an-gour,4,Someone finally made the princess laugh.,Why didn't the king know if he should be glad or sorry?,local,causal relationship,,implicit
+4de24b340cbe5872,momotaro-story-of-son-of-peach,10,surprised,How did the man feel about his wife's unusual eagerness?,local,feeling,,implicit
+45a66ca5b13d5de6,rose-of-evening,13,He met Rose of Evening at the lotus field.,Why did Aduan's illness leave him?,local,causal relationship,,implicit
+03e7522f6c775fa9,story-of-man-who-did-not-wish-to-die,9,"The hermit ceases to feel hunger or cold or heat. His body becomes so light that he can ride on a crane or a carp, and can walk on water without getting his feet wet.",What happened to hermits after they followed the strict rules?,local,outcome resolution,,explicit
+15d99ead91a252c6,the-adventures-of-gilla-na-chreck-an-gour,1,He never done any good yet.,Why did the woman tell her son to take the rope and bring a bresna?,local,causal relationship,,explicit
+3ae22585d1685776,the-constable,17,"This man pretended to be conscientious, and traitorously brought about the death of his friend.",Why did Wang commit a great sin?,local,causal relationship,,explicit
+c06ec9091c325fb6,mr-korbes,1,a beautiful carriage with four red wheels,What did the cock build?,local,action,,explicit
+9d962e90a4c852ba,youth-who-wanted-to-win-daughter-of-mother-in-corner,5,She could use it to make clothes.,Why was the mother so pleased with the linen?,local,causal relationship,,implicit
+4eb5ff31b200522d,the-coming-of-finn,5,fairy music,What did the son of Midna play on his instruments?,local,action,,explicit
+43aaedb091be5b54,the-tale-of-bad-mice,4,the ham flew all into pieces,What happened when Tom Thumb hit the ham with the tongs and the shovel?,local,outcome resolution,,explicit
+7d188fe4e364573c,the-adventures-of-gilla-na-chreck-an-gour,5,"used to be serenading (sauntering) about the walls, and eating people and cattle",What did Redhead say the wolf used to do?,local,action,,explicit
+5c5574b0222d51e4,storks,2,playing,what was the crowd of children doing before they saw the stork?,local,action,,explicit
+74768561687d5c83,red-shoes,6,she still loves them,Why will Karen leave the shoes in the cupboard?,local,prediction,,implicit
+99aedbb0d1b25eb8,leelinau-the-lost-daughter,12,Spirit Grove,Where was Leelinau going to meet her lover?,local,setting,,explicit
+d24a1c4da9055293,rose-of-evening,4,met two men who took him along with them and saw a new world in the midst of the waters of the Yellow River,Why didn't Aduan know that he had been drowned?,local,causal relationship,,explicit
+80d7f7de39575862,a-lost-paradise,1,They wanted plenty of food to eat.,Why did the couple want to find a job?,local,causal relationship,,implicit
+4956d174fe835bb8,momotaro-story-of-son-of-peach,"25,26",He did not realize the man was Momotaro.,Why did the dog's manner change?,summary,causal relationship,,implicit
+40379aeb037659b2,adventures-of-kintaro-golden-boy,10,get hold of the hare's long ear,How did the monkey plan to beat the hare?,local,action,,explicit
+0ce4f863a3a752b8,gray-eagle-and-his-five-brothers,"11,12,13","fixed his talons in both sides of the owl, without further introduction or ceremony, flew away with him",What did Gray Eagle do to White Owl?,summary,action,,explicit
+b738c7d4dc345434,momotaro-story-of-son-of-peach,6,It was quite out of her reach.,Why was the woman unable to get the peach?,local,causal relationship,,explicit
+f90693e5c3f05b49,story-of-man-who-did-not-wish-to-die,1,"""Millionaire""",What did Sentaro's surname mean?,local,character,,explicit
+7545d314d00d525a,brother-sister,"2,3",because they would turn him into an animal,Why didn't the sister want the brother to drink from any of the brooks?,summary,causal relationship,,implicit
+081cd4ad1a8850f2,a-lost-paradise,2,obey his orders exactly,What did the couple need to do for the king to be happy?,local,action,,explicit
+66b785e84ed15ded,gray-eagle-and-his-five-brothers,4,wanted to take care of Gray Eagle,Why did the falcons want to abandon their journey?,local,causal relationship,,explicit
+71f7d2f6580f51d3,the-dangerous-reward,1,The Lord of the Great Mountain wanted Hu-Wu-Bau to take a letter to his daughter.,Why did the Lord of the Great Mountain send for Hu-Wu-Bau?,local,causal relationship,,implicit
+c976f64cd23e5edc,the-origin-of-the-robin,3,glory will depart,What will happen if Iadilla breaks his fast?,local,outcome resolution,prediction,explicit
+0f10da14e9e852d4,wunzh-the-father-of-indian-corn,6,cover the stranger with fresh earth,What did Wunzh have to do once a month?,local,action,,explicit
+5fdd1d65ea445d38,momotaro-story-of-son-of-peach,27,He cannot spare the dog a whole one.,What happened because Momotaro's cakes were the best kind in Japan?,local,outcome resolution,,explicit
+d2f2eea4e2eb547c,momotaro-story-of-son-of-peach,8,She got the peach.,What made the woman happy and excited?,local,causal relationship,,implicit
+fb4370b44fd85d4a,momotaro-story-of-son-of-peach,46,The wind blew in their favor.,Why was their voyage quick?,local,causal relationship,,explicit
+18b59423cee25b1f,momotaro-story-of-son-of-peach,54,The four enemies fought like a hundred.,Why were the devils bewildered?,local,causal relationship,,explicit
+9d550c3516e85491,mother-hulda,5,her spindle,What did Mother Hulda return to the girl?,local,action,,explicit
+22bae306b3f852c5,the-adventures-of-gilla-na-chreck-an-gour,10,Pat Mara of Tomenine,"Who taught Gilla the ""principles of politeness?""",local,character,,explicit
+4e2605a97a6053ff,the-constable,"16, 17",His sentence had already been spoken.,What did the spirit say when Dung asked what had happened to Sir Wang?,summary,action,,explicit
+a935381a67a25453,gray-eagle-and-his-five-brothers,5,sad,How will the two of the falcons feel about leaving home?,local,feeling,prediction,implicit
+9215991615005c46,the-top-and-ball,5,He looked handsomer than ever for he was glided all over.,How did the top change after several years?,local,action,,explicit
+9904c9b3a75a535a,rose-of-evening,12,She was also sick.,What happened to Rose of Evening after she met Aduan?,local,outcome resolution,,implicit
+0d3682c76bd158d8,youth-who-wanted-to-win-daughter-of-mother-in-corner,11,"Every corner was alive with swarms of mice and small rats, and six large rats came dragging along a frying-pan.",What happened after the rat whistled?,local,outcome resolution,,explicit
+a4b0160f208252e5,red-shoes,10,"""cut off my feet with the red shoes""",What does Karen ask the executioner to do?,local,action,,explicit
+9a152bd302525cf3,momotaro-story-of-son-of-peach,4,put her basket down,What did the woman do when she found a nice spot by the river?,local,action,,explicit
+468ba6472b7555ba,wunzh-the-father-of-indian-corn,9,They had Indian corn.,Why did the Indians no longer need to rely on hunting alone?,local,causal relationship,,implicit
+d4c44cfef1e95624,story-of-man-who-did-not-wish-to-die,"10,11",The crane grew large enough for him to ride on it with comfort.,What happened after Sentaro sat on the crane's back?,summary,outcome resolution,,explicit
+a82a0230d5bb5aea,adventures-of-kintaro-golden-boy,10,cunning,What type of animal was the monkey by nature?,local,character,,explicit
+59327c22a49f5599,cinderella-or-the-little-glass-slipper,16,"She was very meanly dressed, and had more the air of a poor country wench than a gentlewoman.",Why didn't the guards notice Cinderella?,local,causal relationship,,explicit
+9c4904b595515e67,the-adventures-of-gilla-na-chreck-an-gour,3,laughed and cursed at him,What did the guards do instead of letting Tom through?,local,action,,explicit
+58b44b39ed8155b7,the-coming-of-finn,9,one the dark hill-side,Where did Finn stand alone?,local,setting,,explicit
+e5dfa183e3295781,the-adventures-of-gilla-na-chreck-an-gour,"5,6",tired,How will the wolf feel dancing for so long?,summary,prediction,,implicit
+d7bdce0239815dc2,momotaro-story-of-son-of-peach,51,to keep intruders out,Why was the large castle surrounded by high walls and large iron gates?,local,causal relationship,,implicit
+fd865462909d5ae1,leelinau-the-lost-daughter,3,visited the fairy wood often,How did Leelinau's attachment to the fairy wood grow?,local,action,,implicit
+de0353dc12285a92,youth-who-wanted-to-win-daughter-of-mother-in-corner,6,the log across the swamp,What did the youth come to as he was hopping and skipping along?,local,action,,explicit
+a67d12ec62295fab,brother-sister,5,leaves and moss,What did the sister use to make a soft bed for the fawn?,local,action,,explicit
+165963b6109855f9,troll-wife,4,so that no one could see her tail fall off when the priest joined their hands,Why did the bride beg one of the bridesmaids to stand close behind her?,local,causal relationship,,explicit
+dc6875223f2b53d0,the-adventures-of-gilla-na-chreck-an-gour,10,two long clefts in the stone where it was,What did the early risers find the next morning?,local,action,,explicit
+5cee2c37000a586d,story-of-man-who-did-not-wish-to-die,14,confused,How did Sentaro feel when he heard of the people's longing for death?,local,feeling,,implicit
+4ea21ccf557a5aa8,the-bones-of-djulung,6,They could tell him nothing.,What happened after the six sisters came to the king?,local,outcome resolution,,explicit
+d71825a4b1a157b4,the-dangerous-reward,1,near the Great Mountain,Where did Hu-Wu-Bau live?,local,setting,,explicit
+8a733921517e550c,the-adventures-of-gilla-na-chreck-an-gour,6,He was ready to drop out of his standing from fair tiresomeness.,Why was the wolf roaring?,local,causal relationship,,explicit
+c7d2978ac7385b34,story-of-man-who-did-not-wish-to-die,14,rushed to them to buy poisons,What did the rich people do when merchants arrived?,local,action,,explicit
+0ace3a40cdfb581e,the-adventures-of-gilla-na-chreck-an-gour,2,She was so melancholy.,Why didn't the King of Dublin's daughter laugh for seven years?,local,causal relationship,,explicit
+737f6f7fab2d5fce,storks,2,they started singing,what happened when the children saw the stork?,local,outcome resolution,,implicit
+09c6133a2d0b5549,rose-of-evening,3,Aduan,Who was no more than seven years of age and he was extraordinarily skillful?,local,character,,explicit
+6d27c874da465127,the-adventures-of-gilla-na-chreck-an-gour,9,"He laid down the flail on the stone steps, and bid no one for their lives to touch it.",What happened after Tom told his story?,local,outcome resolution,,explicit
+375d780100535cf0,red-shoes,2,the Queen,Who was travelling through that part of the country?,local,character,,explicit
+300d9482125655eb,wunzh-the-father-of-indian-corn,3,to instruct and show Wunzh how he could do his kindred good,Why was the celestial visitor sent by the Great Spirit?,local,causal relationship,,explicit
+fadccb5117695afb,wunzh-the-father-of-indian-corn,8,He was fasting.,Why was Wunzh not allowed to see anyone except for his father?,local,causal relationship,,implicit
+d11f275fb5255b51,adventures-of-kintaro-golden-boy,7,the deer,Who was the umpire?,local,character,,explicit
+c88c6dc797e55e01,wunzh-the-father-of-indian-corn,3,a handsome young man,Who came down from the sky advancing towards Wunzh?,local,character,,explicit
+04f5a0631c2c58b8,laotsze,2,He insisted on being paid.,Why did the servant refused to go further?,local,causal relationship,,explicit
+f00e231468f05f96,cinderella-or-the-little-glass-slipper,19,forgive them,What will Cinderella do after the two sisters beg pardon for all the ill-treatment they made her undergo?,local,prediction,,explicit
+41f035e843285d7a,leelinau-the-lost-daughter,7,story-telling,What was Iagoo famous in the tribe for?,local,character,,explicit
+903f4a72beff5af8,youth-who-wanted-to-win-daughter-of-mother-in-corner,11,two rats,Who sprang up in front to drive the coach?,local,character,,explicit
+c95f399cb7ba5494,adventures-of-kintaro-golden-boy,12,He took hold of the trunk and pulled it with all his might.,How was Kintaro able to make a bridge?,local,action,,explicit
+db812c85b8e354e2,laotsze,1,The Old Child,What name was Laotsze given?,local,character,,explicit
+3e09c2d711695e3f,the-bones-of-djulung,1,She had to cut and bring home the wood which was to keep the fire continually burning.,Why did the youngest sister have the hardest task of all?,local,causal relationship,,explicit
+af5b44c8356c51a6,red-shoes,6,she couldn't stop,What happened when Karen started dancing?,local,outcome resolution,,implicit
+71aebe16fd375ecc,twelve-brothers,7,joyful,How did Benjamin and his sister feel after finding each other?,local,feeling,,explicit
+703f8f6ac2de591b,laotsze,"3, 4",Laotsze will take away the life-giving talisman.,What will Laotsze do when he finds out about his servant's actions?,summary,prediction,action,implicit
+3d9bba28d20f53bc,story-of-man-who-did-not-wish-to-die,19,the shrine,Where was Sentaro when he woke up?,local,setting,,explicit
+f889c6e1097257d0,red-shoes,13,because she wants to walk normally,"Why did Karen say ""O God! Help me!""?",local,causal relationship,,implicit
+961e9b1969ba5132,story-of-man-who-did-not-wish-to-die,7,a notorious robber,Who did the hunter said lived in those parts?,local,character,,explicit
+6719adeb43e95e10,a-lost-paradise,1,thought that perhaps he might be able to give some help,Why did the king stop to listen after he heard a sound of sobbing?,local,causal relationship,,explicit
+97ee46d06d3557c5,a-lost-paradise,3,"It was quite, quite certain they would never come back.",Why did the woman think it was needless to lock their door?,local,causal relationship,,explicit
+06240d30639b5b0d,momotaro-story-of-son-of-peach,49,silly,What did the demons think about the pheasant's words?,local,action,,implicit
+43560e227a3b5530,a-lost-paradise,3,confused,How did the woman feel after the king told her to lock their door?,local,feeling,,implicit
+f72a2158cf775efb,the-origin-of-the-robin,4,painted with vermilion over all his breast,What did Iadilla to do his breast?,local,action,,explicit
+ce2cdfee2f455067,momotaro-story-of-son-of-peach,7,an old charm-verse,What did she remember?,local,action,,explicit
+c002048597135cb4,the-tale-of-bad-mice,2,"Tom Thumb and his wife, Hunca Munca",Who was making the scratching noise near the fireplace?,local,action,character,explicit
+fcf452ee20e75e41,youth-who-wanted-to-win-daughter-of-mother-in-corner,1,ripped,What happened to the son's clothes when he skipped and danced?,local,outcome resolution,,implicit
+a8f5d837fce559e5,story-of-man-who-did-not-wish-to-die,9,Hermits were only allowed to eat fruit and berries and the bark of pine trees.,Why was it hard to be a hermit?,local,causal relationship,,explicit
+f362b566da4c5f97,the-adventures-of-gilla-na-chreck-an-gour,1,a poor widow woman,Who lived down by the iron forge?,local,character,,explicit
+436fb37745445fdb,brother-sister,15,her life returned to her,"What happened when the Queen said ""I am your dear wife""?",local,outcome resolution,,explicit
+690d193d0d8a5e49,the-coming-of-finn,5,shame,How did the king feel being unable to defend Tara?,local,feeling,,explicit
+8d413ade1d245c4f,gray-eagle-and-his-five-brothers,4,grateful,How will the falcons feel about Gray Eagle taking care of them?,local,feeling,prediction,implicit
+7ddef1412d465af9,adventures-of-kintaro-golden-boy,"2,3,4",They were friends.,Why did the animals follow Kintaro into the mountains?,summary,causal relationship,,implicit
+2172e428a5c45228,momotaro-story-of-son-of-peach,24,under a tree by the side of the road,Where did Momotaro sit to eat his rice-cake?,local,setting,,explicit
+a97ec3ffd3fd5420,story-of-man-who-did-not-wish-to-die,4,certain hermits,Who lived on Horaizan?,local,character,,explicit
+0df665d2fdda56ed,the-adventures-of-gilla-na-chreck-an-gour,1,grand,How did the son feel when he fastened the goat-skin around his waist?,local,feeling,,explicit
+7616fe14050b5249,the-adventures-of-gilla-na-chreck-an-gour,1,He sat down on the bresna and gave it a tap with the kippeen.,What happened after Tom got the club in his hands?,local,outcome resolution,,explicit
+3d811a6ae0b358d6,red-shoes,3,because she could not see very well,Why didn't the old lady know the shoes were red?,local,causal relationship,,explicit
+e3e935707a235e1c,adventures-of-kintaro-golden-boy,1,She feared her husband's enemy.,Why did Kintoki go to the Ashigara mountains?,local,causal relationship,,explicit
+119e3a6fc88052fd,a-lost-paradise,4,surprised,How did the charcoal-burner feel after the king said they may do as they pleased?,local,feeling,,implicit
+4959d096946b5832,the-tale-of-jemina-puddle-duck,1,because the farmer's wife would not let her hatch her own eggs,Why was Jemima Puddle-duck annoyed?,local,causal relationship,,explicit
+f2a613f6fa3c5ed1,story-of-man-who-did-not-wish-to-die,18,It was in his pocket for a long time.,Why was Sentaro amazed the crane was undamaged?,local,causal relationship,,explicit
+4a6487b772fa5245,osseo-the-son-of-the-evening-star,"5,6",ashamed,How will Osseo feel looking at his wife?,summary,prediction,feeling,implicit
+c182f35ca7af56d7,adventures-of-kintaro-golden-boy,1,his great strength,What was remarkable about Kintaro?,local,character,,explicit
+8951586af844545c,rose-of-evening,16,sad,How did Aduan feel when he could not see Rose of Evening for months?,local,feeling,,implicit
+38346d694b22522d,the-adventures-of-gilla-na-chreck-an-gour,"3,4",The princess looked fondly at Tom.,Why didn't the wizend like Tom?,summary,causal relationship,,implicit
+943a0e945e235cc0,osseo-the-son-of-the-evening-star,10,His family had greater power and commited to the care of the female world.,Why was the spirit that lived in the next lodge always envious of the King of the Star's family?,local,causal relationship,,explicit
+609396fb4d9b5756,adventures-of-kintaro-golden-boy,8,the hare,Who won the match?,local,character,,explicit
+1c543afa93ae56da,momotaro-story-of-son-of-peach,18,an island in the sea,What was northeast of Japan?,local,setting,,explicit
+b31f767c071a5424,adventures-of-kintaro-golden-boy,20,seeing Kintaro a samurai before she died,What was Kintaro's mother's one wish of her life?,local,action,,explicit
+69bd431cf968535b,cinderella-or-the-little-glass-slipper,2,employed Cinderella in the meanest work of the house,What did the mother-in-law do to show herself in her true colors?,local,action,,explicit
+720a213a99e35d0d,leelinau-the-lost-daughter,"13,14",worried,How will Leelinau's parents feel when Leelinau did not return?,summary,prediction,feeling,implicit
+698af7a086cf5ab4,the-coming-of-finn,"5,6","Art and Gaul mac Morna and the Chief of the Fians.""",What will be the reward if Finn defeats Allen and saves Tara?,summary,action,prediction,explicit
+85f7200036555430,the-adventures-of-gilla-na-chreck-an-gour,3,in a gallery,Where was the princess?,local,setting,,explicit
+f4defce2467c5c05,the-adventures-of-gilla-na-chreck-an-gour,1,thankful,How will the joiant feel when Tom spares him?,local,prediction,feeling,implicit
+6e86e16f8bb9579e,the-origin-of-the-robin,6,to make his father amends for it as a harbinger of peace and joy,What did Iadilla say his daily aim would be?,local,action,,explicit
+c6d260775e6358e7,youth-who-wanted-to-win-daughter-of-mother-in-corner,2,wiggling and waggling around and had a bunch of keys hanging from her tail,What was the rat doing when the youth saw her?,local,action,,explicit
+1e8dde9c7a4f59d5,rose-of-evening,27,Aduan cast no shadow,How did the Dragon Prince know that Aduan was a departed spirit?,local,action,,explicit
+ceed148c8038507b,gray-eagle-and-his-five-brothers,14,easier to find food,How will life be easier for Gray Eagle and his siblings in the spring?,local,action,prediction,implicit
+e3a36f5edcfb554d,the-top-and-ball,3,It gave a higher leap than before.,What happened to the ball every time it touched the earth while flying in the air?,local,outcome resolution,action,explicit
+53dae3fe15ea51b6,leelinau-the-lost-daughter,8,"enjoyed such renown in battle, and his name was so famous in the hunt",Why did Leelinau's parents accept the eldest son of a neighboring chief as a suitor for their daughter?,local,causal relationship,,explicit
+560af6958fcf5bc1,wunzh-the-father-of-indian-corn,"6,7,8",Wunzh will accomplish his object of doing good to his fellow-creatures,What will happen after Wunzh follows the stranger's instructions?,summary,outcome resolution,prediction,explicit
+58d8efe6203459a9,red-shoes,4,her red shoes,What was Karen thinking about during her confirmation?,local,action,,explicit
+1101b73866035593,momotaro-story-of-son-of-peach,45,the way was long,Why was Momotaro tired of the voyage?,local,causal relationship,,explicit
+7c54a7e8c1605742,momotaro-story-of-son-of-peach,9,He seemed very tired.,Why did the man use the scythe for a walking stick?,local,causal relationship,,explicit
+fdfcaa8284ac5886,adventures-of-kintaro-golden-boy,2,He made friends with all the animals.,How did Kintaro learn to understand and speak with animals?,local,action,,explicit
+369ba79d8dee5d1c,youth-who-wanted-to-win-daughter-of-mother-in-corner,4,so he could go home,Why did the rat give the youth the linen thread?,local,causal relationship,,implicit
+b5c9a70f0f2d5436,the-adventures-of-gilla-na-chreck-an-gour,"2,5",Tom was playing the flute.,Why did everyone dance?,summary,causal relationship,,implicit
+06083c366e4a5574,rose-of-evening,"6, 7","hastily bade the dance cease, and had the dancers of the nightingale round step forth",What will the Prince of the Dragon Cave do during the dance?,summary,prediction,action,explicit
+d218be27d08750c0,the-coming-of-finn,4,"He standeth over against the city and shoots balls of fire out of his mouth against it, till it is consumed.",How did Allen burn Tara?,local,action,,explicit
+8b1eb68c63ae5fdb,leelinau-the-lost-daughter,2,to show that they desired to stand well with the proprietors of the fairy ground.,Why would the Indians leave an offering of tobacco or some other token?,local,causal relationship,,explicit
+0f81549bcdc0566f,momotaro-story-of-son-of-peach,15,grateful,How did Momotaro feel towards his parents?,local,feeling,,implicit
+1d405facd6945186,the-teapot,"3,4",as a flower pot,what was the teapot used for after it broke?,summary,action,,implicit
+8f0912a04d0f5649,red-shoes,1,pretty and dainty,What was the little girl like?,local,character,,explicit
+b6178b8c362c5bd7,momotaro-story-of-son-of-peach,44,a small ship,What did Momotaro get to cross the sea?,local,action,,explicit
+dcf6efb03f105677,adventures-of-kintaro-golden-boy,22,sad,How did the animals feel when they heard Kintaro was leaving for good?,local,feeling,,implicit
+afbdac1d92875cd0,story-of-man-who-did-not-wish-to-die,15,They felt better in health instead of worse.,What happened when people swallowed the poisons?,local,outcome resolution,,explicit
+91bf23bb395a5965,the-adventures-of-gilla-na-chreck-an-gour,"4,5",make Tom his son-in-law,What will the king do after Tom makes the princess laugh?,summary,prediction,action,implicit
+67aff124330e57fc,adventures-of-kintaro-golden-boy,20,assumed the disguise of a woodcutter,What did Sadamitsu do to find boys who gave promise of remarkable strength?,local,action,,explicit
+93e54df902ae5bf7,story-of-man-who-did-not-wish-to-die,19,He swallowed a quantity of sea-water.,What increased Sentaro's miserable plight?,local,action,,explicit
+1386d1e1420659ee,rose-of-evening,"9, 10",The strict rules allowed no confusion in the ranks.,Why did Aduan and Rose of Evening only gaze and let their souls go out to each other?,summary,causal relationship,,explicit
+5e55edada01858e4,cinderella-or-the-little-glass-slipper,16,rose up and fled,What did Cinderella do when she hurried away immediately when it struck twelve?,local,action,,explicit
+25e33b6d94f650fa,youth-who-wanted-to-win-daughter-of-mother-in-corner,2,He would make a good showing when he came to the mother in the corner.,Why did the mother dress the youth as well as she could?,local,causal relationship,,explicit
+606d920e3c8a5d01,adventures-of-kintaro-golden-boy,11,They did not know how to swim.,Why did all the animals wonder how they could cross the stream?,local,causal relationship,,implicit
+39b5748a4a0f5071,brother-sister,2,all the brooks in the forest,What did the stepmother lay a spell on?,local,action,,explicit
+89541826f0515c03,the-bones-of-djulung,6,some of its leaves and flowers,What did the youngest daughter give to the king?,local,action,,explicit
+d100fdfed37e5ad9,youth-who-wanted-to-win-daughter-of-mother-in-corner,10,upset,How did the youth feel to see the rat again?,local,feeling,,implicit
+f5f908ecd13a5f2b,the-adventures-of-gilla-na-chreck-an-gour,1,a goat-skin,What did the old woman get by book or by crook?,local,action,,explicit
+56d0fc8db3af5b0f,brother-sister,11,into the bathroom,Where did the stepmother lead the queen?,local,setting,,explicit
+16db1aae226d5e86,brother-sister,13,stroked his back,What did the Queen do to the fawn when she went outside to see him?,local,action,,explicit
+252e5bf6130f530b,lord-of-hill-and-john-blessom,3,His hand was freezing.,What happened because John forgot one of his gloves?,local,outcome resolution,,explicit
+c51d857e6f8559b6,red-shoes,9,the shoes kept dancing,Why didn't Karen hear what the angel answered?,local,causal relationship,,implicit
+f5804d0244d95af2,mother-hulda,2,shake the tree,What would the girl do next?,local,prediction,,implicit
+1152e881eeea57f5,brother-sister,"7,8",because he was wounded,Why was the sister terrified when the fawn came home?,summary,causal relationship,feeling,implicit
+08d5aceab1b0545c,story-of-man-who-did-not-wish-to-die,4,far away across the seas,Where was Horaizan?,local,setting,,explicit
+7b71ac45781b5e06,the-coming-of-finn,7,warriors of all Erin,Who stood silent and alert?,local,character,,explicit
+71c7194264f255c8,osseo-the-son-of-the-evening-star,9,a silver feather,What did Oweenee's staff change into?,local,action,,explicit
+f0c3db175eca501c,adventures-of-kintaro-golden-boy,9,a rice-dumpling,What prize did Kintaro give?,local,action,,explicit
+a4befe90d3475d5e,brother-sister,9,"Little sister, let me in",What did the King say when he knocked on the door?,local,action,,explicit
+2facebb68e795000,the-top-and-ball,6,in the gutter,Where did the ball lay for several years?,local,setting,,implicit
+2c82b7994c745745,rose-of-evening,"5, 6",hold a review of his dancers,What will the Prince of the Dragon's Cave do the following day?,summary,prediction,action,explicit
+bbd12e829ca854e3,the-coming-of-finn,12,dazed,How did the soldiers feel waking up?,local,feeling,,explicit
+567c4ab6f83e5667,a-lost-paradise,7,to his wife contented and happy,Why did the husband take the risk of opening the lid?,local,causal relationship,,explicit
+256af148b78557fd,the-adventures-of-gilla-na-chreck-an-gour,3,His poor mother couldn't afford to buy razhurs.,Why did the young giant have long black hair and a short curly beard?,local,causal relationship,,explicit
+4f57e3e553135bcf,the-bones-of-djulung,4,paid a visit to the tree,What did the youngest sister do every day?,local,action,,explicit
+d1ed6fa47bef5ac6,wunzh-the-father-of-indian-corn,"2,3",Wunzh tried to find out ways to make life easier.,How did the Great Spirit know Wunzh wanted to do good for his people?,summary,action,,implicit
+0613cd853e375ebf,the-bones-of-djulung,2,She saved part of her meals for her pet fish.,Why did the youngest sister grow thin?,local,causal relationship,,implicit
+86d9900114ea56e4,momotaro-story-of-son-of-peach,9,impatient,How did the woman feel waiting for her husband to return?,local,feeling,,implicit
+b072739d4fa7593d,story-of-man-who-did-not-wish-to-die,17,try to go back home,What will Sentaro do because he grew tired of the country?,local,prediction,action,implicit
+84fa9d8556005fc6,lord-of-hill-and-john-blessom,4,John's head was twisted.,What remained as long as John had lived?,local,action,character,explicit
+1ffefbb796145edf,momotaro-story-of-son-of-peach,22,They love him.,Why were the old people and Momotaro sad to part?,local,causal relationship,,implicit
+9799739cbab55515,the-coming-of-finn,"5,6",They did not want to hear the fairy music.,Why did the soldiers fill their ears with wax and wool?,summary,causal relationship,,implicit
+fe901aa704b1584a,the-adventures-of-gilla-na-chreck-an-gour,6,"He said no more, but spit in his fist, and gave a flourish of his club.",What did Tom do after he told the wolf to go back to the mountains?,local,outcome resolution,,explicit
+71d8cbc1ade25c93,adventures-of-kintaro-golden-boy,1,He died.,What happened because of the misfortune that prayed upon Kintoki's mind?,local,outcome resolution,,explicit
+0941d7a31720546a,wunzh-the-father-of-indian-corn,"6,7",He was going to wrestle with the stranger.,Why did Wunzh extend his fast?,summary,causal relationship,,implicit
+e0f765a6da395b2e,the-tale-of-bad-mice,1,She never ordered meals.,What was particular about Lucinda?,local,character,,explicit
+e9a37771058d585c,the-bones-of-djulung,1,"threw herself down under a tree, and went sound asleep",What did the youngest sister do after she finished her task?,local,action,,explicit
+2a393c54a0cd529e,momotaro-story-of-son-of-peach,18,He must go away for a short time.,What happened because Momotaro wanted to conquer the devils?,local,outcome resolution,,explicit
+ee186ed8173652af,youth-who-wanted-to-win-daughter-of-mother-in-corner,1,lazy and slow,What type of person was the woman's son?,local,character,,explicit
+7bfa03578ec0501c,gray-eagle-and-his-five-brothers,5,to make the provisions they had laid in last the better,Why did two of the falcons go south?,local,causal relationship,,explicit
+bcee01cbadc751a2,the-coming-of-finn,1,He had no brothers.,Why was Art the Solitary called so?,local,causal relationship,,explicit
+d0d700e307495261,lord-of-hill-and-john-blessom,4,forgot what he had promised,What did the man do when he heard the roaring in Jutulsberg?,local,action,,explicit
+eeeb8349cc325a85,the-constable,"15, 16","stand by Dung's bedside, give him his hand, and ask how things had gone with him since he had last seen him",What will the spirit do when he meets Dung?,summary,prediction,,explicit
+2fdba42a052c554e,youth-who-wanted-to-win-daughter-of-mother-in-corner,5,disbelief,How did the mother feel when she saw the linen?,local,feeling,,implicit
+b6642405bd255d49,youth-who-wanted-to-win-daughter-of-mother-in-corner,7,It looked like food that had been eaten.,Why did the youth not want to eat the food?,local,causal relationship,,explicit
+7834242f9d3e5eac,osseo-the-son-of-the-evening-star,3,He was aged and feeble.,Why did everyone doubt whether Osseo would be able to undertake the journey?,local,causal relationship,,explicit
+3c88f623111657dc,the-bones-of-djulung,1,"Their father and mother were dead, and they had no brothers.",Why did the eldest girl rule over the other sisters?,local,causal relationship,,explicit
+40cfe3385b565149,a-lost-paradise,3,into rooms filled with beautiful things,Where did the servants lead the couple to?,local,setting,,explicit
+a20f336efe605242,story-of-man-who-did-not-wish-to-die,19,cried out loudly to Jofuku to save him,What did Sentaro do when he fell in the water?,local,action,,explicit
+b1c6d639811d51fb,troll-wife,4,He was scared.,Why did the dragoon do as the old man said?,local,causal relationship,,implicit
+58b84eb504ee5555,cinderella-or-the-little-glass-slipper,1,his second wife,Who was the proudest and most haughty woman that was ever seen?,local,character,,explicit
+644344e63b7e589b,momotaro-story-of-son-of-peach,16,Momotaro did not need to thank him.,Why did the old man feel bothered by Momotaro thanking him?,local,causal relationship,,implicit
+af87444e6bc55c08,the-adventures-of-gilla-na-chreck-an-gour,5,not well pleased,How did the princess feel about Tom?,local,feeling,,explicit
+bf9da0d64ecd57a3,the-dangerous-reward,"2, 3",He will go on a journey to deliver the letter.,What will happen when Hu-Wu-Bau returns to the upper world?,summary,prediction,outcome resolution,implicit
+b1e98d7a6d4d583f,the-coming-of-finn,12,the sickness and faintness of death,What came upon Finn?,local,action,,explicit
+05a1cb938fcc579f,twelve-brothers,13,dislike,How did the King's mother feel about the girl?,local,feeling,,implicit
+621f2923e3045ae9,momotaro-story-of-son-of-peach,32,a war-fan,What did Momotaro carry?,local,action,,explicit
+5760356c39a25e99,twelve-brothers,13,The King condemned his son's beautiful wife to death.,What happened because the King's mother harped so long on the subject of the girl?,local,outcome resolution,,explicit
+53e4ee9d0cad525d,story-of-man-who-did-not-wish-to-die,"3,4","called a meeting of his courtiers and asked him all if they could not find for him the ""Elixir of Life.""",What did Shin-no-Shiko do because he was afraid of death?,summary,action,,explicit
+fe9888f77d4354b2,the-adventures-of-gilla-na-chreck-an-gour,3,scared,How will the guards feel when Tom attacks them?,local,feeling,prediction,implicit
+029b265afb415966,the-adventures-of-gilla-na-chreck-an-gour,"7,8",He wanted the imp to trick Tom.,Why did the Ould Boy wink at the young imp?,summary,causal relationship,,implicit
+db14cce5b1fa5c4b,the-adventures-of-gilla-na-chreck-an-gour,7,"a hundred little imps popped their heads out through the bars, and axed him what he wanted",What happened after Tom knocked at the gates?,local,outcome resolution,,explicit
+08e81409fd7f523d,the-adventures-of-gilla-na-chreck-an-gour,2,proud,How did Tom feel after defeating the giants?,local,feeling,,explicit
+101d11b6c7ad5010,wunzh-the-father-of-indian-corn,2,"He recalled these thoughts and wished he could dream of something that would prove a benefit to his father and family, and to all others of his fellow-creatures.",What happened after Wunzh became too languid to walk about and confined himself to the lodge?,local,outcome resolution,,explicit
+640bd68c29665529,momotaro-story-of-son-of-peach,29,These two animals always hate each other.,Why did the dog and monkey quarrel?,local,causal relationship,,explicit
+d612e9efff825d54,gray-eagle-and-his-five-brothers,13,happy,How did the househood feel when the two nest-mates returned?,local,feeling,,explicit
+ebe0b41e08085022,the-teapot,4,a flower,what did the bulb burst into?,local,action,,explicit
+4ad9da45b2f0527c,the-dangerous-reward,"3, 4",thank him,What will the Lord of the Great Mountain do after Hu-Wu-Bau delivers the letter?,summary,prediction,action,explicit
+5b3daaa531c656ae,rose-of-evening,"17, 18","tear his beautiful garments, take his gold and his pearls, and go out with the sole idea of following his beloved in death",What will Aduan do when he hears that Rose of Evening has cast herself into the river?,summary,action,prediction,explicit
+1ed281f9c10253be,story-of-man-who-did-not-wish-to-die,11,several days,How long did it take to reach the island?,local,action,,explicit
+1c10cce43d745ad9,momotaro-story-of-son-of-peach,8,The peach began to come nearer and nearer the bank.,What happened as the woman repeated the song?,local,outcome resolution,,explicit
+cb99989c35eb50b6,troll-wife,2,Everything was in disorder.,How could the son tell the maiden had only just arrived?,local,action,,explicit
+01e7bb4b604f52f5,the-tale-of-bad-mice,5,took them out of the chest of drawers and threw them out of the top-floor window,What did Tom Thumb do with Jane's clothes?,local,action,,implicit
+2be66ca3505554c7,troll-wife,3,Her nose was only half its original size.,What did the girl look like after she was washed?,local,character,,explicit
+9e1cc921e1b4572e,rose-of-evening,5,taught him the dance of the flying thunders of Tsian-Tang River and the music that calms the winds on the sea of Dung-Ting,What did the old woman teach Aduan?,local,action,,explicit
+e090202ecbf653a3,story-of-man-who-did-not-wish-to-die,16,He said he would never grow tired of living.,Why was Sentaro delighted?,local,causal relationship,,explicit
+547137e1d2915eab,the-origin-of-the-robin,4,The father would not listen to Iadilla's requests.,How did the father destroy Iadilla's fortune?,local,action,,explicit
+5396c3b7c11955ec,osseo-the-son-of-the-evening-star,"3,4",Osseo was old and weak.,Why did everyone pity the young and handsome sister that had an unsuitable mate?,summary,causal relationship,,implicit
+d04b0990234e5b1b,red-shoes,7,the ball,Where did Karen wear her shoes to?,local,setting,,explicit
+d7f0db2fe61a5058,osseo-the-son-of-the-evening-star,1,their beauty,What were the daughters noted for?,local,character,,explicit
+394b5fc6073f57c0,the-bones-of-djulung,3,concerned,How did the sisters feel after they noticed their youngest sister grew weaker?,local,feeling,,implicit
+47ce2d5f89375a91,rose-of-evening,9,He wanted to meet Rose of Evening.,Why did Aduan hasten to the western courtyard?,local,causal relationship,,implicit
+ce766d7996df52ce,story-of-man-who-did-not-wish-to-die,1,death and sickness,What thought came to Sentaro?,local,action,,explicit
+ec96048597db5cf0,brother-sister,5,the King,Who held the great hunt in the forest?,local,character,,explicit
+08bb9c5dbb895f17,twelve-brothers,"10,11",sad,How did the sister feel when her brothers changed into ravens?,summary,feeling,,implicit
+e0b066bfe12f5a94,the-coming-of-finn,10,"He might recover the protection of his enchanted palace before the ""fair-faced youth clad in skins"" should overtake him.",Why did the enchanter flee?,local,causal relationship,,explicit
+e81fb7fe4ec455fe,a-lost-paradise,5,rare flowers and fruits and singing birds,What were the gardens filled with?,local,action,,explicit
+7fa266a4a0b75241,the-coming-of-finn,7,"innumerable stars twinkled in the blue, and the likeness of clouds passed through it",Why was the mantle a wonder?,local,causal relationship,,explicit
+a496278deb695cdb,story-of-man-who-did-not-wish-to-die,13,They could not die.,Why could the islanders not reach Paradise?,local,causal relationship,,implicit
+0639393abe865414,the-adventures-of-gilla-na-chreck-an-gour,4,to make hares of the king's best men,What did the red-headed fellow say Tom wanted?,local,action,,explicit
+9e7ee46b64595dd9,momotaro-story-of-son-of-peach,8,delighted,How did the woman feel when she got the peach?,local,feeling,,explicit
+f62ca419b25e5aa4,momotaro-story-of-son-of-peach,45,exploits of which they were proud,What types of stories did the animals tell each other?,local,action,,explicit
+4fa66f99fae75e8e,twelve-brothers,2,He said they would manage to escape.,How did the youngest boy comfort his mother?,local,action,,implicit
+250d829d09a0513d,adventures-of-kintaro-golden-boy,25,the greatest hero of his country,What did Kintaro rise to be?,local,action,,explicit
+0e683f93ce585512,the-constable,3,the stranger,"Who was the head constable of the Nether World, and am subject to the Lord of the Great Mountain?",local,character,,explicit
+0404c0818b7e5bf7,adventures-of-kintaro-golden-boy,7,the monkey and the hare,Who were the first ones to fight?,local,character,,explicit
+feb3aa1d7fbc5fd0,story-of-man-who-did-not-wish-to-die,3,the large palaces,What did Shin-no-Shiko build?,local,action,,explicit
+1b5bd3a5c7ca5166,story-of-man-who-did-not-wish-to-die,3,miserable,How did the thought of death make Shin-no-Shiko feel?,local,feeling,,explicit
+c043981e62615eae,the-adventures-of-gilla-na-chreck-an-gour,7,Tom defeated his men.,Why did the ould thief let Tom go?,local,causal relationship,,implicit
+c2c31f1901df5caf,rose-of-evening,"17, 22","carried to the surface, and the waves carried and cradled her till a ship came by and took her aboard",What will happened when Rose of Evening jumps into the water?,summary,prediction,outcome resolution,explicit
+4285d7142fca5bb1,the-adventures-of-gilla-na-chreck-an-gour,2,"dance home, with himself sitting on it",What did Tom make the giant do?,local,action,,explicit
+cf38f68617575fb3,storks,1,the last house in the village,which house was the stork's nest on?,local,setting,,explicit
+caf34860381c5d7c,brother-sister,14,the King,Who did the nurse tell about the Queen returning to the castle at night?,local,character,,explicit
+0a823c643461539d,storks,3,don't listen to what they say,what did the mother tell the young stork to do?,local,action,,explicit
+48bf30997d865cda,the-origin-of-the-robin,2,came to the door of the little lodge and encouraged Iadilla to persevere,What did the father do every morning?,local,action,,explicit
+89fa240b02555e90,the-constable,7,"Taianfu, the city near the Great Mountain",Where did Dung need to go in two years?,local,setting,,explicit
+a2e2da5ebcab5981,story-of-man-who-did-not-wish-to-die,3,"""Elixir of Life""",What did Shin-no-Shiko think would make him happy?,local,action,,explicit
+2136656306e65398,brother-sister,"4,5",in a little house in the woods,Where did the sister and fawn decide to live?,summary,setting,,implicit
+37a2d329727d5b9d,momotaro-story-of-son-of-peach,12,happy,How will the old man and his wife feel about being sent a child?,local,prediction,feeling,explicit
+7cd737af1ac954cd,the-coming-of-finn,2,Finn,Who was the stranger?,local,character,,explicit
+3c74e7762692536d,the-bones-of-djulung,4,There was no Djulung to give her rice to.,Why did the youngest sister grow fat again?,local,causal relationship,,explicit
+feafdb6b015f5db6,cinderella-or-the-little-glass-slipper,10,made a coachman out of him,Why did the godmother need a rat in the rat-trap?,local,causal relationship,,explicit
+ca8af94f5f6a5765,story-of-man-who-did-not-wish-to-die,19,a monstrous shark,What swam towards Sentaro?,local,action,,explicit
+61cbb9a875095150,the-adventures-of-gilla-na-chreck-an-gour,7,Tom walked so far.,Why didn't the Ould Boy refuse Tom's request?,local,causal relationship,,explicit
+9b120e4de6cf50d9,momotaro-story-of-son-of-peach,12,to be the son of their old age,Why was the beautiful child sent to the couple?,local,causal relationship,,explicit
+8d5c4acfa4d95ebc,rose-of-evening,6,"tremendous waves spouted up to the very skies, and then fell down again like star-glimmer which scatters in the air",What happened when the dance of the Ogres began?,local,outcome resolution,,explicit
+66876937f34f55e9,the-top-and-ball,5,dust-bin,Where did the top jump into?,local,action,,explicit
+4d2db53858625f65,adventures-of-kintaro-golden-boy,12,He was very strong.,How was Kintaro able to pull the tree by its trunk?,local,action,,implicit
+2196f83acfb05ef2,a-lost-paradise,7,"both ran after it, knocking down chairs and vases",What did the couple do after the mouse got out of the soup-tureen?,local,action,,explicit
+11f92990e70753ee,a-lost-paradise,7,startled,How did the wife feel after she saw the mouse?,local,feeling,,implicit
+9db639a979f756eb,the-adventures-of-gilla-na-chreck-an-gour,8,climbed up and took down the iron flail that had the handstaff and booltheen both made out of red-hot iron,What did the young devil do while some were barring the gates?,local,action,,explicit
+e71f319f1ffa5101,mother-hulda,4,because she missed it,Why did the girl want to go home?,local,causal relationship,,implicit
+2cc1461fde79536d,adventures-of-kintaro-golden-boy,22,never forget her,What did Kintaro promise to do?,local,action,,explicit
+93f5ea2c9c2b5d7b,momotaro-story-of-son-of-peach,2,beautiful,How did the country look?,local,setting,,explicit
+7f90a652e7275744,story-of-man-who-did-not-wish-to-die,12,folded up of its own accord and flew into his pocket,What did the crane do after Sentaro got off its back?,local,action,,explicit
+a699b261b6d95503,the-coming-of-finn,11,"in a depression on the north side of the hill of Tara, called the Glen of the Mantle, Glen-a-Brat",Where was the fire of the son of Midna?,local,setting,,explicit
+07cf83d90182530c,storks,1,mother stork and four little ones,who sat in the nest?,local,character,,explicit
+455fd513fc405c41,momotaro-story-of-son-of-peach,57,went into all the rooms of the castle and set the prisoners free,What did Momotaro do after giving the devil to the monkey's charge?,local,action,,explicit
+e84b8067178d5f24,story-of-man-who-did-not-wish-to-die,19,He would be eaten.,What did Sentaro think would happen when he saw the shark?,local,action,,implicit
+4447e21772125e10,the-coming-of-finn,1,Gaul mac Morna,Who was captain of all the Fians?,local,character,,explicit
+b97abc96247d5f88,the-teapot,1,because it was cracked and riveted,why didn't the teapot talk about its lid?,local,causal relationship,,implicit
+c70fb634fc515339,twelve-brothers,4,He was the youngest and weakest.,Why was Benjamin told to stay home and keep the house for his brothers?,local,causal relationship,,explicit
+eb25b90924515dc0,mother-hulda,1,angry,How did the step-mother feel when the girl told her about the spindle falling into the well?,local,feeling,,implicit
+17912633845c5b2b,the-tale-of-bad-mice,1,"because the dinner had been bought read-made, in a box full of shaving",Why did Jane the Cook never do any cooking?,local,causal relationship,,explicit
+5ca2dea0f6fe5dcc,gray-eagle-and-his-five-brothers,10,go out with Peepi to-morrow and help him look after the greedy bush-ranger,What did Gray Eagle say he would do after his strength was fully recovered?,local,action,,explicit
+f82be97093f35c91,rose-of-evening,10,a coral pin fall from her hair,What did Rose of Evening purposely drop?,local,action,,explicit
+81a4a609655d5d3a,the-adventures-of-gilla-na-chreck-an-gour,7,Redhead directed Tom there.,Why did Tom have to go to Hell to get the flail?,local,causal relationship,,implicit
+3fe29d470dc7548b,story-of-man-who-did-not-wish-to-die,10,a little crane made of paper,What did Jofuku give Sentaro?,local,action,,explicit
+997941da8d8158b2,momotaro-story-of-son-of-peach,48,break off the horns that grow on their forehead,What did the pheasant tell the devils to do as a token of their submission?,local,action,,explicit
+79c90177244c5c09,momotaro-story-of-son-of-peach,12,heaven,Who sent the child to the couple?,local,action,,explicit
+f0002b6df35c53df,brother-sister,3,he became a fawn,What happened when the brother drank from the brook?,local,outcome resolution,,explicit
+d47b256359175c34,the-adventures-of-gilla-na-chreck-an-gour,2,He wanted to make the King of Dublin's daughter laugh.,Why did Tom set off to Dublin?,local,causal relationship,,implicit
+0a82d2c3f7e7518a,the-adventures-of-gilla-na-chreck-an-gour,5,Redhead,Who was shut out along with the rest?,local,character,,explicit
+c064ec72fad5547c,the-flying-ogre,5,"This girl was not a human being, but a flying ogre.",Why did the stranger want to find the girl?,local,causal relationship,,explicit
+029b267dd1e8503b,wunzh-the-father-of-indian-corn,9,happy,How will Wunzh feel seeing his wish fulfilled?,local,feeling,prediction,implicit
+8523357c96cf5ab5,adventures-of-kintaro-golden-boy,10,He felt that he had not been fairly beaten.,Why was the monkey cross?,local,causal relationship,,explicit
+2bfd8dc2f1805c3d,the-bones-of-djulung,5,He saw an interesting leaf.,Why did the king want to find the tree?,local,causal relationship,,explicit
+c86c523008b05a9b,the-coming-of-finn,8,the mountains of Slieve Gullion,Where was the fairy tune coming from?,local,setting,,explicit
+bdd773443abe5f29,the-adventures-of-gilla-na-chreck-an-gour,5,He must have all the king's daughter.,What will happen when Gilla na Chreck an Gour gets rid of the wolf?,local,outcome resolution,prediction,explicit
+edefba06c2c95e41,the-flying-ogre,3,ran up to the hollow tree and crawled into it,What did the girl do after she asked for the old Buddhist monk's help?,local,action,,explicit
+9dd07d19091e5d4a,momotaro-story-of-son-of-peach,9,He worked hard.,Why was the man tired?,local,causal relationship,,implicit
+90475943c3055fd1,adventures-of-kintaro-golden-boy,1,He grew stronger and stronger.,How was Kintaro able to cut down trees as quickly as the woodcutters?,local,action,,explicit
+30b7691d05e85198,brother-sister,13,the nurse,Who noticed the door open and the true queen come in?,local,character,,explicit
+8bf1222505e15d8e,the-adventures-of-gilla-na-chreck-an-gour,3,the King and Queen,Who was in the palace yard?,local,character,,explicit
+930677b44f8f5897,a-lost-paradise,4,lift the lid,What did the king order the couple to not do?,local,action,,explicit
+53b04291a41d55f6,the-coming-of-finn,3,honored,How will Finn feel being warmly received?,local,feeling,prediction,implicit
+c23d23f6cb5b5b8a,the-teapot,2,a spout,what does the teapot have that no one else has?,local,character,,explicit
+07cf8f939337524f,youth-who-wanted-to-win-daughter-of-mother-in-corner,11,run away from the whole pack of them,What did the youth plan to do once they were safely above?,local,action,,explicit
+c5395b9948af5da6,momotaro-story-of-son-of-peach,12,a beautiful child,Who stepped out of the peach?,local,character,,explicit
+4d15d45107b556da,adventures-of-kintaro-golden-boy,20,He could take Kintaro and present him to the Lord Raiko as a candidate for his service.,How could Sadamitsu help Kintaro's mother fulfill her wish?,local,action,,explicit
+6132f4d44be958d1,momotaro-story-of-son-of-peach,13,He had come out of a peach.,Why did the couple name the boy 'Momotaro'?,local,causal relationship,,explicit
+6aee13e2104358a9,the-flying-ogre,5,The Lord of the Heavens gave the stranger a triple command.,Why did the stranger hurry down from the skies to slay the flying ogre?,local,causal relationship,,explicit
+e432ea8e2fac5380,cinderella-or-the-little-glass-slipper,19,gave her two sisters lodgings in the palace and matched them with two great lords of the Court,What did Cinderella do for her sisters after she got married?,local,action,,explicit
+6a050e4e42195043,laotsze,2,to the West,Where did Laotsze plan to go?,local,setting,,explicit
+58a0638dfb1156d8,twelve-brothers,5,go and seek her brothers,What will the girl do when she finds out about her twelve brothers?,local,prediction,action,explicit
+d45af47be118582a,the-coming-of-finn,4,He liked to mock the king.,Why did Allen enjoy destroying Tara?,local,causal relationship,,implicit
+d50ea5979e085cdc,laotsze,4,gave him a life-giving talisman to eat,What did Laotsze give the servant instead of money?,local,action,,explicit
+9d13df360dd95eb3,story-of-man-who-did-not-wish-to-die,2,prolong his life as long as he wished,Why did Sentaro decide to live simply and frugally?,local,causal relationship,,explicit
+e35954eb435d5525,youth-who-wanted-to-win-daughter-of-mother-in-corner,5,They had plenty of clothes to wear.,Why were the mother and son able to live in joy and comfort?,local,causal relationship,,implicit
+85d48e0b0ea356d4,the-adventures-of-gilla-na-chreck-an-gour,10,Nobody wanted to be hurt like Redhead.,Why didn't anyone go near the flail?,local,causal relationship,,implicit
+ac700b087bbf5ce0,adventures-of-kintaro-golden-boy,22,She hid her grief with a strong face.,What happened because Kintaro's mother did not want to discourage him?,local,outcome resolution,,explicit
+7843d89552895a9b,story-of-man-who-did-not-wish-to-die,8,seven days,How many days did Sentaro pray at the shrine?,local,action,,explicit
+62212c20c76556ee,momotaro-story-of-son-of-peach,11,eat it,What will the old man and woman do to the peach?,local,prediction,action,explicit
+d7841bbf54b05320,red-shoes,4,everyone told her,How did the old lady find out Karen wore red shoes?,local,causal relationship,,implicit
+5711eef0a565584f,osseo-the-son-of-the-evening-star,10,Oweenee's sister laughed at Oweenee's ill fortune and ridiculed Osseo while he was under the power of that wicked spirit.,Why was pity shown to Osseo?,local,causal relationship,,explicit
+9f5e0ae33eb15f4d,story-of-man-who-did-not-wish-to-die,1,inherited a small fortune from his father,How did Sentaro get his money?,local,action,,explicit
+a0fb502eaf3655e4,twelve-brothers,4,go out and fetch food,What were the rest of the brothers going to do while Benjamin kept the house?,local,action,,explicit
+c7616a3be02d5d36,the-origin-of-the-robin,3,as he had the day before,How did the father respond to Iadilla's second request?,local,action,,explicit
+d9be82fa25d65b80,osseo-the-son-of-the-evening-star,12,Osseo and his wife,Who always led the dance?,local,character,,explicit
+15954a8a987a51ff,lord-of-hill-and-john-blessom,1,had speech with a gentleman in authority,What did John have on Christmas Eve?,local,action,,explicit
+4f930f47706a55ae,momotaro-story-of-son-of-peach,24,Momotaro did not ask permission to pass the field.,Why was the dog angry?,local,causal relationship,,implicit
+f690a2e1220a52d2,the-dangerous-reward,5,"plead for him, and beg him to excuse him from this task and make him the field- god in their village",What did Hu-Wu-Bau's father want his son to do?,local,action,,explicit
+3f428466e8a358d2,story-of-man-who-did-not-wish-to-die,5,never returned to the waiting Emperor,What happened after Jofuku set out for Horaizan?,local,outcome resolution,,explicit
+a0ec7d07786e511e,troll-wife,2,The old man and woman were crooked and shriveled up with age.,How did the old man and woman look different from the maiden?,local,character,,explicit
+0aaa360c903d5359,mother-hulda,3,Mother Hulda,Who was the woman in the house?,local,character,,explicit
+6258bc607ad35200,the-adventures-of-gilla-na-chreck-an-gour,2,grant her in marriage,What did the King promise to whoever would make her laugh three times?,local,action,,explicit
+a8a16d4948a45a7d,the-constable,"11, 12",The officer will be condemned to death.,What will happen to the officer after he is investigated?,summary,prediction,outcome resolution,explicit
+5d46b84b173f572d,the-bones-of-djulung,5,the king,Who wanted to find the tree?,local,character,,explicit
+33fc122ffa8651f0,a-lost-paradise,2,He did not want to make the couple feel ashamed for having an empty house.,Why did the king pretend to be in too great of a hurry?,local,causal relationship,,implicit
+33f5d076e49b5def,the-coming-of-finn,14,heroic feats like thine were not performed by the sons of inconsiderable and unknown men,Why did Conn believe Finn was the son of a great king or champion?,local,causal relationship,,explicit
+49aed8d93ef6575d,the-origin-of-the-robin,6,a neighboring wood,Where did Iadilla fly away to?,local,setting,,explicit
+424d17a567965a5b,the-origin-of-the-robin,4,hatred,How will Iadilla feel towards his father?,local,feeling,prediction,implicit
+67cdcaa763c859df,story-of-man-who-did-not-wish-to-die,"11,17",fly on the crane,How will Sentaro return home?,summary,prediction,action,implicit
+1ce9e52cc3cd5008,the-top-and-ball,2,Mahogany,What was the top made up of?,local,character,,explicit
+50a3e6924d2858d5,cinderella-or-the-little-glass-slipper,1,Cinderella had unparalleled goodness and sweetness of temper. The second wife was the proudest and most haughty woman that was ever seen.,How were Cinderella and the second wife different?,local,character,,explicit
+01e304ee601850ea,the-flying-ogre,1,Sianfu,Where did the old Buddhist monk live?,local,setting,,explicit
+44f0738e2d9752d7,the-adventures-of-gilla-na-chreck-an-gour,3,A tap from Tom's club sent them headlong into the moat or down on the stones.,Why did the guards begin to beg for Tom to stay his hands?,local,causal relationship,,explicit
+644f95461f03539b,the-adventures-of-gilla-na-chreck-an-gour,9,She came over to Gilla and put her two delicate hands into Tom's two rough ones.,What did the princess do after she laughed?,local,action,outcome resolution,explicit
+06363f3e45095585,osseo-the-son-of-the-evening-star,6,at the lodge of the hunter,Where did Osseo and Oweenee find the banquet ready?,local,setting,,explicit
+e84d1221b98e5ccf,story-of-man-who-did-not-wish-to-die,11,It was a paper bird.,Why did the bird not need to stop for nourishment?,local,causal relationship,,explicit
+6193a3c7fe975590,brother-sister,4,her golden girdle,What did the sister tie around the fawn's neck?,local,action,,explicit
+e63517b8c0a45bce,adventures-of-kintaro-golden-boy,10,His foot slipped and he tumbled.,Why did the monkey think he was not fairly beaten?,local,causal relationship,,explicit
+7b730a36cd4e5b57,wunzh-the-father-of-indian-corn,4,Wunzh wanted to continue the wrestle.,Why did Wunzh want the celestial visitor to return?,local,causal relationship,,implicit
+b2435d61f5185ad7,a-lost-paradise,3,"Lock their door, and put the key in their pocket.",What did the king tell the couple to do?,local,action,,explicit
+5f6089ac5d5f5b0c,the-adventures-of-gilla-na-chreck-an-gour,1,a big joiant,Who came up to Tom?,local,character,,explicit
+6ab3a8ee1c3b5950,the-adventures-of-gilla-na-chreck-an-gour,9,touch the fiail,What did Tom bade no one to do?,local,action,,explicit
+0fb61167838f5e12,youth-who-wanted-to-win-daughter-of-mother-in-corner,13,shocked,How did the youth feel when he saw the beautiful castle?,local,feeling,,implicit
+c7c4db0ec7bc56b5,adventures-of-kintaro-golden-boy,"14,16",the woodcutter,Who will the voice from outside be?,summary,character,prediction,explicit
+3b5a7f01416955de,the-adventures-of-gilla-na-chreck-an-gour,2,a beautiful boy with three heads on him,Who was the next giant?,local,character,,explicit
+d79394ac4e3058cd,the-adventures-of-gilla-na-chreck-an-gour,6,to see if Tom would give him leave to eat him,Why did the wolf keep his eyes on Tom?,local,causal relationship,,explicit
+2d28dc95a53956fd,adventures-of-kintaro-golden-boy,21,joy,How did Kintaro feel upon hearing his mother finish speaking?,local,feeling,,explicit
+7dea9d0625bf56cb,leelinau-the-lost-daughter,4,her mother,Who secretly followed Leelinau?,local,character,,explicit
+ebb5bd84ca2457ce,wunzh-the-father-of-indian-corn,"5,6,7",Wunzh's wish will come true.,What will happen when Wunzh follows the stranger's instructions?,summary,outcome resolution,prediction,implicit
+16b43737816c5cf1,laotsze,3,"told the servant of the guardian that his master owed him a great deal of money, and begged the latter to put in a good word for him",What did Laotsze's servant do when they reached the guardian's house?,local,action,,explicit
+09bd8245d0a45aeb,twelve-brothers,6,the little enchanted house,Where did the girl come to in the evening after walking all day long?,local,setting,,explicit
+ab50ef975cef535f,wunzh-the-father-of-indian-corn,4,wrestle with him,What did the celestial visitor challenge Wunzh to do with him?,local,action,,explicit
+97f5f65defb95925,leelinau-the-lost-daughter,6,happy,How did the girl feel when she picked a red ear?,local,feeling,,implicit
+6b127e1ecc1c576c,the-coming-of-finn,12,"He recalled one of his marvellous attributes, and approaching a silver vessel, he made a cup with his two hands and, lifting it to his mouth, drank.",How did strength return to Finn?,local,action,,explicit
+c403ff3ba7135124,rose-of-evening,5,sat down and had Aduan show his tricks,What did the old woman do after she met Aduan?,local,action,,explicit
+347f2b8bf9d059df,the-coming-of-finn,1,sad,How did the warriors feel?,local,feeling,,explicit
+c99fe1e941ec5a1b,momotaro-story-of-son-of-peach,8,her work,What did the woman stop doing because she got the peach?,local,action,,explicit
+4f6e33671217574d,lord-of-hill-and-john-blessom,2,sad,How did John feel when he heard the man was headed to Vaage?,local,feeling,,implicit
+a208cfa052045870,the-adventures-of-gilla-na-chreck-an-gour,9,to make an end of Tom,Why did Redhead touch the flail?,local,causal relationship,,explicit
+b81654688908545b,the-constable,"6, 7",Spirits only fed on odors.,Why didn't the man touch the goblet or the chopsticks?,summary,causal relationship,,explicit
+6a3b3ae7c17f5a14,red-shoes,11,she saw the shoes dancing in front of her,Why did Karen turn back and repent of her sin?,local,causal relationship,,implicit
+4d0f4a87cb935473,the-coming-of-finn,4,There were marvellous powers of life-giving in his two hands,How could Finn restore people at the point of death?,local,action,,explicit
+335bfbe1be035601,youth-who-wanted-to-win-daughter-of-mother-in-corner,12,fair and beautiful as the sun,What did the maiden look like?,local,character,,explicit
+cabc85c0c7d6523d,momotaro-story-of-son-of-peach,21,rice,What were the cakes made out of?,local,action,,explicit
+edcf990c66c959f3,momotaro-story-of-son-of-peach,19,He was strong and fearless.,Why did the man think the devils would be powerless to harm Momotaro?,local,causal relationship,,explicit
+6bc1de2641fe517b,momotaro-story-of-son-of-peach,3,For some reason they could not explain,Why was the old couple very happy that morning?,local,causal relationship,,explicit
+6bf69ed647e656fb,the-tale-of-jemina-puddle-duck,3,an elegantly dressed gentleman reading a newspaper,Who did Jemima find upon the stump?,local,action,,explicit
+463b2fd5dcb65b61,story-of-man-who-did-not-wish-to-die,6,the highest peaks,Where on Mount Fuji were the hermits said to have live?,local,setting,,explicit
+4c03844036555aeb,lord-of-hill-and-john-blessom,4,grateful,How did John feel towards the man?,local,feeling,,implicit
+5ad0d73c10f356a5,story-of-man-who-did-not-wish-to-die,"4,6","""Elixir of Life""",What was the water of perpetual life?,summary,character,,explicit
+fa5a423f4a13521d,the-origin-of-the-robin,3,by the gentle heaving of his breast,How could one tell that Iadilla was still living?,local,action,,explicit
+4ac1ef2575f05d7a,red-shoes,6,so she would stop dancing,Why did they take off her shoes?,local,causal relationship,,implicit
+309a94e41c605cfa,momotaro-story-of-son-of-peach,2,the river,Where did the old woman take some clothes to wash?,local,setting,,explicit
+1cb3e6b357425bf9,the-tale-of-jemina-puddle-duck,8,"Someone with a black nose sniffed at the bottom of the door, and then locked it.",What happened when Jemina entered into the ouse?,local,outcome resolution,,explicit
+edc10a2950fa5643,troll-wife,1,a pasture in the hills,Where did the couple and their son spend their summer?,local,setting,,explicit
+4b00e6b2ba7954df,the-dangerous-reward,1,a lofty palace,Where did Hu-Wu-Bau find himself after he opened his eyes?,local,setting,,explicit
+49194d14a0b3558d,the-coming-of-finn,2,a low sound like thunder,What did the men hear?,local,action,,explicit
+27f024bce8695305,the-constable,1,saw a man in a red hat dressed as a constable,How did Dung know that the man was a member of his profession?,local,action,,explicit
+31622d155aee5420,osseo-the-son-of-the-evening-star,8,transform the lodge into the lightness of the skies and decorate it with the colors of the clouds,What did the beams have the power to do?,local,action,,explicit
+340c8d4ba9ef510e,the-coming-of-finn,5,all the women and children,Who have been sent out of Tara?,local,character,,explicit
+7654a109bf1959a7,story-of-man-who-did-not-wish-to-die,12,one of the hotels,Where did Sentaro stay when he first arrived at the country of Perpetual Life?,local,setting,,explicit
+39c4a43bdc2f521c,momotaro-story-of-son-of-peach,38,harmony,What was the first thing necessary in an army?,local,action,,explicit
+726482e757235a79,youth-who-wanted-to-win-daughter-of-mother-in-corner,10,"took a roundabout way, the longest he could fine",What did the youth do differently after setting forth this time compared to the previous times?,local,action,,explicit
+5468c67f4b44552b,the-adventures-of-gilla-na-chreck-an-gour,7,rubbed himself over with the greenish ointment,What did Tom do before he knocked at the gates?,local,action,outcome resolution,explicit
+1c0e2d7955a4533c,rose-of-evening,25,Aduan,Who was a departed spirit?,local,character,,explicit
+137485adf23a5e8a,brother-sister,7,a hunter,Who slipped after the fawn to the little house?,local,character,,explicit
+71a9ae3a5c675040,mother-hulda,2,in a beautiful meadow,"When the girl came to herself, where was she?",local,setting,,explicit
+c454cf8708da5d11,the-adventures-of-gilla-na-chreck-an-gour,4,The princess was so amused that she let a great sweet laugh out of her that was heard all over the yard.,What happened after the princess saw Tom fight the men?,local,outcome resolution,,explicit
+854fa55d796d5e91,wunzh-the-father-of-indian-corn,3,weak,How did Wunzh feel on the third day?,local,feeling,,explicit
+36237dbb736755ef,a-lost-paradise,6,"The woman spoke less and less, and seemed so wretched that her husband grew quite frightened about her.",What happened after the couple had the conversation about the soup-tureen?,local,outcome resolution,,explicit
+f7e794fe30475cc4,wunzh-the-father-of-indian-corn,8,He was warmly welcomed.,What happened when Wunzh returned to his father's lodge?,local,outcome resolution,,explicit
+e3b65e40e79255de,gray-eagle-and-his-five-brothers,"3,4",They could die from the cold climate.,Why would the falcons want to go to a warmer climate?,summary,causal relationship,,implicit
+179e8509402d589c,the-adventures-of-gilla-na-chreck-an-gour,"7,8",trick Tom,What will the Ould Boy do when Tom gets the flail?,summary,prediction,,implicit
+a6b4f39f95c4598d,rose-of-evening,3,sad,How did Dsiang feel when her son fell into the water below the Gold Island?,local,feeling,,implicit
+07ce182f68e95bd8,osseo-the-son-of-the-evening-star,11,a bow and arrows,What did Osseo make to gratify his son?,local,action,,explicit
+ce0f519ebd4b5795,the-flying-ogre,1,an old Buddhist monk,Who loved to wander in lonely places?,local,character,,explicit
+d0dad849f56753f6,the-coming-of-finn,2,"They distinctly heard a footfall like the slow, deliberate tread of a giant.",Why was every face pale?,local,causal relationship,,explicit
+a69edd220d7559e1,red-shoes,10,a pair of wooden feet and some crutches,What did the executioner carve for Karen?,local,action,,explicit
+01caf16cc501568a,youth-who-wanted-to-win-daughter-of-mother-in-corner,2,"He went down and down until he was standing in a dark, ugly hole.",What happened when the youth set foot on the clump of grass?,local,outcome resolution,,explicit
+2a798b23cb025329,adventures-of-kintaro-golden-boy,1,married her,What did Kintoki do because he fell in love with a beautiful lady?,local,action,,explicit
+a69c794fe4765e76,the-top-and-ball,3,It did not return.,What happened to the ball when it flew for the ninth time?,local,outcome resolution,,explicit
+958c6c05d0985af4,wunzh-the-father-of-indian-corn,"7,8",sad,How will Wunzh feel about losing his friend?,summary,feeling,prediction,implicit
+fb4a2046bf9054f5,the-flying-ogre,"2, 3",A man was pursuing her.,Why did the girl ask the old Buddhist monk to save her life?,summary,causal relationship,,explicit
+49c86f80bf515a22,mother-hulda,"6,7",she didn't want the apples to fall on her head,Why didn't the ugly daughter shake the apple tree?,summary,causal relationship,,implicit
+06d08972f2aa57f3,the-coming-of-finn,9,They will fall asleep.,What will happen when the soldiers hear the fairy music?,local,outcome resolution,prediction,implicit
+909374628c755e2a,the-adventures-of-gilla-na-chreck-an-gour,6,mountains,Where did Tom tell the wolf to go?,local,setting,,explicit
+498e9efd2b295673,story-of-man-who-did-not-wish-to-die,21,His life was not austere enough.,Why was the Elixir of Life not for Sentaro?,local,causal relationship,,explicit
+0a01473342c65cfa,adventures-of-kintaro-golden-boy,1,the malice of some friends,How did Kintoki fall into disgrace at Court?,local,action,,explicit
+6bebf7459b5a5053,the-origin-of-the-robin,4,He heard his son talking to himself.,Why was the father surprised when he came to the door of the little lodge?,local,causal relationship,,explicit
+e6b901f4749d593b,momotaro-story-of-son-of-peach,47,watched him,What did the animals do while Momotaro was deep in thought?,local,action,,explicit
+ba9be8d1e1d65cd9,momotaro-story-of-son-of-peach,5,It was unusually large.,What was special about the peach?,local,character,,implicit
+2d73f6c2f1805aa5,the-coming-of-finn,5,Allen was coming.,Why did the king send the women and children out of Tara?,local,causal relationship,,implicit
+30c458d20b34528c,the-teapot,1,proud,how did the teapot feel about being porcelain?,local,feeling,,explicit
+bde1335cbd315866,brother-sister,2,He was thirsty.,Why did the brother want to find a brook?,local,causal relationship,,implicit
+2d56dfd7bf6e5f2a,leelinau-the-lost-daughter,2,The Indians feared to fall under the influence of its mischievous inhabitants.,Why was Manitowok seldom visited by Indians?,local,causal relationship,,explicit
+95d880929c1b544c,the-adventures-of-gilla-na-chreck-an-gour,5,a jackeen,What will the Redhead send to show Tom where the wolf lives?,local,action,prediction,explicit
+2f09b942a3c55954,twelve-brothers,1,sad,How did the Queen feel about the fate of her sons?,local,feeling,,explicit
+fd8e41849cad5cc2,story-of-man-who-did-not-wish-to-die,3,He knew that one day he must die and leave it all.,Why was Shin-no-Shiko miserable?,local,causal relationship,,explicit
+07ade96161a7535f,the-adventures-of-gilla-na-chreck-an-gour,3,an envious wizened,Who wished to marry the princess?,local,character,,explicit
+6a3d726737a8532a,osseo-the-son-of-the-evening-star,4,The star emitted a brighter ray.,What happened when Osseo and Oweenee came to a great rock?,local,outcome resolution,,explicit
+e82b1e5ef38e5860,story-of-man-who-did-not-wish-to-die,6,He might obtain the water of perpetual life.,Why did Sentaro want to become a hermit?,local,causal relationship,,explicit
+9967d8c188245f0f,mother-hulda,1,go and fetch it out again,What did the step-mother tell the girl to do after the spindle fell in?,local,action,,explicit
+01527985db655c40,the-adventures-of-gilla-na-chreck-an-gour,10,frightened,How did the Danes feel when they heard the story of the flail?,local,feeling,,explicit
+1e2e707c714a5d3b,momotaro-story-of-son-of-peach,39,Momotaro,Who was the leader?,local,character,,explicit
+6d228959e32d5a59,mother-hulda,5,a shower of gold,What fell when the girl walked through the door?,local,outcome resolution,,explicit
+e773f854f7075635,momotaro-story-of-son-of-peach,30,He heard of his expedition to the Island of the Devils.,Why did the monkey find Momotaro?,local,causal relationship,,explicit
+db3ed49e32015dd6,a-lost-paradise,7,told them to go home,What did the king do after the couple did not listen to him?,local,action,,explicit
+10328a33bba252ea,youth-who-wanted-to-win-daughter-of-mother-in-corner,10,He was such a good-looking fellow.,Why did the mother think her son would not be refused?,local,causal relationship,,explicit
+7119110498c55c36,the-flying-ogre,"5, 6",point to the hollow tree,What will the monk do when the stranger tells him to say the truth?,summary,prediction,,explicit
+18e8e3fce2435d2e,the-coming-of-finn,"10,11",Finn did not fall asleep.,How did the enchanter know his power over Tara was at an end?,summary,action,,implicit
+6bca9c5d61ed52a9,leelinau-the-lost-daughter,"2,3",Leelinau was isolated.,Why did Leelinau's parent suspect that some evil spirit had enticed Leelinau?,summary,causal relationship,,implicit
+8b19e1381e0f557c,youth-who-wanted-to-win-daughter-of-mother-in-corner,10,He did not want to go down to the rat again because he was sick of her eternal wiggling and waggling and the talk about marriage.,Why did the youth choose the longest way?,local,causal relationship,,explicit
+f30195b2450452bf,gray-eagle-and-his-five-brothers,1,Gray Eagle,Who was the eldest falcon?,local,character,,explicit
+cb87dd0c624c53e1,rose-of-evening,"15, 16",The King had kept back Rose of Evening and one of the nightingale dancers to teach the girls in his castle.,Why didn't Aduan see Rose of Evening for months?,summary,causal relationship,,explicit
+79ab8d1e84a056e6,the-coming-of-finn,13,astonished,How did the soldiers feel seeing that Tara was still standing?,local,feeling,,explicit
+a731723aef8e5f9c,wunzh-the-father-of-indian-corn,1,They were all too young to give assistance.,Why couldn't the children help procure food for the family?,local,causal relationship,,explicit
+5e346f1fbef7521d,adventures-of-kintaro-golden-boy,7,a leaf,What did the deer use as a signal?,local,action,,explicit
+e0f8b065480c522a,the-coming-of-finn,4,restore him to life and health,What could Finn do if a person was at the point of death?,local,action,,explicit
+69fb28844f355183,the-adventures-of-gilla-na-chreck-an-gour,10,It was powerful.,Why would Tom not bring the flail to the palace?,local,causal relationship,,implicit
+02b05db1a5655f24,the-coming-of-finn,2,the man who is to conquer Midna,Who was coming before his time?,local,character,,explicit
+6772566ddb185c14,storks,1,"no, they will turn red someday",will the pointed black bills stay black forever?,local,prediction,,implicit
+9c6f2eb285245af5,a-lost-paradise,1,They could not find work.,Why was the couple unhappy?,local,causal relationship,,implicit
+3d8d0f4365c750bf,youth-who-wanted-to-win-daughter-of-mother-in-corner,13,a beautiful castle,Where did the princess actually live?,local,setting,,explicit
+0a93bdeb14e05b2e,youth-who-wanted-to-win-daughter-of-mother-in-corner,7,by the time the youth came again,When would all be ready according to the rat?,local,setting,,explicit
+f6bdb579b5af51cb,the-coming-of-finn,7,the Fians and the warriors of Conn had torches in their hands,Why was there a ring of flame around Tara?,local,causal relationship,,explicit
+1a5998905366548c,momotaro-story-of-son-of-peach,58,triumphantly,How did Momotaro return home?,local,action,,explicit
+bf0fb19a2b465e6d,the-constable,14,an inn,Where did Dung go when he reached Taianfu?,local,setting,,explicit
+070b2a675cee5c18,cinderella-or-the-little-glass-slipper,4,"she ironed her sisters' linen, and plaited their ruffles",Why did the prince's invitation to the ball become a new trouble for Cinderella?,local,causal relationship,,explicit
+cd146311a09a585f,red-shoes,5,an old soldier,Who stood at the church door?,local,character,,explicit
+e07e200a67fe5ecf,adventures-of-kintaro-golden-boy,16,startled,How did Kintaro and his mother feel when they heard the voice from outside?,local,feeling,,explicit
+238fee1ee6be5286,the-origin-of-the-robin,2,"He never replied, but he laid without the least sign of discontent or murmuring.",How did Iadilla respond to the glowing words of promise and glory?,local,action,,explicit
+2f182c787a465e56,the-origin-of-the-robin,2,hungry,How will Iadilla feel on the ninth day of his fast?,local,feeling,prediction,implicit
+15bfd539c4d3557e,the-constable,"4, 8",Wang will die.,What will happen to Wang after the man comes to Dung's district?,summary,prediction,outcome resolution,implicit
+04c970dc93b75374,the-coming-of-finn,11,on the threshold of the enchanted palace,Where did FInn find the body of Midna?,local,setting,,explicit
+4fc416ea29fa5311,the-origin-of-the-robin,"4,5",a robin-red-breast,What will Iadilla's new shape be?,summary,action,prediction,implicit
+ba4e7b09d2635b5c,adventures-of-kintaro-golden-boy,20,She will accept.,How will Kintaro's mom respond to Sadamitsu's offer?,local,prediction,action,implicit
+fd8df9ddbc985848,leelinau-the-lost-daughter,14,the slight ripple of the fishermen's oars,What made Leelinau flee?,local,causal relationship,,explicit
+c191c3a21e8d5a3c,the-adventures-of-gilla-na-chreck-an-gour,1,He wanted the club.,Why did Tom spare the joiant?,local,causal relationship,,implicit
+18f3121081d85f7f,laotsze,2,gave him nothing,What did Laotsze do when his servant insisted on being paid?,local,action,,explicit
+73b56f64fcc151ea,adventures-of-kintaro-golden-boy,8,angry,How will the monkey feel when he loses?,local,prediction,feeling,implicit
+4d92e8775d095d23,the-adventures-of-gilla-na-chreck-an-gour,"3,4",make the beautiful princess laugh three times,What was Tom's business?,summary,action,,explicit
+74977b74278b5d89,twelve-brothers,11,be dumb and not laugh for seven years,What did the sister must do in order to free her brothers?,local,action,,explicit
+ada046a807755f4e,adventures-of-kintaro-golden-boy,10,the pain of having his long ear pulled so hard,How did the hare get thrown off guard?,local,action,,explicit
+f39a90b51f885362,story-of-man-who-did-not-wish-to-die,1,wretched,How did the idea of falling ill or dying make Sentaro feel?,local,feeling,,explicit
+dc9d36595d345978,momotaro-story-of-son-of-peach,24,a dog,Who came running out from the high grass?,local,character,,explicit
+cbfccfd850c05c60,osseo-the-son-of-the-evening-star,7,amazed,How will Osseo feel about living in the stars?,local,feeling,prediction,implicit
+3b378cf11d1755e7,adventures-of-kintaro-golden-boy,"14,15",He was gone for a long time.,Why was Kintaro's mother waiting for him?,summary,causal relationship,,implicit
+e1000cf9e7635973,twelve-brothers,1,she may be very rich and the kingdom hers alone,Why must all of her twelve brothers die if their thirteenth child is a girl?,local,causal relationship,,explicit
+660a0863525e5640,the-tale-of-jemina-puddle-duck,2,a wood in the distance,What did Jemina Puddle-Duck see when she reached the top of the hill?,local,action,,explicit
+dbc5ecb3d7df5481,the-adventures-of-gilla-na-chreck-an-gour,6,She did not want Tom to fight the Danes.,Why did the princess rather never be Tom's wife than to see him in danger?,local,causal relationship,,implicit
+1f4c8a7a6ae85506,youth-who-wanted-to-win-daughter-of-mother-in-corner,9,decorated her room,What did the mother do with her small fortune?,local,action,,explicit
+283f3cfee306510d,story-of-man-who-did-not-wish-to-die,4,his courtiers,"Who did Shin-no-Shiko ask to find the ""Elixir of Life""?",local,character,,explicit
+3c3b44f579b3562d,story-of-man-who-did-not-wish-to-die,19,a wild dream,What did Sentaro's adventures turn out to be?,local,action,,explicit
+5b099a94e29f5cd6,red-shoes,"7,8",freightened,How did Karen feel when the old soldier spoke to her in the woods?,summary,feeling,,explicit
+cdddd18bd3145ead,osseo-the-son-of-the-evening-star,"9,10",Osseo will be told why he and his wife have been sent for.,What will happen when Osseo hangs the cage of birds at the door?,summary,prediction,outcome resolution,explicit
+6e3abc078f885552,the-adventures-of-gilla-na-chreck-an-gour,6,There was no fear of anyone being kilt.,Why did the princess give another great laugh?,local,causal relationship,,explicit
+ed6955409bdb50a0,a-lost-paradise,5,They got everything they wanted at the palace.,Why did the couple feel like they were living in a beautiful dream?,local,causal relationship,,implicit
+540177c7b13d5d35,lord-of-hill-and-john-blessom,1,"a white blouse, with a knapsack, and buttons as big as silver dollars",What was the man from Vaage wearing?,local,character,,explicit
+689cf045b28c5e78,momotaro-story-of-son-of-peach,45,kill the monsters,What did Momotaro long to do?,local,action,,explicit
+afe485a7e7c156d4,the-dangerous-reward,7,sent his messenger to fetch the man's father,What did the Lord of the Grat Mountain do when Hu-Wu-Bau told of his misfortune?,local,action,,explicit
+d1a6fbc55cec5370,momotaro-story-of-son-of-peach,11,He was hungry.,Why did the old man want to eat the peach?,local,causal relationship,,explicit
+ba0a19dfb65157e5,a-lost-paradise,4,He needed to tell them to not lift the lid.,Why did the king come to visit the couple in the small hall?,local,causal relationship,,implicit
+07b2abfcea9e5323,leelinau-the-lost-daughter,9,hoped he would draw back the thoughts of Leelinau from that spirit-land,What did Leelinau's parents hope the eldest son of a neighboring chief would do to Leelinau?,local,action,,explicit
+f7c305e683655e05,gray-eagle-and-his-five-brothers,8,gave them advice and instruction in the art of hunting,What did Gray Eagle do to repay the brothers' kindness?,local,action,,explicit
+c831af40c86d5033,osseo-the-son-of-the-evening-star,2,He was a good man.,Why was Oweenee happy with Osseo?,local,causal relationship,,implicit
+0f6626f535905cb7,the-adventures-of-gilla-na-chreck-an-gour,1,the widow's door,Where did the Bresna take Tom?,local,setting,,explicit
+bfe7e07f628e5fb0,twelve-brothers,10,"Her brothers turned into twelve ravens, who flew croaking over the wood.",What happened after the girl plucked the twelve lilies?,local,outcome resolution,,explicit
+eaa703d5ef2453b5,the-bones-of-djulung,3,The eldest sister went and caught him. He was boiled for supper.,What happened after one of the sisters saw the fish?,local,outcome resolution,,explicit
+2fd85408faf15cc3,story-of-man-who-did-not-wish-to-die,10,death never comes,What happens at the country of Perpetual life?,local,action,,explicit
+dd6757be1bb4564e,momotaro-story-of-son-of-peach,1,cut grass for the farmers around,What hard work did the man do to earn his daily rice?,local,action,,explicit
+54583ea14a185ee0,brother-sister,10,jealous,How did the step-mother feel when she found out the sister and brother were living in the castle?,local,feeling,,implicit
+37201c4d3ffb5dad,story-of-man-who-did-not-wish-to-die,18,Sentaro had regretted all he had left behind.,What happened after the crane headed towards Japan?,local,outcome resolution,,explicit
+a0c103958ff8522d,adventures-of-kintaro-golden-boy,18,He will be the strongest man in Japan.,What did the woodcutter say would happen when Kintaro is full-grown?,local,action,,explicit
+08ccca1791e65c73,wunzh-the-father-of-indian-corn,6,strip off the stranger's garments and throw him down,What will Wunzh do as soon as he prevails the stranger?,local,action,prediction,explicit
+422d2c674a2959c6,the-adventures-of-gilla-na-chreck-an-gour,7,through a street,Where did many bad women live?,local,setting,,explicit
+a07dafcbeb055d93,story-of-man-who-did-not-wish-to-die,6,Never a hermit did he find.,What happened when Sentaro made it to the top of the peaks?,local,outcome resolution,,explicit
+b4e16cdeef5e5c7a,osseo-the-son-of-the-evening-star,11,hunting,What did Osseo's son wish to learn about?,local,action,,explicit
+5a99b85dc11c5baa,the-adventures-of-gilla-na-chreck-an-gour,7,the big divel of all,Who did Tom want to speak to?,local,character,,explicit
+5d634efcae315964,the-adventures-of-gilla-na-chreck-an-gour,6,put away that divel of a wolf,What did the king order Tom to do?,local,action,,explicit
+a3ca9e85ceec5baa,the-tale-of-bad-mice,8,because Tom Thumb paid for everything he broke,"Why are the two mice as not so very, very naughty after all?",local,causal relationship,,explicit
+0f0a24d441965552,story-of-man-who-did-not-wish-to-die,17,heavy losses in business,What caused Sentaro great annoyance?,local,causal relationship,,explicit
+a64d19ab0cd95d58,red-shoes,15,it broke,What happened to her heart after her heard filled with peace and joy?,local,outcome resolution,,explicit
+685af1f8b18a5bd4,momotaro-story-of-son-of-peach,34,It showed so much spirit in the fight.,Why did Momotaro admire the bird?,local,causal relationship,,explicit
+e1e71d5bb63d55c3,the-adventures-of-gilla-na-chreck-an-gour,7,how shabby it would look to reneague the adventure,What did Redhead nudge Tom about?,local,action,,explicit
+fb5294e754205db1,story-of-man-who-did-not-wish-to-die,11,"spread its wings, rose high in the air, and flew away",What did the crane do after it grew large?,local,action,,explicit
+94404885e5915839,the-coming-of-finn,"1,2,4",They expected the son of Midna to arrive.,Why was every face gloomy?,summary,causal relationship,,implicit
+81ae98749af05a31,mother-hulda,"6,7",she kept walking,What did the ugly daughter do when the bread and apple tree asked for her help?,summary,action,,implicit
+c2582d5d0794526f,wunzh-the-father-of-indian-corn,4,"The voice of the stranger was cheery, and put such a courage in his heart.",Why did Wunzh spring up even though he was weak from fasting?,local,causal relationship,,explicit
+cd3af745569c52c7,leelinau-the-lost-daughter,9,maiden fear,What did Leelinau's parents ascribe Leelinau's hesitancy as?,local,action,,explicit
+9e1c786f8d0c5059,the-origin-of-the-robin,4,delighted,How did the father feel the next morning?,local,feeling,,explicit
+ee6b2781294f567e,troll-wife,5,laid the table for the old folk in the bake-house,What did the wife do whenever guests came?,local,action,,explicit
+52e56704d0f35a81,leelinau-the-lost-daughter,"7,8",the old man,Who was believed to be the corn thief?,summary,character,,explicit
+14a37e5072375be7,momotaro-story-of-son-of-peach,9,He was hidden by the big bundle of grass on his back.,Why could the woman hardly see her husband?,local,causal relationship,,explicit
+963ee7cfad1f5b7c,the-origin-of-the-robin,"3,4,5",His father would lose his only son.,Why will the father be the lone sufferer?,summary,causal relationship,,implicit
+d182f2d6acd75f53,the-bones-of-djulung,3,The youngest sister was away in the woods.,Why didn't the youngest sister know what happened to the fish?,local,causal relationship,,explicit
+f91489c85db25a55,gray-eagle-and-his-five-brothers,1,protect them from danger,How will Gray Eagle care for his siblings?,local,action,prediction,implicit
+d4d4b0e6da285322,osseo-the-son-of-the-evening-star,2,Osseo,Who did Oweenee marry?,local,character,,explicit
+8ca2725158635fe1,wunzh-the-father-of-indian-corn,9,Mondawmin,What did Wunzh say was the friend of all mankind?,local,action,,explicit
+ca2f73aee81c5ea8,red-shoes,12,sat quiet,What did Karen do while the pastor read aloud from the Bible?,local,action,,explicit
+c9daa22fec3658e3,youth-who-wanted-to-win-daughter-of-mother-in-corner,"1,5",go to the mother in the corner,What will the youth want to do instead of taking service?,summary,prediction,action,explicit
+a685604c6ad052be,troll-wife,2,an old man and woman,Who did the son see when he peeped through the window?,local,character,,explicit
+44048f713e845fc1,the-adventures-of-gilla-na-chreck-an-gour,1,He didn't do any good at six-feet and over nineteen years.,Why did the widow call her son a thief?,local,causal relationship,,implicit
+5e802e101b405103,momotaro-story-of-son-of-peach,42,The animals were afraid of the sea.,Why did Momotaro think it would be better to go alone?,local,causal relationship,,implicit
+951a3fe6df44514e,youth-who-wanted-to-win-daughter-of-mother-in-corner,"5,8",make clothes,What will the youth and his mother do with the wool?,summary,prediction,action,implicit
+21b7d3d74e785cfe,youth-who-wanted-to-win-daughter-of-mother-in-corner,11,The road was a little narrow there.,Why did the youth need to walk beside the coach?,local,causal relationship,,explicit
+e325e6bdaff5519a,momotaro-story-of-son-of-peach,14,He was just what they thought a hero ought to be like.,Why was the old couple's pleasure very great when they looked at him?,local,causal relationship,,explicit
+cf91c73b952f563a,gray-eagle-and-his-five-brothers,"12,13",forgave White Owl,Why did Gray Eagle dismiss White Owl?,summary,causal relationship,,explicit
+3aed1bbb78e0563f,the-bones-of-djulung,2,Djulung-djulung,What did the youngest sister call her pet fish?,local,character,,explicit
+db4b080aeaa45729,wunzh-the-father-of-indian-corn,5,delivered instructions to Wunzh and informed him in what manner he should proceed to take advantage of his victory,What did the stranger do in Wunzh's fasting-lodge?,local,action,,explicit
+d6cf681a568c50eb,momotaro-story-of-son-of-peach,15,His parents take good care of him.,Why did Momotaro feel thankful towards his parents?,local,causal relationship,,implicit
+7e6b4c54392a5469,brother-sister,12,to hide her lost eye,Why did the daughter lie on her side in the bed?,local,causal relationship,,implicit
+40a27d201ada5ca0,red-shoes,12,the pastor's wife,Who took Karen into service?,local,character,,explicit
+e7d76209b09b565a,the-coming-of-finn,"11,13",proud,How will the people feel about Finn defeating the son of Midna?,summary,feeling,prediction,implicit
+966c12b42dc15695,youth-who-wanted-to-win-daughter-of-mother-in-corner,8,happy,How did the youth feel to escape?,local,feeling,,explicit
+611587f2523053a5,adventures-of-kintaro-golden-boy,"18,23",Kintaro was very strong.,Why did Lord Raiko make Kintaro a vassal at once?,summary,causal relationship,,implicit
+00eeb9b452595728,leelinau-the-lost-daughter,"5,6,7",was not entertained with the girls' activity,Why did Leelinau isolate herself?,summary,causal relationship,,implicit
+688616b567e25020,momotaro-story-of-son-of-peach,1,the work of the house and worked in their own little rice field,What did his wife do when he was gone?,local,action,,explicit
+ea44c7edd1b35eb2,youth-who-wanted-to-win-daughter-of-mother-in-corner,3,She was to receive a larger dower and was not yet ready for the wedding.,Why did the rat ask the youth to be patient?,local,causal relationship,,explicit
+9c760daf0d515489,youth-who-wanted-to-win-daughter-of-mother-in-corner,4,Short before and long behind',What did the rat tell the youth to repeat?,local,action,,explicit
+5f81816dbafd5107,mr-korbes,4,the cat threw ashes in his eyes,What happened to Mr. Korbes when we returned home?,local,outcome resolution,,explicit
+5fc332801ee55321,momotaro-story-of-son-of-peach,37,annoyed,How did the dog feel about the bird coming along?,local,feeling,,implicit
+a8c4906b52d95d77,gray-eagle-and-his-five-brothers,8,the youngest,Who was not quite as successful in his quest?,local,character,,explicit
+ccb56bbdc7375292,story-of-man-who-did-not-wish-to-die,8,irritated,How did the odd answer make Sentaro feel?,local,feeling,,explicit
+cec21221a4c65425,story-of-man-who-did-not-wish-to-die,19,frightened,How did Sentaro feel at the thought of drowning?,local,feeling,,explicit
+5e85c854e41a574c,brother-sister,1,in a high tree,Where did they fall asleep?,local,setting,,explicit
+30209eca854c5cbc,osseo-the-son-of-the-evening-star,3,Osseo's walking-staff,What did Oweenee say was more precious than all the forests of the north?,local,action,,explicit
+e37e5a62541855ef,youth-who-wanted-to-win-daughter-of-mother-in-corner,2,sang and danced,What did the youth do as he made his way to the mother in the corner?,local,action,,explicit
+0d0150c785965f8d,mother-hulda,"7,8",because she didn't help,Why didn't Mother Hulda give the ugly daughter gold?,summary,causal relationship,,implicit
+e7ef525e5d905c8f,the-coming-of-finn,1,a thousand wax candles,"What caused the vessels of gold, silver, and bronze to shine?",local,causal relationship,,explicit
+a674f82d8c6d5b78,momotaro-story-of-son-of-peach,12,sad,How had the couple felt about having no child?,local,feeling,,implicit
+bc9fa730e54e54c3,story-of-man-who-did-not-wish-to-die,13,Paradise,What could only be reached by dying?,local,action,,explicit
+fe563bb1c00e5e42,momotaro-story-of-son-of-peach,12,astonished,How did the old man and his wife feel when they saw the child?,local,feeling,,explicit
+12cd70d1b0a25096,the-coming-of-finn,6,took from the bag that was at his girdle the instruments of divination and magic,What did Finn do after washing his face?,local,outcome resolution,,explicit
+e2402228b1995caf,wunzh-the-father-of-indian-corn,4,joy,How did Wunzh feel when he saw the visitor reappear?,local,feeling,,explicit
+c9fd3020841f51a6,wunzh-the-father-of-indian-corn,10,the instructions given to him by the stranger,What did Wunzh communicate to his father?,local,action,,explicit
+d6febc89bcc25217,adventures-of-kintaro-golden-boy,1,his beautiful young wife,Who did Kintoki leave behind when he died?,local,character,,explicit
+dcf71f8047745fc1,the-tale-of-jemina-puddle-duck,6,He promised to take great of her nest until she came back again next day.,What did the  gentleman promise to Jemina?,local,action,,explicit
+cc08412616d453a9,mother-hulda,2,take it out of the oven,What did the bread ask her to do?,local,action,,implicit
+a6af9f1206f45b07,troll-wife,3,scared,How will the dragoon feel about marring the girl?,local,prediction,feeling,implicit
+22999486d195556d,the-coming-of-finn,1,the sons of Morna,Who kept Finn out of his rights?,local,character,,explicit
+f53e1990fa805e35,youth-who-wanted-to-win-daughter-of-mother-in-corner,6,shining bright and warm,What was sun doing when the youth stepped out?,local,action,,explicit
+8af0c7003187591a,a-lost-paradise,1,a charcoal-burner and his wife,Who were both young and handsome and strong?,local,character,,explicit
+cce7768f507557a0,adventures-of-kintaro-golden-boy,1,help the woodcutters,What did Kintaro use the large axe for?,local,action,,explicit
+584ff85b1e875e7f,the-adventures-of-gilla-na-chreck-an-gour,2,a fife that nobody could help dancing when he was playing it,What did the giant say he would give Tom?,local,action,,explicit
+039150dc3a3b5c6a,gray-eagle-and-his-five-brothers,1,were left without parents and without food,What happened to the six falcons after their parents were shot?,local,outcome resolution,,explicit
+298c205c5e625d10,the-adventures-of-gilla-na-chreck-an-gour,1,He'll give him that club.,What will the giant do if Tom spares his life?,local,action,prediction,explicit
+6339e060a7485a1a,the-adventures-of-gilla-na-chreck-an-gour,5,get on his hind legs and dance Tatther Jack Walsh along with the rest.,What was the wolf obliged to do?,local,action,,explicit
+d07d574f0bf05043,mother-hulda,1,the pretty one,Which daughter was made to do all the work around the house?,local,character,,explicit
+a6664fde853e5d38,a-lost-paradise,3,grateful,How did the couple feel after the king offered to help them?,local,feeling,,implicit
+c0ec32a762a35eca,youth-who-wanted-to-win-daughter-of-mother-in-corner,12,They had all been enchanted together.,What made the princess and her playmates turn to rats?,local,causal relationship,,explicit
+2b660aa829ae530a,youth-who-wanted-to-win-daughter-of-mother-in-corner,12,The youth had come down to them and never contradicted.,How were the princess and her playmates delivered?,local,action,,explicit
+ba50e1f23d3a5a17,the-origin-of-the-robin,"4,6","He shall always be the friend of men, and keep near their dwellings.",How will Iadilla be forever happy in his new state?,summary,action,prediction,explicit
+449c75aa89d45f24,momotaro-story-of-son-of-peach,"5,6",It was unusually large.,Why did the woman think the peach would be delicious?,summary,causal relationship,,implicit
+f10c13a1e2215dd3,leelinau-the-lost-daughter,5,sat vacantly by,What did Leelinau do when the girls played pappus-e-ko-waun?,local,action,,explicit
+a54cc1197ba55615,story-of-man-who-did-not-wish-to-die,11,frightened,How did Sentaro feel when he first rode on the crane?,local,feeling,,explicit
+340c4215e0745afc,youth-who-wanted-to-win-daughter-of-mother-in-corner,3,sit down and help himself,What did the rat tell the youth to do while he waited?,local,action,,explicit
+01f37206b6195054,twelve-brothers,4,Benjamin soon learnt to make them into dainty dishes.,What happened when the brothers brought their spoils home?,local,outcome resolution,,explicit
+629bef5fba2159a0,the-flying-ogre,"4, 5",reply that he has seen nothing.,What will the old Buddhist monk do when he meets the stranger?,summary,prediction,,explicit
+b862aca9978854b9,momotaro-story-of-son-of-peach,33,beautiful,How did the bird look?,local,character,,explicit
+b7632d9578d15adc,the-coming-of-finn,9,He laughed and from his mouth blew a red fire-ball at the Teck-Midcuarta.,What happened after the enchanter saw all was silent and dark?,local,outcome resolution,,explicit
+485a7e62a1a858f2,rose-of-evening,1,along the Yangtze-kiang,Where was the festival of Dragon Junk held?,local,setting,,explicit
+527f21ac32eb5bae,mr-korbes,2,so that the cat will not fall forward,Why did the cock ask the cat to sit at the back?,local,causal relationship,,implicit
+eacb6a85e6b75ba6,adventures-of-kintaro-golden-boy,1,No one would look for her there.,Why did Kintoki choose to live in the Ashigara mountains to hide from her husband's enemies?,local,causal relationship,,implicit
+2d567e1aa0a25564,the-adventures-of-gilla-na-chreck-an-gour,9,"The poor fellow, between the pain that was only just gone, and the comfort he was in, had the comicalest face that ever you see.",Why did everyone laugh?,local,causal relationship,,explicit
+a81e8a24ba6e5606,story-of-man-who-did-not-wish-to-die,17,He was busy from morning till night.,How did Sentaro grow tired of life in that country?,local,causal relationship,,explicit
+a4782117832e5511,story-of-man-who-did-not-wish-to-die,12,The land and the people seemed prosperous.,Why did Sentaro decide to stay at the island?,local,causal relationship,,explicit
+7a712f227ffd585d,brother-sister,8,worried,How did the sister feel when the fawn leaved for the hunt?,local,feeling,,implicit
+191613dbcf5457c1,momotaro-story-of-son-of-peach,22,cried,What did the old people do when they parted with Momotaro?,local,action,,implicit
+614783b0d7995cab,adventures-of-kintaro-golden-boy,20,Sadamitsu,Who was the woodcutter really?,local,character,,explicit
+b64568688ea559ea,cinderella-or-the-little-glass-slipper,8,her godmother,Who saw Cinderella all in tears?,local,character,,explicit
+41823e54e8415c67,story-of-man-who-did-not-wish-to-die,"2,5","look for the ""Elixir of Life""",What will Sentaro do because he fears death and illness?,summary,prediction,action,implicit
+27e65a54f8f85b44,rose-of-evening,9,The Prince of the Dragon Cave was especially desirous of testing Aduan.,Why did Aduan dance alone?,local,causal relationship,,explicit
+46efc58d95c050ee,youth-who-wanted-to-win-daughter-of-mother-in-corner,5,She told her son that it was the highest time of him to take service.,What happened after the woman had not a bite to eat in the house?,local,outcome resolution,,explicit
+ceaf112de44c5b23,laotsze,"3, 5","follow his teachings, and will be given a place among the immortals",What will happen to the guardian after he meets Laotsze?,summary,prediction,outcome resolution,explicit
+ea1108f5801b5737,twelve-brothers,1,twelve,How many children did the King and Queen have?,local,character,,explicit
+51312ba5928c5c00,momotaro-story-of-son-of-peach,8,homewards,Where did the woman hurry to?,local,setting,,explicit
+bc28a39561265d9e,leelinau-the-lost-daughter,"4,5,6",more sad,How did Leelinau's behavior change the more she visited the fairy wood?,summary,action,,implicit
+cfe0da4944a85ee8,momotaro-story-of-son-of-peach,14,taller and far stronger than any other boys of his own age,What was the boy like at fifteen years of age?,local,character,,explicit
+58c173e4a75b59fc,the-origin-of-the-robin,1,prepare with great ceremony for the important event,What did the old man direct his son to do?,local,action,,explicit
+a07b5fc0f6685c3f,the-adventures-of-gilla-na-chreck-an-gour,2,a giant with two heads on him,Who did Tom have to fight with this time?,local,character,,explicit
+9bb50a498e85560b,adventures-of-kintaro-golden-boy,6,a wrestling match,What game did Kintaro suggest?,local,action,,explicit
+c7e49bef94bf52a7,troll-wife,5,dissatisfied,How did the dragoon feel about his wife?,local,feeling,,implicit
+b66124da862f5a6d,wunzh-the-father-of-indian-corn,2,cleared his heart of every evil thought,What did Wunzh do to prepare himself for the rite?,local,action,,explicit
+fefc49ee8db65125,the-adventures-of-gilla-na-chreck-an-gour,5,Tom,Who was Gilla na Chreck an Gour?,local,causal relationship,,explicit
+44f2bc3da38d5a65,youth-who-wanted-to-win-daughter-of-mother-in-corner,"4,5,7",piles of wool,What will the youth find when he returns home?,summary,prediction,action,implicit
+d340fdf0edfe559f,adventures-of-kintaro-golden-boy,11,Kintaro,Who will figure out how to get across the bridge?,local,character,,explicit
+023dda7d9ffe5f71,wunzh-the-father-of-indian-corn,2,"Wunzh's father, with the help of his younger brothers, built the customary little lodge where he would not be disturbed during the solemn rite.",What happened as soon as the first buds of spring appeared?,local,outcome resolution,,explicit
+7c4ec7179b5a525e,mother-hulda,3,terrified,How did the girl feel when she saw the old woman's teeth?,local,feeling,,explicit
+321061118fe45462,mother-hulda,8,dirty girl,What did the cock call the lazy girl?,local,action,,explicit
+fe8f8350e7525f30,the-constable,4,The King of the Nether World could no come to a decision in the case.,Why did the King of the Nether World ask the Lord of the Great Mountain to settle it?,local,causal relationship,,explicit
+76ebea65c2335308,mother-hulda,1,to wash it,Why did she dip the spindle into the well?,local,causal relationship,,implicit
+4596eafd99a653a0,mother-hulda,6,in the beautiful meadow,Where did the ugly daughter find herself when she jumped down the well?,local,setting,,explicit
+0e2192e6ab2a5825,the-coming-of-finn,10,"The enchanter saw Finn's face, and recognised his conqueror.",What happened to the enchanter on the third occasion Finn caught the fire-ball?,local,outcome resolution,,explicit
+cb7029d6cd515b08,the-origin-of-the-robin,"2,3",encouraged him to persevere,How did the father support his son's fast?,summary,action,,explicit
+2444bbfee818550d,the-adventures-of-gilla-na-chreck-an-gour,2,Tom was sent off again to pick more.,What happened after the sticks were all burned?,local,outcome resolution,,explicit
+883eba994dff5bd8,youth-who-wanted-to-win-daughter-of-mother-in-corner,9,a small fortune,What was brought to the mother and son because of the wool?,local,outcome resolution,,explicit
+88e3b93b1a385064,gray-eagle-and-his-five-brothers,12,not to play the tyrant over those weaker than himself,What did Gray Eagle tell White Owl when he let him go?,local,action,,explicit
+4f00ec18c2675f72,the-adventures-of-gilla-na-chreck-an-gour,1,Tom jumped a-one side and picked up a ram-pike.,What happened after Tom saw the joiant?,local,outcome resolution,action,explicit
+c8d97006fe2e51cd,a-lost-paradise,1,"Bad times came, and they grew poorer and poorer, and the nights in which they went hungry to bed became more and more frequent.",What happened after the charcoal-burner and his wife got married?,local,outcome resolution,,explicit
+23399727743e574d,momotaro-story-of-son-of-peach,44,They were quite happy again.,What happened because the animals grew accustomed to the water?,local,causal relationship,,explicit
+fe820cb19961558b,story-of-man-who-did-not-wish-to-die,"15,16",Everyone else wanted to die.,How was Sentaro the only happy man on the island?,summary,character,action,implicit
+247051a6dfc058ec,momotaro-story-of-son-of-peach,1,They were peasants.,Why did the old man and old woman have to work hard to earn their daily rice?,local,causal relationship,,explicit
+3f38d6eb5b7a52c2,the-bones-of-djulung,4,a tree,What did the bones grow into?,local,action,,explicit
+088cc810f5e35f96,story-of-man-who-did-not-wish-to-die,14,hoped for death to come so that they might go to Paradise,Why did the people drink poison?,local,causal relationship,,explicit
+6a1602d14c9e5e61,the-tale-of-jemina-puddle-duck,5,faggots and turf,What was the dismal-looking house built of?,local,setting,,explicit
+c59a58849678522d,troll-wife,3,The maiden tottered and fell to the ground.,What happened because the dragoon shot off his pistol?,local,outcome resolution,,explicit
+74f815def1285e8c,youth-who-wanted-to-win-daughter-of-mother-in-corner,4,He did not like being down there.,Why was the youth in no hurry to go down the hole again?,local,causal relationship,,implicit
+d50d87cceaba5959,the-coming-of-finn,1,a canopy of bright bronze,What hung over Conn's head?,local,action,,explicit
+9e6556d2a4355b25,the-bones-of-djulung,2,to a cave in front of which a stream fell over some rocks into a basin,Where did the youngest sister put her pet fish?,local,setting,,explicit
+5cf9b0a6af9b547b,osseo-the-son-of-the-evening-star,1,Oweenee,Who was very independent in her way of thinking?,local,character,,explicit
+fc5a865650965138,the-flying-ogre,2,"a girl in a red coat, barefoot, and with unbound hair, who was running as fast as the wind",What did the old Buddhist monk see when he had gone on a few miles?,local,action,,explicit
+283d26469d955618,the-dangerous-reward,7,In about a year's time nearly all his children had died.,What happened when Hu-Wu-Bau's father was appointed as the field god?,local,outcome resolution,,explicit
+ec5aacd0d7995436,momotaro-story-of-son-of-peach,32,They were always snapping at each other.,Why did Momotaro send the dog ahead and the monkey behind?,local,causal relationship,,explicit
+a5a805bfc0385e4c,story-of-man-who-did-not-wish-to-die,20,He cried loudly for help when he thought the shark would eat him.,How did Jofuku know Sentaro's desire for death was not real?,local,action,,implicit
+df5c7bb1d6235573,the-coming-of-finn,4,"Allen, son of Midna",Who was the enchanter?,local,character,,explicit
+e27849841e6654a7,a-lost-paradise,2,The king wanted to enter her home.,Why was the woman surprised?,local,causal relationship,,implicit
+6f2be370e41152dd,momotaro-story-of-son-of-peach,40,the North-Eastern Sea,Where did they at last come out upon?,local,setting,,explicit
+81c33f62bd025599,leelinau-the-lost-daughter,12,the chieftain of the Green Plume,Who was Leelinau's fairy lover?,summary,character,,explicit
+af9797bc17765f63,lord-of-hill-and-john-blessom,3,to not look around when he heard a roaring and notice a flare of light.,What did the man make John promise?,local,action,,explicit
+3d18637d0e8c5b84,gray-eagle-and-his-five-brothers,11,A large white owl laid claim to it.,What happened just as Peepi was getting to land with his prize?,local,outcome resolution,,explicit
+3aa12632d698572b,adventures-of-kintaro-golden-boy,10,was now the victor,Why did the monkey forget his sore back?,local,causal relationship,,explicit
+5ba25b488a525167,the-adventures-of-gilla-na-chreck-an-gour,3,Tom looked funny.,Why did the guards laugh at Tom instead of letting him through?,local,causal relationship,,implicit
+feebcc7ad15552e0,the-bones-of-djulung,1,in a beautiful island,Where did the seven sisters live?,local,setting,,explicit
+932afedcf93053af,momotaro-story-of-son-of-peach,21,cakes,What did the old man and woman make for Momotaro?,local,action,,explicit
+28e6eb4da0ca5277,the-origin-of-the-robin,5,pity,How did the robin feel when it looked down upon its father?,local,feeling,,explicit
+e4f6b983c2c4531b,the-adventures-of-gilla-na-chreck-an-gour,2,There were no more giants.,Why could Tom gather sticks without giants or fairy men coming to disturb him?,local,causal relationship,,implicit
+b9a9dbace73f5618,rose-of-evening,"20, 21",joy,How will Aduan's mother feel when she sees him?,summary,prediction,feeling,explicit
+403a53ef3e9a57c6,the-adventures-of-gilla-na-chreck-an-gour,"4,5","There was no more fighting that day, and Tom was invited to dine with the royal family.",What happened after Tom said he quartered of the princess?,summary,outcome resolution,,explicit
+f7ca23b150b553ea,a-lost-paradise,2,his palace,Where did the king tell the couple to go with him?,local,setting,,explicit
+dd438eb2945951a3,adventures-of-kintaro-golden-boy,1,Kyoto,Where did Kintoki live?,local,setting,,explicit
+b045348451f256a0,the-adventures-of-gilla-na-chreck-an-gour,6,Redhead,Who did the wolf keep his eyes on?,local,character,,explicit
+500241a9b514522c,cinderella-or-the-little-glass-slipper,1,a young daughter,Who took unparalleled goodness and sweetness of temper from her mother?,local,character,,explicit
+e065f109c10151bc,momotaro-story-of-son-of-peach,53,the two ladies led the way,How did Momotaro get into the castle?,local,action,,explicit
+6b79321e7b585c0a,story-of-man-who-did-not-wish-to-die,15,wearisome,How did their long lives make the people feel?,local,feeling,,explicit
+750fff4c60b25653,laotsze,"4, 5",cast himself to earth and pleaded for him,What will the guardian do when he sees the servant collapse?,summary,prediction,action,explicit
+3b8a7f0d39af5d79,youth-who-wanted-to-win-daughter-of-mother-in-corner,13,when the youth's mother came,When did the wedding festivities begin?,local,setting,,explicit
+e2c06cfa67c15a70,rose-of-evening,2,They were so close to the water.,Why were the boys in danger when they performed tricks?,local,causal relationship,,implicit
+727c72c065ea5e7d,adventures-of-kintaro-golden-boy,10,satisfied,How did the monkey feel after winning?,local,feeling,,explicit
+7cbad803b5685d0b,brother-sister,11,so she could sneak into the castle,Why did the old witch take the shape of a bedchamber woman?,local,causal relationship,,implicit
+8f64ed4b50ce57c6,gray-eagle-and-his-five-brothers,8,good nursing,What made Gray Eagle recover from his wound?,local,causal relationship,,explicit
+0368dee0ee1651f1,youth-who-wanted-to-win-daughter-of-mother-in-corner,9,"clasped her hands together over her head, and nearly fainted with joy.",What did the mother do when she came to the door?,local,action,,explicit
+9b461ac01a37525e,the-constable,1,in a city in the neighborhood of Kaiutschou,Where did Dung live?,local,setting,,explicit
+ca57838bdd525073,the-dangerous-reward,"7, 8","appoint another field-god for that village, and also give the father another place",What will the Lord of the Mountain do when Hu-Wu-Bau's father does not fulfill his duty?,summary,prediction,action,explicit
+af642f9f308b55e8,rose-of-evening,6,beat upon enormous cymbals,What did the dancers do for the dance of the Ogres?,local,action,,explicit
+b31d011a716f5e56,the-constable,"10, 11",Wang will want to disclose his master's crimes to the State.,What will happen after Wang hears about his master's crimes?,summary,prediction,outcome resolution,implicit
+724db64ac4535c0c,the-origin-of-the-robin,"3,6",Iadilla did not become a star among the chieftains and the beloved of battle.,How did Iadilla fail to gratify his father's wishes as a warrior?,summary,action,,implicit
+839300dc87d95de7,momotaro-story-of-son-of-peach,24,He began to feel hungry.,Why did Momotaro take a rice-cake and sit down?,local,causal relationship,,explicit
+790071587a0d5022,the-top-and-ball,1,a dress of morocco leather,What was the ball wearing?,local,character,,explicit
+00622e3d66fb53e7,red-shoes,5,red,Which color shoes did Karen put on?,local,action,,explicit
+24342af90bd659ba,story-of-man-who-did-not-wish-to-die,"9,10",Sentaro was found of good living and of every comfort.,Why did Jofuku think Sentaro could not become a hermit?,summary,causal relationship,,explicit
+7f9e20eb487a58a1,the-adventures-of-gilla-na-chreck-an-gour,"4,5,6",jealous,How will Redhead feel when he sees Tom succeed in every challenge?,summary,prediction,,implicit
+cf15b9a346715c72,momotaro-story-of-son-of-peach,5,surprised,How did the woman feel when she saw the peach?,local,feeling,,implicit
+52f08656468f5107,momotaro-story-of-son-of-peach,55,They were a sign of his strength ad power.,Why were the devil's broken horns a token of submission?,local,causal relationship,,explicit
+a1182370fd8b5932,cinderella-or-the-little-glass-slipper,11,three huge rats,What did Cinderella find on the trap?,local,character,,explicit
+97c4712368fa56ba,red-shoes,3,red,What color were the shoes Karen picked out?,local,action,,explicit
+62d94a8a7cc250e3,troll-wife,6,He was scared of his wife.,Why did the dragoon turn into one of the best husbands?,local,causal relationship,,implicit
+e43cf809758d5e68,story-of-man-who-did-not-wish-to-die,4,Jofuku,Who brought up the hermits and Horaizan?,local,character,,explicit
+d2220f2d316a51ac,cinderella-or-the-little-glass-slipper,16,took up most carefully,What did the prince do after Cinderella left behind one of her glass slippers?,local,action,,explicit
+93f36017459859aa,a-lost-paradise,7,"A small mouse had sprung from the inside of the tureen, and had nearly hit her in the eye.",Why did the wife scream after her husband lifted the lid?,local,causal relationship,,explicit
+f17cb50dc2365d5d,troll-wife,1,a maiden,Who was among the mountain folk?,local,character,,explicit
+91db38b7e1855d5e,story-of-man-who-did-not-wish-to-die,5,Mount Fuji,Where has been said to be the fabled Horaizan and home of hermits?,local,setting,,explicit
+271d3451d5f85aeb,wunzh-the-father-of-indian-corn,2,at a retired sport at some distance from their own,Where was Wunzh's customary little lodge?,local,setting,,explicit
+98481a2a3d545a3f,momotaro-story-of-son-of-peach,16,take care of them,What would Momotaro do when he turns older according to the old man?,local,action,,explicit
+5c6f4aa1dab35570,the-top-and-ball,4,because he could not get a hold of her,Why did the top's love for the ball increase?,local,causal relationship,,explicit
+59f2575394715a4d,momotaro-story-of-son-of-peach,6,stretched out her arm,How did the woman try to get the peach?,local,action,,explicit
+e56e347f3fd55db9,the-origin-of-the-robin,1,to prepare and purify him for communion with his good spirit,Why was Iadilla in the sweating-lodge and bath several times?,local,causal relationship,,explicit
+c5292969412d5783,youth-who-wanted-to-win-daughter-of-mother-in-corner,1,unhappy,How did the woman feel about her son singing and dancing?,local,feeling,,implicit
+32373f3af6e55a32,story-of-man-who-did-not-wish-to-die,7,a hunter,Who did Sentaro meet?,local,character,,explicit
+400f09306485515a,momotaro-story-of-son-of-peach,9,as the sun was setting,When did the man return?,local,action,,explicit
+0653afdeb0845471,youth-who-wanted-to-win-daughter-of-mother-in-corner,"11,12",six white horses,What had the six large rats turned into?,summary,character,action,explicit
+a95dd325922a5fe1,momotaro-story-of-son-of-peach,26,respect,How did the dog feel about Momotaro?,local,feeling,,implicit
+5b3d32c24a8e5e10,adventures-of-kintaro-golden-boy,19,hid him away in this unknown part of the country,What did Kintaro's mother do because of Kintaro's strength?,local,action,,explicit
+7561145885d258fe,the-flying-ogre,5,"slain a countless number of them, and have pretty well done away with them",What did the stranger do to flying ogres?,local,action,,explicit
+edee683442325302,momotaro-story-of-son-of-peach,45,listen to the three animals,What did Momotaro do to amuse himself?,local,action,,explicit
+88dda20d005152e4,the-adventures-of-gilla-na-chreck-an-gour,3,drove his bagnet half an inch or so into his side,What did one of the guards do?,local,action,,explicit
+a6030bee754a524d,story-of-man-who-did-not-wish-to-die,9,The door of the innermost shrine flew open and Jofuku appeared.,What happened at midnight of the seventh day?,local,action,,explicit
+1900db535da251c7,the-constable,17,obtain a place for Dung as constable in the Nether World,What did the spirit want to do after Dung's mortal life ended?,local,action,,explicit
+c9da8c56246e5e32,adventures-of-kintaro-golden-boy,6,dug up the earth and pat it into shape,How did the bear make the platform for the wrestlers?,local,action,,explicit
+298ca3a89d6b5d53,story-of-man-who-did-not-wish-to-die,2,emperors,What types of people lived a long time?,local,character,,explicit
+25a351b993a95d56,momotaro-story-of-son-of-peach,17,He was quite different to all other boys.,Why did the old man allow Momotaro to do whatever he wished?,local,causal relationship,,explicit
+512e89b2787859b0,the-constable,9,told the inn-keeper's mother to ask his wife,What did Wang tell the inn-keeper's mother to do?,local,action,,implicit
+fca47dbd85795236,story-of-man-who-did-not-wish-to-die,10,Sentaro would not make it as a hermit.,Why did Jofuku offer Sentaro another way to answer his prayer?,local,causal relationship,,implicit
+deddd97bf39f5dd5,the-bones-of-djulung,2,She wanted to save some for her pet fish.,Why didn't the youngest sister finish her dinner?,local,causal relationship,,implicit
+fc25556fbd0059d7,the-coming-of-finn,4,"This annual building of Tara, only to be annually consumed.",What was the cause of shame?,local,causal relationship,,explicit
+8b7b7f6c660950e7,leelinau-the-lost-daughter,1,Kaug Wudjoo,Where did Leelinau live?,local,setting,,explicit
+f64195daa8735485,the-coming-of-finn,13,joy,How did the men feel when they saw Midna's head?,local,feeling,,explicit
+df5fc50772bf5601,twelve-brothers,5,a gold star,What did their little sister have on her forehead?,local,character,,explicit
+5a2e5eacefee5a61,the-bones-of-djulung,5,He wanted to know about the tree.,Why did the king order the seven girls to come to him?,local,causal relationship,,implicit
+c1edc23058035d3f,momotaro-story-of-son-of-peach,47,He has good wings.,Why did Momotaro send the bird first?,local,causal relationship,,explicit
+92760b82abe7582b,the-adventures-of-gilla-na-chreck-an-gour,7,the loan of that flail that he saw hanging on the collar-beam for the King of Dublin to give a thrashing to the Danes.,What was Tom's business with the Ould Boy?,local,action,,explicit
+40df7fe32c615963,troll-wife,4,"Take her up before him on his horse, and ride into town and marry her.",What did the old man tell the dragoon to do with the girl?,local,action,,explicit
+82bc27a248e152de,momotaro-story-of-son-of-peach,5,try and get it,What will the woman do after she sees the peach?,local,prediction,action,explicit
+530784d655e75864,momotaro-story-of-son-of-peach,41,They had never seen the sea before.,Why were the animals bewildered?,local,causal relationship,,explicit
+55569951ee135346,cinderella-or-the-little-glass-slipper,4,delighted,How did the young misses feel after being invited to the ball?,local,feeling,,explicit
+de53ccac740551f1,the-dangerous-reward,7,scared,How did Hu-Wu-Bau feel when his children had died?,local,feeling,,implicit
+01918a1bc53d5274,the-flying-ogre,1,a tree,What did the old Buddhist monk see when he came to Kuku-Nor?,local,action,,explicit
+6b3e9708a64f5205,momotaro-story-of-son-of-peach,4,took them out one by one,How did the woman wash the clothes?,local,action,,explicit
+ce88b66d8c41578b,momotaro-story-of-son-of-peach,10,She wanted to show her husband the peach.,Why was the woman so impatient?,local,causal relationship,,implicit
+afef1c840f49589e,the-tale-of-jemina-puddle-duck,7,two onions,What did Jemima get from the kitchen?,local,action,,explicit
+89b44d48c08057ba,rose-of-evening,13,a lotus field,Where did the boy lead Aduan?,local,setting,,explicit
+fa00c777b6685c8f,storks,3,they were afraid,why did the little ones draw their beaks into the nest?,local,causal relationship,feeling,implicit
+b255db49f65156dc,the-adventures-of-gilla-na-chreck-an-gour,4,They wanted to fight Tom.,Why did the fellows gather around Tom?,local,causal relationship,,implicit
+c3461d61fbba5880,the-teapot,"4,5",glad,how did the teapot feel about holding the flower?,summary,feeling,,explicit
+c61a036ab38d54fa,leelinau-the-lost-daughter,3,Leelinau was of so gentle and delicate a temper that they feared to thwart her.,Why were Leelinau's parents not able to restrain Leelinau's frequent visits to the fairy wood?,local,causal relationship,,explicit
+a108facb89d65d01,the-dangerous-reward,3,green silk shoes,What did the river-god give Hu-Wu-Bau as a gift?,local,action,,explicit
+b719f15eec25573c,story-of-man-who-did-not-wish-to-die,15,It was supposed to turn hair slightly gray and bring about disorders of the stomach.,Why was the drug in the chemist shop in constant demand?,local,causal relationship,,explicit
+7de742132d24573d,the-adventures-of-gilla-na-chreck-an-gour,10,They heard of the flail coming into Dublin.,Why did the Danes' ship sail away?,local,causal relationship,,explicit
+78aa4b0054385f71,the-coming-of-finn,7,between the palace and Conn,Where was the House-of-the-going-round-of-Mead?,local,setting,,explicit
+64e888bfb9ad5657,rose-of-evening,8,the swallow dancers,Who were all little girls?,local,character,,explicit
+4b0bb89f593f5fa0,brother-sister,15,he took human shape again,What happened to the fawn when the witch was burned?,local,outcome resolution,,explicit
+17a5949a0b4f511b,osseo-the-son-of-the-evening-star,12,joined hands and danced,What did the village do to mark the homage to the King of the Evening Star?,local,action,,explicit
+433763c373fc5d76,adventures-of-kintaro-golden-boy,"4,5",satisfied,How did Kintaro and the animals feel about the field?,summary,action,,implicit
+5921fba56d1255a6,the-flying-ogre,6,The ogre had probably been hit by an arrow or captured.,What happened to the ogre after the old Buddhist monk revealed where she was hiding?,local,outcome resolution,,explicit
+830e2c3c8cdf51e2,the-tale-of-jemina-puddle-duck,4,He had a long bushy tail which he was sitting upo. He also had sandy whiskers.,How does the story describe the gentleman's appereance?,local,character,,explicit
+45ada62a02335113,leelinau-the-lost-daughter,"3,4,10",feels withdrawn from others,Why will Leelinau go to the fairy wood?,summary,prediction,causal relationship,implicit
+5711bccf1c365b5a,youth-who-wanted-to-win-daughter-of-mother-in-corner,"7,10",the wedding,What will happen now that the youth has returned again?,summary,prediction,action,implicit

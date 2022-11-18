@@ -1,0 +1,4 @@
+name: QG
+channels:
+  - defaults
+prefix: /home/zw16/.conda/envs/QG
