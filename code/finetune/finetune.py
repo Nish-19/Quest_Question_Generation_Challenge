@@ -22,11 +22,11 @@ from transformers import AdamW, get_linear_schedule_with_warmup
 import pytorch_lightning as pl
 from pytorch_lightning import Trainer
 from pytorch_lightning.strategies.ddp import DDPStrategy
-from pytorch_lightning.loggers import WandbLogger
+from pytorch_lightning.loggers import WandbLogger, CSVLogger
 from pytorch_lightning.callbacks import EarlyStopping, LearningRateMonitor, ModelCheckpoint
 
 os.environ['WANDB_NOTEBOOK_NAME'] = 'FinetuneTransformer'
-wandb.login()
+
 
 # %%
 def clean_str(text):
@@ -65,12 +65,18 @@ def construct_transformer_input(story, answer, choice=1):
     inps = []
     if choice == 1:
         prefix = 'Generate question from story and answer: '
+        suffix = ''
     elif choice == 2:
         prefix = 'Generate question: '
-    else:
+        suffix = ''
+    elif choice == 3:
         prefix = ''
+        suffix = ''
+    elif choice == 4:
+        prefix = 'Generate question from story and answer: '
+        suffix = '\nThe question is:'
     for stry, ans in zip(story, answer):
-        transformer_input = prefix + ' The story is ' + stry + ' The answer is ' + ans 
+        transformer_input = prefix + '\nThe story is ' + stry + '\nThe answer is ' + ans + suffix
         inps.append(transformer_input)
     return inps
 
@@ -209,6 +215,7 @@ class FinetuneTransformer(pl.LightningModule):
 
 def add_params():
     parser = argparse.ArgumentParser()
+    parser.add_argument('-W', '--wandb', action=argparse.BooleanOptionalAction, help='For Wandb logging')
     parser.add_argument("-B", "--batch_size", type=int, default=8, help="Batch size for training the Transformer Model")
     parser.add_argument("-L", "--learning_rate", type=float, default=3e-4, help="Learning Rate for training the Transformer Model")
     parser.add_argument("-E", "--num_epochs", type=int, default=5, help="Total Number of Epochs")
@@ -275,7 +282,12 @@ if __name__ == '__main__':
         num_train_epochs=max_epochs, lr=args.learning_rate)
 
     # Trainig code
-    wandb_logger = WandbLogger(name=args.run_name, project='Quest_Gen_Challenge')
+    if args.wandb:
+        wandb.login()
+        logger = WandbLogger(name=args.run_name, project='Quest_Gen_Challenge')
+    else:
+        logger = CSVLogger("run_results", name=args.run_name)
+
 
     early_stop_callback = EarlyStopping(
         monitor='validation_loss',
@@ -290,9 +302,10 @@ if __name__ == '__main__':
     save_directory = os.path.join('./code/finetune/Checkpoints', args.run_name)
     save_checkpoint =  ModelCheckpoint(dirpath=save_directory, monitor='validation_loss', save_top_k=1)
 
+
     trainer = Trainer(accelerator='gpu', devices=args.num_devices, 
                     default_root_dir=save_directory, 
-                    logger=wandb_logger, 
+                    logger=logger, 
                     max_epochs=max_epochs,
                     callbacks=[early_stop_callback, lr_monitor, save_checkpoint],
                     strategy = DDPStrategy(find_unused_parameters=False))
