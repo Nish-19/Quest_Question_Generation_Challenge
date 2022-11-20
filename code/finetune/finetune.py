@@ -22,6 +22,7 @@ from transformers import AdamW, get_linear_schedule_with_warmup
 import pytorch_lightning as pl
 from pytorch_lightning import Trainer
 from pytorch_lightning.strategies.ddp import DDPStrategy
+from pytorch_lightning.strategies import DeepSpeedStrategy
 from pytorch_lightning.loggers import WandbLogger, CSVLogger
 from pytorch_lightning.callbacks import EarlyStopping, LearningRateMonitor, ModelCheckpoint
 
@@ -308,7 +309,13 @@ if __name__ == '__main__':
                     logger=logger, 
                     max_epochs=max_epochs,
                     callbacks=[early_stop_callback, lr_monitor, save_checkpoint],
-                    strategy = DDPStrategy(find_unused_parameters=False))
+#                    strategy = DDPStrategy(find_unused_parameters=False))
+                    strategy = DeepSpeedStrategy(
+                                    stage=3,
+                                    offload_optimizer=True,
+                                    offload_parameters=True,
+                                    )
+                    )
 
     trainer.fit(model)
 
