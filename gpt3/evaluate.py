@@ -41,11 +41,13 @@ import argparse
 import json
 import time
 import numpy as np
+import torch
+from sentence_transformers import SentenceTransformer
 
 from code.utils.create_dataset_split import load_df, save_csv
 from code.gpt3.prepare_dataset import load_stories, clean_str, create_prompt
 from code.gpt3.run_model import run_gpt3
-from code.incontext.create_prompt_incontext import create_prompt_incontext
+from code.incontext.create_prompt_incontext import create_prompt_incontext, get_corpus_embedding
 
 
 RAW_DIR = "./data"
@@ -69,19 +71,30 @@ def add_params():
     parser.add_argument("--stop", type=str, default='\n', help="Stop sequence")
     # In-context learning parameters
     parser.add_argument('--incontext', action='store_true', help='Use in-context learning')
-    parser.add_argument('--incontext_mode', type=str, default="random", choices=["random", "all_types", "retrieval"], help="In-context learning mode")
+    parser.add_argument('--incontext_mode', type=str, default="random", choices=["random", "all_types", "retrieval_topk", "retrieval_all_types", "augment"], help="In-context learning mode")
     parser.add_argument("--num_incontext_ex", type=int, default=7, help="Number of incontext examples to use")
     parser.add_argument('--pack_max', action='store_true', help='Pack with max number of in-context examples possible')
+    parser.add_argument('--augment_on_single_story', action='store_true', help='Use single story for in-context learning to generate samples from')
+    # Retrieval parameters
+    parser.add_argument("--embedder_model", type=str, default='all-MiniLM-L6-v2', help="Embedder model for retrieval (mpall-mpnet-base-v2, etc)")
+    parser.add_argument("--retrieval_query", type=str, default="story_answer", choices=["story_answer", "story", "answer"], help="Queries to use for retrieval")
+
     params = parser.parse_args()
     
     return params
 
 
-def evaluate_gpt3(df_eval, df_train, story_map, args):
+def evaluate_gpt3(df_eval, df_train, story_map, args, device):
     tqdm.pandas()
     # Create prompt 
+    print(f"Creating prompts...")
     if( args.incontext ):
-        df_eval = df_eval.progress_apply(lambda row: create_prompt_incontext(row, story_map, df_train, args), axis=1)
+        if( "retrieval" in args.incontext_mode ):
+            embedder = SentenceTransformer(args.embedder_model)
+            corpus_embeddings, corpus = get_corpus_embedding(embedder, df_train, story_map, args, device)
+            df_eval = df_eval.progress_apply(lambda row: create_prompt_incontext(row, story_map, df_train, df_eval, args, device, embedder, corpus_embeddings, corpus), axis=1)
+        else:
+            df_eval = df_eval.progress_apply(lambda row: create_prompt_incontext(row, story_map, df_train, df_eval, args, device), axis=1)
     else:
         df_eval["prompt"] = df_eval.progress_apply(lambda row: create_prompt(row, story_map, args.add_instructions), axis=1)
 
@@ -89,16 +102,15 @@ def evaluate_gpt3(df_eval, df_train, story_map, args):
     # Batch prompts to avoid rate limit on Codex
     # https://help.openai.com/en/articles/5955598-is-api-usage-subject-to-any-rate-limits
     # https://github.com/openai/openai-cookbook/blob/main/examples/How_to_handle_rate_limits.ipynb
+    print(f"Running model...")
     df_eval["generated_question"] = ""
     for chunk in tqdm(np.split(df_eval, np.arange(MAX_PARALLEL_PROMPTS_CODEX, len(df_eval), MAX_PARALLEL_PROMPTS_CODEX))):
         questions = run_gpt3(chunk["prompt"].tolist(), args)
         chunk["generated_question"] = questions
         df_eval.update(chunk)
     
-    """
     # Without batching prompts
-    df_eval["generated_question"] = df_eval.progress_apply(lambda row: run_gpt3(row["prompt"], args), axis=1)
-    """
+    #df_eval["generated_question"] = df_eval.progress_apply(lambda row: run_gpt3(row["prompt"], args), axis=1)
 
     return df_eval
 
@@ -119,6 +131,9 @@ def clean_data(df):
 def main():
     args = add_params()
     
+    device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
+    os.environ["TOKENIZERS_PARALLELISM"] = "false"
+
     # For prompting a non finetuned model, i.e., zero shot or few shot learning on off-the-shelf models, add instructions as prefix
     if args.model_name in ["ada", "babbage", "curie", "davinci"]: 
         assert args.add_instructions 
@@ -127,18 +142,20 @@ def main():
     story_map = load_stories()
     
     # Load evaluation set
-    nrows = 10 if args.debug else None
+    nrows = 50 if args.debug else None
     folder = os.path.join(RAW_DIR, args.eval_folder)
     df_eval = load_df(args.eval_filename, folder, nrows=nrows)
     df_eval = clean_data(df_eval)
 
     # Load train data for in-context samples
     folder = os.path.join(RAW_DIR, "train_val_split_csv")
-    df_train = load_df("train.csv", folder)
+    df_train = load_df("train.csv", folder, nrows=nrows)
     df_train = clean_data(df_train)
+    # Rename attribute types to one word keywords
+    df_train["attribute1"].replace({"causal relationship": "causal", "outcome resolution": "outcome"}, inplace=True)
     
     # Run GPT-3 model for evaluation
-    df_eval = evaluate_gpt3(df_eval, df_train, story_map, args)
+    df_eval = evaluate_gpt3(df_eval, df_train, story_map, args, device)
     
     # Save evaluation responses
     folder = os.path.join(RAW_DIR, "results/{}".format(args.eval_folder))

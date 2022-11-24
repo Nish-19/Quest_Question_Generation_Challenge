@@ -213,6 +213,9 @@ python3.9 -m code.gpt2.evaluate \
 
 In-context prompting:
 
+
+
+
 python -m code.gpt3.evaluate \
     --model_name "code-davinci-002" \
     --eval_type "local_val" \
@@ -269,9 +272,98 @@ python -m code.gpt3.evaluate \
     --incontext_mode "random"
 
 
+
 Zero shot codex model:
 python -m code.gpt3.evaluate \
     --model_name "code-davinci-002" \
     --eval_type "local_val" \
     --add_instructions \
     --stop "?"
+
+
+
+Zero shot gpt3 davinci model:
+
+python -m code.gpt3.evaluate \
+    --model_name "text-davinci-002" \
+    --eval_type "local_val" \
+    --add_instructions \
+    --stop "?"
+
+
+Incontext prompting
+
+Retrieval:
+python3.9 -m code.gpt3.evaluate \
+    --model_name "code-davinci-002" \
+    --eval_type "local_val" \
+    --add_instructions \
+    --stop "?" \
+    --incontext \
+    --incontext_mode "retrieval_all_types" \
+    --retrieval_query "story_answer" 
+
+python3.9 -m code.gpt3.evaluate \
+    --model_name "code-davinci-002" \
+    --eval_type "local_val" \
+    --add_instructions \
+    --stop "?" \
+    --incontext \
+    --incontext_mode "retrieval_all_types" \
+    --retrieval_query "story" 
+
+python3.9 -m code.gpt3.evaluate \
+    --model_name "code-davinci-002" \
+    --eval_type "local_val" \
+    --add_instructions \
+    --stop "?" \
+    --incontext \
+    --incontext_mode "retrieval_all_types" \
+    --retrieval_query "answer" 
+
+python3.9 -m code.gpt3.evaluate \
+    --model_name "code-davinci-002" \
+    --eval_type "local_val" \
+    --add_instructions \
+    --stop "?" \
+    --incontext \
+    --incontext_mode "retrieval_topk" \
+    --retrieval_query "story_answer" 
+
+python3.9 -m code.gpt3.evaluate \
+    --model_name "code-davinci-002" \
+    --eval_type "local_val" \
+    --add_instructions \
+    --stop "?" \
+    --incontext \
+    --incontext_mode "retrieval_topk" \
+    --retrieval_query "story" 
+
+python3.9 -m code.gpt3.evaluate \
+    --model_name "code-davinci-002" \
+    --eval_type "local_val" \
+    --add_instructions \
+    --stop "?" \
+    --incontext \
+    --incontext_mode "retrieval_topk" \
+    --retrieval_query "answer" 
+
+
+
+Augment:
+python3.9 -m code.gpt3.evaluate \
+    --model_name "code-davinci-002" \
+    --eval_type "local_val" \
+    --add_instructions \
+    --stop "?" \
+    --incontext \
+    --incontext_mode "augment"
+
+python3.9 -m code.gpt3.evaluate \
+    --model_name "code-davinci-002" \
+    --eval_type "local_val" \
+    --add_instructions \
+    --stop "?" \
+    --incontext \
+    --incontext_mode "augment" \
+    --augment_on_single_story

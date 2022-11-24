@@ -17,7 +17,7 @@ BLEURT:  0.5448525935956617 (without normalization)
 
 python -m code.utils.compute_eval_metric \
     --eval_folder train_val_split_csv \
-    --eval_filename code-davinci-002_20221118-030743.csv \
+    --eval_filename text-davinci-002_20221122-202844.csv \
     --batch_size 128
 
 GPT-3 Curie:
@@ -33,6 +33,9 @@ incontext random without pack_max = 0.48398684873056363
 incontext all with pack_max = 0.4813110683779649
 incontext random with pack_max = 0.4757306356043593
 
+
+GPT-3 Davinci:
+zero shot = 0.3788071376294261
 
 
 GPT2 finetuned with CLM loss on question only:
@@ -124,7 +127,7 @@ def ceildiv(a, b):
 
 def grade_score_with_batching(df, bleurt, batch_size=64):
     # Add batching to speed up BLEURT model computation
-    # Note: BLEURT metric is non commutative, therefore predictions must match questions generated
+    # Note: BLEURT metric is non commutative, therefore predictions named function argument must match questions generated
     df['question'] = df['question'].apply(normalize)
     df['generated_question'] = df['generated_question'].apply(normalize)
 
