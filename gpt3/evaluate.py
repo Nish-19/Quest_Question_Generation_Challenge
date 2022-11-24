@@ -76,7 +76,7 @@ def add_params():
     parser.add_argument('--pack_max', action='store_true', help='Pack with max number of in-context examples possible')
     parser.add_argument('--augment_on_single_story', action='store_true', help='Use single story for in-context learning to generate samples from')
     # Retrieval parameters
-    parser.add_argument("--embedder_model", type=str, default='all-MiniLM-L6-v2', help="Embedder model for retrieval (mpall-mpnet-base-v2, etc)")
+    parser.add_argument("--embedder_model", type=str, default='all-mpnet-base-v2', help="Embedder model for retrieval (all-mpnet-base-v2, all-MiniLM-L6-v2, etc)")
     parser.add_argument("--retrieval_query", type=str, default="story_answer", choices=["story_answer", "story", "answer"], help="Queries to use for retrieval")
 
     params = parser.parse_args()

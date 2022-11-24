@@ -17,7 +17,7 @@ BLEURT:  0.5448525935956617 (without normalization)
 
 python -m code.utils.compute_eval_metric \
     --eval_folder train_val_split_csv \
-    --eval_filename text-davinci-002_20221122-202844.csv \
+    --eval_filename code-davinci-002_20221124-035154.csv \
     --batch_size 128
 
 GPT-3 Curie:
@@ -146,7 +146,7 @@ def grade_score_with_batching(df, bleurt, batch_size=64):
 def main():
     args = add_params()
     
-    # Load BLUERT metric
+    # Load BLEURT metric
     bleurt = evaluate.load('bleurt', 'bleurt-20')
     
     # Load question generations
@@ -171,7 +171,7 @@ def main():
     print("Mean BLEURT grouped by question explicit vs implicit:\n", df_pred.groupby('ex_or_im')['bleurt_score'].agg(['mean', 'count']))
 
     # Save file with BLEURT scores
-    save_csv(df_pred, "{}_bluert".format(args.eval_filename.split(".")[0]), folder)
+    save_csv(df_pred, "{}_bleurt".format(args.eval_filename.split(".")[0]), folder)
 
 
 if __name__ == '__main__':

@@ -302,6 +302,8 @@ python3.9 -m code.gpt3.evaluate \
     --incontext \
     --incontext_mode "retrieval_all_types" \
     --retrieval_query "story_answer" 
+code-davinci-002_20221124-033430
+0.48661857419382265
 
 python3.9 -m code.gpt3.evaluate \
     --model_name "code-davinci-002" \
@@ -329,6 +331,8 @@ python3.9 -m code.gpt3.evaluate \
     --incontext \
     --incontext_mode "retrieval_topk" \
     --retrieval_query "story_answer" 
+code-davinci-002_20221124-035154
+0.4885043883544764
 
 python3.9 -m code.gpt3.evaluate \
     --model_name "code-davinci-002" \
@@ -358,6 +362,8 @@ python3.9 -m code.gpt3.evaluate \
     --stop "?" \
     --incontext \
     --incontext_mode "augment"
+code-davinci-002_20221123-204720
+BLEURT = 0.5100783299185275
 
 python3.9 -m code.gpt3.evaluate \
     --model_name "code-davinci-002" \
@@ -367,3 +373,5 @@ python3.9 -m code.gpt3.evaluate \
     --incontext \
     --incontext_mode "augment" \
     --augment_on_single_story
+code-davinci-002_20221123-215506
+BLEURT = 0.44696097889142794

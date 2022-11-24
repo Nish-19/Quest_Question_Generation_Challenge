@@ -8,7 +8,7 @@ import openai
 def run_gpt3(prompts, args):
     # Slow down requests to avoid rate limit for codex
     if("code" in args.model_name):
-        time.sleep(7)
+        time.sleep(12)
     # TODO increase max_tokens if attribute has to be predicted as well
     response = openai.Completion.create(model=args.model_name, 
                                     prompt=prompts, 
