@@ -1,5 +1,5 @@
 '''
-python -m code.finetune.inference -MT T -N t5_small -M t5-small
+python -m code.finetune.inference -N t5_small -M t5-small
 '''
 
 import argparse
