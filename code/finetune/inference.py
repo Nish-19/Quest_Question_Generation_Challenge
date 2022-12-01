@@ -2,6 +2,9 @@
 python -m code.finetune.inference -N t5_small -M t5-small
 '''
 
+import GPUtil
+from threading import Thread
+import time
 import argparse
 import re
 import wandb, os
@@ -66,9 +69,9 @@ def construct_transformer_input(story, answer, choice=1):
 # Tokenization
 def get_transformer_encoding(tokenizer, transformer_inputs, question):
     # tokenizer = T5Tokenizer.from_pretrained(model_name)
-    max_source_length, max_target_length = 512, 128
+    max_source_length, max_target_length = 512, 512
 
-    inp_encoding = tokenizer(transformer_inputs, padding='longest', 
+    inp_encoding = tokenizer(transformer_inputs, padding='longest', # longest 
                         max_length=max_source_length,
                         truncation=True,
                         return_tensors="pt"
@@ -135,13 +138,29 @@ def get_preds(tokenizer, generated_tokens):
         val_preds.append(sample)
     return val_preds
 
+class Monitor(Thread):
+    def __init__(self, delay):
+        super(Monitor, self).__init__()
+        self.stopped = False
+        self.delay = delay # Time between calls to GPUtil
+        self.start()
+
+    def run(self):
+        while not self.stopped:
+            GPUtil.showUtilization()
+            time.sleep(self.delay)
+
+    def stop(self):
+        self.stopped = True
+
 def add_params():
     parser = argparse.ArgumentParser()
+    parser.add_argument('-TGU', '--track_gpu_usage', action=argparse.BooleanOptionalAction, help='Track GPU Usage')
     parser.add_argument("-F", "--eval_folder", type=str, default="train_val_split_csv", help="Evaluation Folder where output is saved")
     parser.add_argument("-B", "--batch_size", type=int, default=8, help="Batch size for passing through the Transformer Model")
-    parser.add_argument("-N", "--run_name", type=str, default="t5-small", help="Name of the Run (Used in storing the model)")
     parser.add_argument("-MT", "--model_type", type=str, default="t", help="T for T5 and B for BART")
     parser.add_argument("-MN", "--model_name", default="t5-small", help="Variant of the Transformer model for finetuning")
+    parser.add_argument("-N", "--run_name", type=str, default="t5-small", help="Name of the Run (Used in storing the model)")
     parser.add_argument('-DS', '--decoding_strategy', type=str, default="G", help='Specify the decoding strategy (B-Beam Search, N-Nucleus sampling, G-Greedy)')
     parser.add_argument("-PS", "--p_sampling", type=float, default=0.9, help="Value of P used in the P-sampling")
     parser.add_argument("-T", "--temperature", type=float, default=1, help="Temperature for softmax decoding")
@@ -193,7 +212,7 @@ if __name__=='__main__':
     print('Created Pytorch Dataset')
 
     # %%
-    batch_size = 8
+    batch_size = args.batch_size
     train_dataloader = get_dataloader(batch_size, train_dataset)
     valid_dataloader = get_dataloader(batch_size, val_dataset, datatype='val')
     print('Loaded Dataloader!')
@@ -212,13 +231,21 @@ if __name__=='__main__':
     force_tokens = ['?']
     force_words_ids = tokenizer(force_tokens, add_special_tokens=False).input_ids
 
+    # NOTE: Track GPU Utilization
+    if args.track_gpu_usage:
+        print('Tracking GPU Usage')
+        monitor = Monitor(10)
+
     print('Begining Generation')
     val_outputs = get_generation(model, valid_dataloader, force_words_ids, 
                     args.decoding_strategy, args.num_of_beams, 
                     args.p_sampling, args.temperature, 
                     args.num_of_samples)
     print('Done Generating!')
-    print('Done Generating!')
+
+    if args.track_gpu_usage:
+        monitor.stop()
+
     print('Begining Decoding')
     val_preds = get_preds(tokenizer, val_outputs)
     print('Done Decoding!')

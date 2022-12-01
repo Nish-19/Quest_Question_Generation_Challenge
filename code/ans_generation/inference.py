@@ -146,6 +146,7 @@ def get_preds(tokenizer, generated_tokens):
 
 def add_params():
     parser = argparse.ArgumentParser()
+    parser.add_argument('-TGU', '--track_gpu_usage', action=argparse.BooleanOptionalAction, help='Track GPU Usage')
     parser.add_argument("-F", "--eval_folder", type=str, default="data_augmentation", help="Evaluation Folder where output is saved")
     parser.add_argument("-EF", "--eval_filename", type=str, default="nucleus_flan_t5_large_0.95_1.20.csv", help="Evaluation filename")
     parser.add_argument("-B", "--batch_size", type=int, default=8, help="Batch size for passing through the Transformer Model")
@@ -183,9 +184,9 @@ if __name__=='__main__':
     val_inps = construct_transformer_input(val_story, val_question, args.prefix_choice)
 
     if args.model_type == 'T':
-        tokenizer = T5Tokenizer.from_pretrained(args.model_name)
+        tokenizer = T5Tokenizer.from_pretrained(args.model_name, use_fast=True)
     elif args.model_type == 'B':
-        tokenizer = BartTokenizer.from_pretrained(args.model_name)
+        tokenizer = BartTokenizer.from_pretrained(args.model_name, use_fast=True)
     else:
         print('Wrong model type - either T or B only')
 
@@ -199,7 +200,7 @@ if __name__=='__main__':
     print('Created Pytorch Dataset')
 
     # %%
-    batch_size = 8
+    batch_size = args.batch_size
     valid_dataloader = get_dataloader(batch_size, val_dataset, datatype='val')
     print('Loaded Dataloader!')
 
