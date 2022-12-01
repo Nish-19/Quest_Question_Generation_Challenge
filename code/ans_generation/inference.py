@@ -217,13 +217,21 @@ if __name__=='__main__':
     force_tokens = ['?']
     force_words_ids = tokenizer(force_tokens, add_special_tokens=False).input_ids
 
+    # NOTE: Track GPU Utilization
+    if args.track_gpu_usage:
+        print('Tracking GPU Usage')
+        monitor = Monitor(10)
+
     print('Begining Generation')
     val_outputs = get_generation(model, valid_dataloader, force_words_ids, 
                     args.decoding_strategy, args.num_of_beams, 
                     args.p_sampling, args.temperature, 
                     args.num_of_samples)
     print('Done Generating!')
-    print('Done Generating!')
+
+    if args.track_gpu_usage:
+        monitor.stop()
+
     print('Begining Decoding')
     val_preds = get_preds(tokenizer, val_outputs)
     print('Done Decoding!')
