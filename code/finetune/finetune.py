@@ -217,6 +217,7 @@ class FinetuneTransformer(pl.LightningModule):
 def add_params():
     parser = argparse.ArgumentParser()
     parser.add_argument('-W', '--wandb', action=argparse.BooleanOptionalAction, help='For Wandb logging')
+    parser.add_argument('-TS', '--training_strategy', type=str, default="DP", help="DP for dataparalle and DS for deepspeed")
     parser.add_argument("-B", "--batch_size", type=int, default=8, help="Batch size for training the Transformer Model")
     parser.add_argument("-L", "--learning_rate", type=float, default=3e-4, help="Learning Rate for training the Transformer Model")
     parser.add_argument("-E", "--num_epochs", type=int, default=5, help="Total Number of Epochs")
@@ -300,8 +301,16 @@ if __name__ == '__main__':
 
     lr_monitor = LearningRateMonitor(logging_interval='step')
     
-    save_directory = os.path.join('./code/finetune/Checkpoints', args.run_name)
+    save_directory = os.path.join('./code/finetune/Checkpoints_new', args.run_name)
     save_checkpoint =  ModelCheckpoint(dirpath=save_directory, monitor='validation_loss', save_top_k=1)
+
+
+    if args.training_strategy == 'DP':
+        strategy = DDPStrategy(find_unused_parameters=False)
+    elif args.training_strategy == 'DS':
+        strategy = DeepSpeedStrategy(stage=3,
+                                    offload_optimizer=True,
+                                    offload_parameters=True)
 
 
     trainer = Trainer(accelerator='gpu', devices=args.num_devices, 
@@ -309,13 +318,7 @@ if __name__ == '__main__':
                     logger=logger, 
                     max_epochs=max_epochs,
                     callbacks=[early_stop_callback, lr_monitor, save_checkpoint],
-#                    strategy = DDPStrategy(find_unused_parameters=False))
-                    strategy = DeepSpeedStrategy(
-                                    stage=3,
-                                    offload_optimizer=True,
-                                    offload_parameters=True,
-                                    )
-                    )
+                    strategy = strategy)
 
     trainer.fit(model)
 

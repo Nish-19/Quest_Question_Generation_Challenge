@@ -36,6 +36,7 @@ def clean_str(text):
 def get_parallel_corpus(ip_df, story_df):
     # hash stories and sections
     story_sec_hash = defaultdict(dict)
+    print(story_df.columns)
     for i, row in story_df.iterrows():
         story_sec_hash[row['source_title']][row['cor_section']] = clean_str(row['text'])
     
@@ -232,10 +233,10 @@ if __name__=='__main__':
     if args.decoding_strategy == 'N':
         times = [args.num_of_samples for _ in range(len(val_df))]
         new_val_df = val_df.loc[val_df.index.repeat(times)].reset_index(drop=True)
-        save_csv_name = 'nucleus_{:s}_{:.2f}_{:.2f}'.format(args.run_name, args.p_sampling, args.temperature)
+        save_csv_name = 'nucleus_{:s}_{:.2f}_{:.2f}'.format(os.path.splitext(args.eval_filename)[0], args.p_sampling, args.temperature)
     else:
         new_val_df = val_df
-        save_csv_name = os.path.splitext(args.eval_filename)[0]
+        save_csv_name = os.path.splitext(args.eval_filename)[0] + '_greedy'
 
     # Save predictions
     preds_df = pd.DataFrame()

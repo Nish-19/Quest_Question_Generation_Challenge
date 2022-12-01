@@ -201,9 +201,10 @@ if __name__=='__main__':
     # %%
     # Load the Generative Head 
     # search for ckpt file
-    search_dir = os.path.join('./code/finetune/Checkpoints', args.run_name)
+    search_dir = os.path.join('./code/finetune/Checkpoints_new', args.run_name)
     for file in os.listdir(search_dir):
         ckpt_file = os.path.join(search_dir, file)
+    print('ckpt_file', ckpt_file)
     # model_pl = FinetuneTransformer(model_type = args.model_type, model_name = args.model_name)
     model = FinetuneTransformer.load_from_checkpoint(ckpt_file, model_type = args.model_type).model.to(device)
     print('Successfully loaded the saved checkpoint!')
