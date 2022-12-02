@@ -3,6 +3,9 @@ python -m code.ans_generation.inference \
 -MT T -N t5_small -M t5-small
 '''
 
+import GPUtil
+from threading import Thread
+import time
 import argparse
 import re
 import wandb, os
@@ -143,6 +146,21 @@ def get_preds(tokenizer, generated_tokens):
         sample = tokenizer.decode(inp, skip_special_tokens=True)
         val_preds.append(sample)
     return val_preds
+
+class Monitor(Thread):
+    def __init__(self, delay):
+        super(Monitor, self).__init__()
+        self.stopped = False
+        self.delay = delay # Time between calls to GPUtil
+        self.start()
+
+    def run(self):
+        while not self.stopped:
+            GPUtil.showUtilization()
+            time.sleep(self.delay)
+
+    def stop(self):
+        self.stopped = True
 
 def add_params():
     parser = argparse.ArgumentParser()

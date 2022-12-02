@@ -69,16 +69,16 @@ def construct_transformer_input(story, answer, choice=1):
 # Tokenization
 def get_transformer_encoding(tokenizer, transformer_inputs, question):
     # tokenizer = T5Tokenizer.from_pretrained(model_name)
-    max_source_length, max_target_length = 512, 512
+    max_source_length, max_target_length = 1024, 1024
 
-    inp_encoding = tokenizer(transformer_inputs, padding='longest', # longest 
+    inp_encoding = tokenizer(transformer_inputs, padding='max_length', # longest 
                         max_length=max_source_length,
                         truncation=True,
                         return_tensors="pt"
                     )
     input_ids, attention_mask = inp_encoding.input_ids, inp_encoding.attention_mask
 
-    target_encoding = tokenizer(question, padding='longest', 
+    target_encoding = tokenizer(question, padding='max_length', 
                         max_length=max_target_length,
                         truncation=True,
                         return_tensors="pt"
