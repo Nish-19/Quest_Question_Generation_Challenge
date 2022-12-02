@@ -35,9 +35,10 @@ import os
 
 def add_params():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--eval_folder", type=str, default="train_val_split_csv", help="Folder containing evaluation file relative to data folder")
-    parser.add_argument("--eval_filename", type=str, default="val.csv", help="Evaluation filename with timestamp and .csv extension")
-    parser.add_argument("--batch_size", type=int, default=64, help="Evaluation batch size for BLEURT model")
+    parser.add_argument('-EFD', "--eval_folder", type=str, default="train_val_split_csv", help="Folder containing evaluation file relative to data folder")
+    parser.add_argument('-EFN', "--eval_filename", type=str, default="val.csv", help="Evaluation filename with timestamp and .csv extension")
+    parser.add_argument('-T', "--type", type=str, default="Q", help="Q-Question, A-Answer")
+    parser.add_argument('-B', "--batch_size", type=int, default=64, help="Evaluation batch size for BLEURT model")
     params = parser.parse_args()
     
     return params
@@ -83,7 +84,7 @@ def ceildiv(a, b):
     return -(a // -b)
 
 
-def grade_score_with_batching(df, bleurt, batch_size=64):
+def grade_score_with_batching_question(df, bleurt, batch_size=64):
     # Add batching to speed up BLEURT model computation
     # Note: BLEURT metric is non commutative, therefore predictions must match questions generated
     df['question'] = df['question'].apply(normalize)
@@ -91,6 +92,23 @@ def grade_score_with_batching(df, bleurt, batch_size=64):
 
     ref_q = df['question'].tolist()
     gen_q = df['generated_question'].tolist()
+
+    scores = []
+    num_batches = ceildiv(len(ref_q), batch_size)
+    for ref_q_batch, gen_q_batch in tqdm( zip(get_batch(ref_q, batch_size), get_batch(gen_q, batch_size)), total=num_batches ):
+        batch_scores = bleurt.compute(predictions=gen_q_batch, references=ref_q_batch)
+        scores.extend(batch_scores["scores"])
+
+    return scores
+
+def grade_score_with_batching_answer(df, bleurt, batch_size=64):
+    # Add batching to speed up BLEURT model computation
+    # Note: BLEURT metric is non commutative, therefore predictions must match questions generated
+    df['answer'] = df['answer'].apply(normalize)
+    df['generated_answer'] = df['generated_answer'].apply(normalize)
+
+    ref_q = df['answer'].tolist()
+    gen_q = df['generated_answer'].tolist()
 
     scores = []
     num_batches = ceildiv(len(ref_q), batch_size)
@@ -139,7 +157,10 @@ def main():
     #print("BLEURT: ", np.mean([x["scores"][0] for x in bleurt_list]))
     
     # Batching method
-    bleurt_scores = grade_score_with_batching(df_pred, bleurt, args.batch_size)
+    if args.type == 'Q':
+        bleurt_scores = grade_score_with_batching_question(df_pred, bleurt, args.batch_size)
+    elif args.type == 'A':
+        bleurt_scores = grade_score_with_batching_answer(df_pred, bleurt, args.batch_size)
 
     # Groupwise preds
     
