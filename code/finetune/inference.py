@@ -2,6 +2,7 @@
 python -m code.finetune.inference -N t5_small -M t5-small
 '''
 
+from tqdm import tqdm
 import GPUtil
 from threading import Thread
 import time
@@ -113,7 +114,7 @@ def get_dataloader(batch_size, dataset, datatype='train'):
 # Generate from saved model
 def get_generation(model, val_dataloader, force_words_ids, decoding_strategy='B', num_beams=3, prob_p=0.9, temp=1, num_samples=10):
     val_outputs = []
-    for step, batch in enumerate(val_dataloader):
+    for batch in tqdm(val_dataloader):
         val_input_ids = batch['input_ids'].to(device)
         # TODO: Force ? to occur in the sentence
         if decoding_strategy == 'B': # Beam search

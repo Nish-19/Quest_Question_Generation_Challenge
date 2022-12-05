@@ -3,6 +3,7 @@ python -m code.ans_generation.inference \
 -MT T -N t5_small -M t5-small
 '''
 
+from tqdm import tqdm
 import GPUtil
 from threading import Thread
 import time
@@ -11,6 +12,8 @@ import re
 import wandb, os
 from collections import defaultdict
 import statistics
+import random
+import numpy as np
 import pandas as pd
 import torch
 from torch.utils.data import Dataset, TensorDataset, DataLoader
@@ -19,6 +22,14 @@ from transformers import BartTokenizer
 
 from code.utils.create_dataset_split import RAW_DIR, save_csv
 from code.finetune.finetune import FinetuneTransformer
+
+# setting the seed
+seed_val = 37
+random.seed(seed_val)
+np.random.seed(seed_val)
+torch.manual_seed(seed_val)
+torch.cuda.manual_seed_all(seed_val)
+
 
 os.environ['WANDB_NOTEBOOK_NAME'] = 'FinetuneTransformerForAnswerGeneration'
 
@@ -122,7 +133,7 @@ def get_dataloader(batch_size, dataset, datatype='train'):
 # Generate from saved model
 def get_generation(model, val_dataloader, force_words_ids, decoding_strategy='B', num_beams=3, prob_p=0.9, temp=1, num_samples=10):
     val_outputs = []
-    for step, batch in enumerate(val_dataloader):
+    for batch in tqdm(val_dataloader):
         val_input_ids = batch['input_ids'].to(device)
         # TODO: Force ? to occur in the sentence
         if decoding_strategy == 'B': # Beam search
@@ -168,8 +179,8 @@ def add_params():
     parser.add_argument("-F", "--eval_folder", type=str, default="data_augmentation", help="Evaluation Folder where output is saved")
     parser.add_argument("-EF", "--eval_filename", type=str, default="nucleus_flan_t5_large_0.95_1.20.csv", help="Evaluation filename")
     parser.add_argument("-B", "--batch_size", type=int, default=8, help="Batch size for passing through the Transformer Model")
-    parser.add_argument("-N", "--run_name", type=str, default="t5-small", help="Name of the Run (Used in storing the model)")
     parser.add_argument("-MT", "--model_type", type=str, default="t", help="T for T5 and B for BART")
+    parser.add_argument("-N", "--run_name", type=str, default="t5-small", help="Name of the Run (Used in storing the model)")
     parser.add_argument("-MN", "--model_name", default="t5-small", help="Variant of the Transformer model for finetuning")
     parser.add_argument('-DS', '--decoding_strategy', type=str, default="G", help='Specify the decoding strategy (B-Beam Search, N-Nucleus sampling, G-Greedy)')
     parser.add_argument("-PS", "--p_sampling", type=float, default=0.9, help="Value of P used in the P-sampling")
@@ -260,10 +271,10 @@ if __name__=='__main__':
     if args.decoding_strategy == 'N':
         times = [args.num_of_samples for _ in range(len(val_df))]
         new_val_df = val_df.loc[val_df.index.repeat(times)].reset_index(drop=True)
-        save_csv_name = 'nucleus_{:s}_{:.2f}_{:.2f}'.format(os.path.splitext(args.eval_filename)[0], args.p_sampling, args.temperature)
+        save_csv_name = 'answer_{:s}_{:.2f}_{:.2f}'.format(os.path.splitext(args.eval_filename)[0], args.p_sampling, args.temperature)
     else:
         new_val_df = val_df
-        save_csv_name = os.path.splitext(args.eval_filename)[0] + '_greedy'
+        save_csv_name = 'answer_' + os.path.splitext(args.eval_filename)[0] + '_greedy'
 
     # Save predictions
     preds_df = pd.DataFrame()
