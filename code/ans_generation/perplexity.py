@@ -1,6 +1,6 @@
 '''
-python -m code.ans_generation.inference \
--MT T -N t5_small -M t5-small
+python -m code.ans_generation.perplexity \
+-TGU -EF answer_nucleus_flan_t5_large_0.95_1.20.csv -B 64 -MT T -MN google/flan-t5-large -N flan_t5_large
 '''
 
 from tqdm import tqdm
@@ -47,7 +47,7 @@ def clean_str(text):
 
 
 # Tokenization
-def get_transformer_encoding(tokenizer, prompts, gen_answers):
+def get_transformer_encoding(tokenizer, prompts, gt_answers):
     # tokenizer = T5Tokenizer.from_pretrained(model_name)
     max_source_length, max_target_length = 512, 512
 
@@ -58,7 +58,7 @@ def get_transformer_encoding(tokenizer, prompts, gen_answers):
                     )
     input_ids, attention_mask = inp_encoding.input_ids, inp_encoding.attention_mask
 
-    target_encoding = tokenizer(gen_answers, padding='longest', 
+    target_encoding = tokenizer(gt_answers, padding='longest', 
                         max_length=max_target_length,
                         truncation=True,
                         return_tensors="pt"
@@ -154,8 +154,8 @@ def add_params():
     parser.add_argument("-EF", "--gen_filename", type=str, default="answer_nucleus_flan_t5_large_0.95_1.20.csv", help="Evaluation filename")
     parser.add_argument("-B", "--batch_size", type=int, default=8, help="Batch size for passing through the Transformer Model")
     parser.add_argument("-MT", "--model_type", type=str, default="t", help="T for T5 and B for BART")
-    parser.add_argument("-N", "--run_name", type=str, default="t5-small", help="Name of the Run (Used in storing the model)")
     parser.add_argument("-MN", "--model_name", default="t5-small", help="Variant of the Transformer model for finetuning")
+    parser.add_argument("-N", "--run_name", type=str, default="t5-small", help="Name of the Run (Used in storing the model)")
     params = parser.parse_args()
     
     return params
@@ -178,7 +178,7 @@ if __name__=='__main__':
 
     # %%
     print('Tokenizing Data:')
-    prompt_input_ids, prompt_attention_mask, ans_labels = get_transformer_encoding(tokenizer, gen_df['prompt'].tolist(), gen_df['generated_answer'].tolist())
+    prompt_input_ids, prompt_attention_mask, ans_labels = get_transformer_encoding(tokenizer, gen_df['prompt'].tolist(), gen_df['answer'].tolist())
     print('Tokenized Data!')
 
     # %%
@@ -217,7 +217,8 @@ if __name__=='__main__':
     # Save predictions
     preds_df = pd.DataFrame()
     preds_df['pair_id'] = gen_df['pair_id']
-    preds_df['generated_answer'] = gen_df['generated_answer']
+    preds_df['prompt'] = gen_df['prompt']
+    preds_df['generated_answer'] = gen_df['answer']
     preds_df['perplexity'] = perplexity
     save_csv_name = 'ppl_' + os.path.splitext(args.gen_filename)[0]
 
