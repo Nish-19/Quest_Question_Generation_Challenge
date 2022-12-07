@@ -286,7 +286,7 @@ if __name__ == '__main__':
     # Trainig code
     if args.wandb:
         wandb.login()
-        logger = WandbLogger(name=args.run_name, project='Quest_Gen_Challenge')
+        logger = WandbLogger(name=args.run_name+'_em_augment', project='Quest_Gen_Challenge')
     else:
         logger = CSVLogger("run_results", name=args.run_name)
 
