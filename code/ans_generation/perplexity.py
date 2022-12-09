@@ -1,6 +1,6 @@
 '''
 python -m code.ans_generation.perplexity \
--TGU -EF answer_nucleus_flan_t5_large_0.95_1.20.csv -B 64 -MT T -MN google/flan-t5-large -N flan_t5_large
+-TGU -EF answer_nucleus_flan_t5_large_0.95_1.20.csv -B 1 -MT T -MN google/flan-t5-large -N flan_t5_large_ans
 '''
 
 from tqdm import tqdm
