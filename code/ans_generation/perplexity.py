@@ -130,8 +130,6 @@ def compute_perplexity(model, batch_encodings):
     return perplexity
 
 
-
-
 class Monitor(Thread):
     def __init__(self, delay):
         super(Monitor, self).__init__()
@@ -218,7 +216,9 @@ if __name__=='__main__':
     preds_df = pd.DataFrame()
     preds_df['pair_id'] = gen_df['pair_id']
     preds_df['prompt'] = gen_df['prompt']
-    preds_df['generated_answer'] = gen_df['answer']
+    preds_df['answer'] = gen_df['answer']
+    preds_df['generated_answer'] = gen_df['generated_answer']
+    print(len(preds_df), len(perplexity))
     preds_df['perplexity'] = perplexity
     save_csv_name = 'ppl_' + os.path.splitext(args.gen_filename)[0]
 
