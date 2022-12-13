@@ -257,7 +257,7 @@ if __name__=='__main__':
     if args.decoding_strategy == 'N':
         times = [args.num_of_samples for _ in range(len(val_df))]
         new_val_df = val_df.loc[val_df.index.repeat(times)].reset_index(drop=True)
-        save_csv_name = 'nucleus_{:s}_{:.2f}_{:.2f}'.format(args.run_name, args.p_sampling, args.temperature)
+        save_csv_name = 'nucleus_{:s}_{:.2f}_{:.2f}_{:d}'.format(args.run_name, args.p_sampling, args.temperature, args.num_of_samples)
     else:
         new_val_df = val_df
         save_csv_name = args.run_name
