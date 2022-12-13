@@ -237,10 +237,18 @@ if __name__ == '__main__':
     story_file = './data/original/source_texts.csv'
     story_df = pd.read_csv(story_file)
     # Train-Val split
-    train_file = './data/train_val_split_csv/Exact_Match_Augment_Train.csv'
+    train_file = './data/train_val_split_csv/Sel2_Exact_Match_Augment_Train.csv'
     train_df = pd.read_csv(train_file)
     val_file = './data/train_val_split_csv/val.csv'
     val_df = pd.read_csv(val_file)
+
+    prefix = train_file.split('/')[-1].split('_')[0]
+    if 'Sel' in prefix:
+        suffix =  '_{:s}_em_augment'.format(prefix.lower())
+    else:
+        suffix = '_em_augment'
+    print('Suffix is:', suffix)
+
 
     train_story, train_answer, train_question = get_parallel_corpus(train_df, story_df)
     val_story, val_answer, val_question = get_parallel_corpus(val_df, story_df)
@@ -286,7 +294,7 @@ if __name__ == '__main__':
     # Trainig code
     if args.wandb:
         wandb.login()
-        logger = WandbLogger(name=args.run_name+'_em_augment', project='Quest_Gen_Challenge')
+        logger = WandbLogger(name=args.run_name+suffix, project='Quest_Gen_Challenge')
     else:
         logger = CSVLogger("run_results", name=args.run_name)
 
@@ -301,7 +309,7 @@ if __name__ == '__main__':
 
     lr_monitor = LearningRateMonitor(logging_interval='step')
     
-    save_directory = os.path.join('./code/finetune/Checkpoints_new', args.run_name+'_em_augment')
+    save_directory = os.path.join('./code/finetune/Checkpoints_new', args.run_name+suffix)
     save_checkpoint =  ModelCheckpoint(dirpath=save_directory, monitor='validation_loss', save_top_k=1)
 
 
