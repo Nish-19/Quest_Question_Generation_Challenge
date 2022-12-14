@@ -16,7 +16,7 @@ python -m code.gpt3.evaluate \
 
 In-context learning:
 python -m code.gpt3.evaluate \
-    --model_name "text-curie-001" \
+    --model_name "text-ada-001" \
     --eval_type "local_val" \
     --add_instructions \
     --stop "?" \
@@ -51,7 +51,8 @@ from code.incontext.create_prompt_incontext import create_prompt_incontext, get_
 
 
 RAW_DIR = "./data"
-MAX_PARALLEL_PROMPTS_CODEX = 20
+MAX_PARALLEL_PROMPTS_CODEX = 3
+
 
 def add_params():
     parser = argparse.ArgumentParser()
@@ -62,12 +63,12 @@ def add_params():
     parser.add_argument("--eval_filename", type=str, default="val.csv", help="Evaluation filename")
     parser.add_argument('--debug', action='store_true', help='Debug mode evaluating on a small subset of 5 samples')
     parser.add_argument('--add_instructions', action='store_true', help='Add instructions as a prefix to prompt if not using a finetuned model')
-    #parser.add_argument('--batch', action='store_true', help='Batch prompts for generation to avoid rate limit on codex')
     # GPT-3 generation parameters
     parser.add_argument("--max_tokens", type=int, default=30, help="Maximum number of tokens to generate")
     parser.add_argument("--temperature", type=float, default=0, help="Temperature for sampling")
     parser.add_argument("--top_p", type=float, default=1, help="Top-p sampling")
     parser.add_argument("--n", type=int, default=1, help="Number of samples to generate")
+    parser.add_argument("--best_of", type=int, default=1, help="Number of samples to take the best n, best_of must be >= n")
     parser.add_argument("--stop", type=str, default='\n', help="Stop sequence")
     # In-context learning parameters
     parser.add_argument('--incontext', action='store_true', help='Use in-context learning')
@@ -112,6 +113,9 @@ def evaluate_gpt3(df_eval, df_train, story_map, args, device):
     # Without batching prompts
     #df_eval["generated_question"] = df_eval.progress_apply(lambda row: run_gpt3(row["prompt"], args), axis=1)
 
+    # Explode generated_questions column since top-n question candidates could have been generated
+    df_eval = df_eval.explode("generated_question")
+
     return df_eval
 
 
@@ -142,7 +146,7 @@ def main():
     story_map = load_stories()
     
     # Load evaluation set
-    nrows = 50 if args.debug else None
+    nrows = 5 if args.debug else None
     folder = os.path.join(RAW_DIR, args.eval_folder)
     df_eval = load_df(args.eval_filename, folder, nrows=nrows)
     df_eval = clean_data(df_eval)

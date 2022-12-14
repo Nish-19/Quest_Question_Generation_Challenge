@@ -8,7 +8,7 @@ import openai
 def run_gpt3(prompts, args):
     # Slow down requests to avoid rate limit for codex
     if("code" in args.model_name):
-        time.sleep(12)
+        time.sleep(30)
     # TODO increase max_tokens if attribute has to be predicted as well
     response = openai.Completion.create(model=args.model_name, 
                                     prompt=prompts, 
@@ -16,10 +16,11 @@ def run_gpt3(prompts, args):
                                     temperature=args.temperature, 
                                     top_p=args.top_p, 
                                     n=args.n, 
+                                    best_of = args.best_of,
                                     stop=[args.stop])
     
     # Match completions to prompts by index since completions are not returned in the same order as prompts
-    questions = [None] * len(prompts)
+    questions = [None] * len(prompts) * args.n
     for choice in response.choices:
         # Remove leading whitespace in generated question
         questions[choice.index] = choice.text.strip()
@@ -27,5 +28,8 @@ def run_gpt3(prompts, args):
         # Add question mark at end if stop sequence was question mark
         if( args.stop == "?"):
             questions[choice.index] = questions[choice.index] + "?"
+
+    # Group n questions back together in a sublist
+    questions = [questions[i:i+args.n] for i in range(0, len(questions), args.n)]
 
     return questions

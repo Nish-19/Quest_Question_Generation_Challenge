@@ -17,7 +17,7 @@ BLEURT:  0.5448525935956617 (without normalization)
 
 python -m code.utils.compute_eval_metric \
     --eval_folder train_val_split_csv \
-    --eval_filename code-davinci-002_20221124-035154.csv \
+    --eval_filename code-davinci-002_20221212-070223.csv \
     --batch_size 128
 
 GPT-3 Curie:
@@ -32,10 +32,14 @@ incontext all without pack_max = 0.47531837670935123
 incontext random without pack_max = 0.48398684873056363
 incontext all with pack_max = 0.4813110683779649
 incontext random with pack_max = 0.4757306356043593
+zero shot (top-10, temp=0.99) = 0.5042377344627933
+incontext augment (top-10, temp=0.99) = 0.6563515267448454
+incontext augment (top-10, temp=0.7) = 0.6752303581291098
 
 
 GPT-3 Davinci:
-zero shot = 0.3788071376294261
+zero shot (old-002) = 0.3788071376294261
+zero shot (new-003) = 0.4274963186069475
 
 
 GPT2 finetuned with CLM loss on question only:
@@ -143,6 +147,19 @@ def grade_score_with_batching(df, bleurt, batch_size=64):
     return scores
 
 
+def keep_best_bleurt(df):
+    # Keep only the question with the best BLEURT score
+    return df.sort_values('bleurt_score', ascending=False).drop_duplicates(['pair_id'])
+
+
+def compute_bleurt_score(df_pred):
+    df_pred = keep_best_bleurt(df_pred)
+    print("Mean BLEURT over all samples: ", df_pred['bleurt_score'].mean())
+    print("Mean BLEURT grouped by question attribute type:\n", df_pred.groupby('attribute1')['bleurt_score'].agg(['mean', 'count']))
+    print("Mean BLEURT grouped by question local vs summary:\n", df_pred.groupby('local_or_sum')['bleurt_score'].agg(['mean', 'count']))
+    print("Mean BLEURT grouped by question explicit vs implicit:\n", df_pred.groupby('ex_or_im')['bleurt_score'].agg(['mean', 'count']))
+
+
 def main():
     args = add_params()
     
@@ -156,19 +173,14 @@ def main():
     
     # Non batching method
     #bleurt_list = grade_score(df_pred, bleurt)
-    #print("BLEURT: ", np.mean([x["scores"][0] for x in bleurt_list]))
     
     # Batching method
     bleurt_scores = grade_score_with_batching(df_pred, bleurt, args.batch_size)
-    #print(bleurt_scores)
-    print("Mean BLEURT over all samples: ", np.mean(bleurt_scores))
 
-    # Get average BLEURT scores per question type
     df_pred['bleurt_score'] = bleurt_scores
     df_pred['bleurt_score'] = df_pred['bleurt_score'].astype(float)
-    print("Mean BLEURT grouped by question attribute type:\n", df_pred.groupby('attribute1')['bleurt_score'].agg(['mean', 'count']))
-    print("Mean BLEURT grouped by question local vs summary:\n", df_pred.groupby('local_or_sum')['bleurt_score'].agg(['mean', 'count']))
-    print("Mean BLEURT grouped by question explicit vs implicit:\n", df_pred.groupby('ex_or_im')['bleurt_score'].agg(['mean', 'count']))
+
+    compute_bleurt_score(df_pred)
 
     # Save file with BLEURT scores
     save_csv(df_pred, "{}_bleurt".format(args.eval_filename.split(".")[0]), folder)

@@ -1,7 +1,7 @@
 from random import Random
 from sentence_transformers.util import semantic_search
 
-from code.gpt3.prepare_dataset import INSTRUCTIONS, SEP_TOKEN, get_story
+from code.gpt3.prepare_dataset import SEP_TOKEN, get_story
 
 
 SEED = 21

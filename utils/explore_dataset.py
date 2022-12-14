@@ -52,11 +52,20 @@ def explore_story_source_texts(filepath):
     # TODO: why is mean story len of 1945 words != mean section len of 139 words X mean num of sections of 10.4?
 
 
+def explore_data_aug(filepath):
+    print("\nExplore for data augmentation\n")
+    df_train = load_df("train.csv", filepath)
+    # Group by source title and cor_section
+    df_aug = df_train.groupby(['source_title', 'cor_section']).size().reset_index(name='count').sort_values(by=['count'], ascending=False).head(30)
+    print(df_aug)
+
+
 def main():
     filepath = os.path.join(RAW_DIR, "original")
-    explore_train_set(filepath)
-    explore_test_set(filepath)
-    explore_story_source_texts(filepath)
+    explore_data_aug(filepath)
+    #explore_train_set(filepath)
+    #explore_test_set(filepath)
+    #explore_story_source_texts(filepath)
 
 
 if __name__ == '__main__':
