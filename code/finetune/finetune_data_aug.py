@@ -15,6 +15,7 @@ import argparse
 import statistics
 import pandas as pd
 import torch
+import torch.nn as nn
 from torch.utils.data import Dataset, TensorDataset, DataLoader
 from transformers import T5Tokenizer, T5ForConditionalGeneration
 from transformers import BartTokenizer, BartForConditionalGeneration
@@ -117,17 +118,19 @@ def get_transformer_encoding(tokenizer, transformer_inputs, question):
 
 # Pytorch Dataset
 class FairyDataset(Dataset):
-    def __init__(self, input_ids, attn_masks, labels):
+    def __init__(self, input_ids, attn_masks, labels, loss_weights):
         self.input_ids = input_ids
         self.attn_masks = attn_masks
         self.labels = labels
+        self.loss_weights = loss_weights
         
     def __getitem__(self, index):
         x = self.input_ids[index]
         y = self.attn_masks[index]
         z = self.labels[index]
+        w = self.loss_weights[index]
         
-        return {'input_ids': x, 'attention_mask': y, 'labels':z}
+        return {'input_ids': x, 'attention_mask': y, 'labels':z, 'loss_weights':w}
     
     def __len__(self):
         return len(self.input_ids)
@@ -157,7 +160,7 @@ class FinetuneTransformer(pl.LightningModule):
         self.hparams.lr = lr
         self.save_hyperparameters()
     
-    def forward(self, input_ids, attention_mask, labels=None):     
+    def forward(self, input_ids, attention_mask, labels=None, loss_weights=None):     
         outputs = self.model(input_ids=input_ids, attention_mask=attention_mask, labels=labels)
         return outputs
     
@@ -167,9 +170,30 @@ class FinetuneTransformer(pl.LightningModule):
         Returns the loss for the batch
         '''
         outputs = self(**batch)
-        loss = outputs.loss
+        logits = outputs.logits
+        batch_size, seq_length, vocab_size = logits.shape
+        # TODO: Implement Weighted Loss
+        shifted_logits = logits[:, :-1, :].contiguous() 
+        labels = batch['labels'][:, 1:].contiguous()
+        loss_fct = nn.CrossEntropyLoss(reduction='none')
+        lm_loss = loss_fct(shifted_logits.view(-1, vocab_size), labels.view(-1))
+        lm_loss_expand = torch.reshape(lm_loss, shape=(batch_size, seq_length-1))
+        lm_loss_mean = torch.mean(lm_loss_expand, dim=1)
+        weights = batch['loss_weights']
+        weighted_loss = lm_loss_mean * weights
+        weight_loss_sum = torch.sum(weighted_loss, dim=0)
 
-        return loss
+        # print(type(outputs))
+        # print('Logits:', outputs.logits.shape, outputs.logits.requires_grad)
+        # print('Label sample:', batch['labels'])
+        # softmax = nn.Softmax(dim=2)
+        # soft_out = softmax(outputs.logits)
+        # print('Logits Softmax:', soft_out)
+        # print('Logits Softmax:', soft_out.shape, soft_out.requires_grad)
+        # print('Labels shape:', batch['labels'].shape)
+        # loss = outputs.loss
+
+        return weight_loss_sum
     
     def training_step(self, batch, batch_idx):
         loss = self.common_step(batch, batch_idx)     
@@ -223,6 +247,7 @@ def add_params():
     parser.add_argument('-W', '--wandb', action=argparse.BooleanOptionalAction, help='For Wandb logging')
     parser.add_argument('-TS', '--training_strategy', type=str, default="DP", help="DP for dataparall and DS for deepspeed")
     parser.add_argument("-B", "--batch_size", type=int, default=8, help="Batch size for training the Transformer Model")
+    parser.add_argument("-LAM", '--lambda_weight', type=float, default=0.5, help="Loss weight for the real data, (1-LAM) for the codex data")
     parser.add_argument("-L", "--learning_rate", type=float, default=3e-4, help="Learning Rate for training the Transformer Model")
     parser.add_argument("-E", "--num_epochs", type=int, default=5, help="Total Number of Epochs")
     parser.add_argument("-D", "--num_devices", type=int, default=1, help="Devices used for training")
@@ -241,14 +266,14 @@ if __name__ == '__main__':
     story_file = './data/original/source_texts.csv'
     story_df = pd.read_csv(story_file)
     # Train-Val split
-    train_file = './data/train_val_split_csv/Codexonly_Train.csv'
+    train_file = './data/train_val_split_csv/Codex_Augment_Train.csv'
     train_df = pd.read_csv(train_file)
     val_file = './data/train_val_split_csv/val.csv'
     val_df = pd.read_csv(val_file)
 
     prefix = train_file.split('/')[-1].split('_')[0]
     if 'Codex' in prefix:
-        suffix = '_{:s}_augment'.format(prefix.lower())
+        suffix = '_{:s}_{:.2f}_augment'.format(prefix.lower(), args.lambda_weight)
     elif 'Sel' in prefix:
         suffix =  '_{:s}_em_augment'.format(prefix.lower())
     else:
@@ -282,8 +307,20 @@ if __name__ == '__main__':
     val_input_ids, val_attention_mask, val_labels = get_transformer_encoding(tokenizer, val_inps, val_question)
     print('Tokenized Data!')
 
-    train_dataset = FairyDataset(train_input_ids, train_attention_mask, train_labels)
-    val_dataset = FairyDataset(val_input_ids, val_attention_mask, val_labels)
+    # Get Loss weights
+    train_loss_weights = [] 
+    for aug_type in train_df['aug_type'].tolist():
+        if aug_type == 'org':
+            train_loss_weights.append(args.lambda_weight)
+        elif aug_type == 'codex':
+            train_loss_weights.append(1-args.lambda_weight)
+        else:
+            print('Unknown aug_type')
+    train_loss_weights = torch.tensor(train_loss_weights)
+    val_loss_weights = torch.ones(len(val_df))
+
+    train_dataset = FairyDataset(train_input_ids, train_attention_mask, train_labels, train_loss_weights)
+    val_dataset = FairyDataset(val_input_ids, val_attention_mask, val_labels, val_loss_weights)
     print('Created Pytorch Dataset')
 
 
