@@ -16,6 +16,7 @@ import statistics
 import pandas as pd
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 from torch.utils.data import Dataset, TensorDataset, DataLoader
 from transformers import T5Tokenizer, T5ForConditionalGeneration
 from transformers import BartTokenizer, BartForConditionalGeneration
@@ -112,6 +113,7 @@ def get_transformer_encoding(tokenizer, transformer_inputs, question):
                         return_tensors="pt"
                     )
     labels = target_encoding.input_ids
+    mask = torch.ones(labels.shape)
     # 0 loss for pad tokens
     labels[labels == tokenizer.pad_token_id] = -100
     return input_ids, attention_mask, labels
@@ -122,7 +124,11 @@ class FairyDataset(Dataset):
         self.input_ids = input_ids
         self.attn_masks = attn_masks
         self.labels = labels
-        self.loss_weights = loss_weights
+        # NOTE: Process weights
+        label_len, seq_len = self.labels.shape
+        self.loss_weights_expand = torch.reshape(loss_weights, shape=(label_len, 1))
+        self.loss_weights = torch.matmul(self.loss_weights_expand, torch.ones(1, seq_len))
+
         
     def __getitem__(self, index):
         x = self.input_ids[index]
@@ -171,29 +177,18 @@ class FinetuneTransformer(pl.LightningModule):
         '''
         outputs = self(**batch)
         logits = outputs.logits
+        labels = batch['labels']
         batch_size, seq_length, vocab_size = logits.shape
-        # TODO: Implement Weighted Loss
-        shifted_logits = logits[:, :-1, :].contiguous() 
-        labels = batch['labels'][:, 1:].contiguous()
-        loss_fct = nn.CrossEntropyLoss(reduction='none')
-        lm_loss = loss_fct(shifted_logits.view(-1, vocab_size), labels.view(-1))
-        lm_loss_expand = torch.reshape(lm_loss, shape=(batch_size, seq_length-1))
-        lm_loss_mean = torch.mean(lm_loss_expand, dim=1)
         weights = batch['loss_weights']
-        weighted_loss = lm_loss_mean * weights
-        weight_loss_sum = torch.sum(weighted_loss, dim=0)
+        # print('Labels Shape: ', labels.shape, 'Weights shape:', weights.shape)
+        
+        # TODO: Implement Weighted Loss
+        loss_fct = nn.CrossEntropyLoss(reduction='none')
+        lm_loss = loss_fct(logits[labels != -100].view(-1, vocab_size), labels[labels != -100].view(-1))
+        lm_loss_weighted = lm_loss * weights[labels != -100]
+        # print('Hugging Face loss: {:.4f}\t Direct Mean: {:.4f} \t Weighted Mean {:.4f}'.format(outputs.loss, lm_loss.mean(), lm_loss_weighted.mean()))
 
-        # print(type(outputs))
-        # print('Logits:', outputs.logits.shape, outputs.logits.requires_grad)
-        # print('Label sample:', batch['labels'])
-        # softmax = nn.Softmax(dim=2)
-        # soft_out = softmax(outputs.logits)
-        # print('Logits Softmax:', soft_out)
-        # print('Logits Softmax:', soft_out.shape, soft_out.requires_grad)
-        # print('Labels shape:', batch['labels'].shape)
-        # loss = outputs.loss
-
-        return weight_loss_sum
+        return lm_loss_weighted.mean()
     
     def training_step(self, batch, batch_idx):
         loss = self.common_step(batch, batch_idx)     
