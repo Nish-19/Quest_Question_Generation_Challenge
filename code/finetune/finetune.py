@@ -226,7 +226,6 @@ def add_params():
     parser.add_argument("-MN", "--model_name", type=str, default="t5-small", help="Variant of the Transformer model for finetuning")
     parser.add_argument("-N", "--run_name", type=str, default="t5-small", help="Name of the Run (Used in storing the model)")
     parser.add_argument('-LC', '--load_checkpoint', action=argparse.BooleanOptionalAction, help='Load Checkpoint for re-finetuning')
-    parser.add_argument("-CN", "--checkpoint_name", type=str, default="flan_t5_large_codex_0.00_augment", help="Variant of the trained Transformer Base Model")
     parser.add_argument("-P", "--prefix_choice", type=int, default=1, help="Choice of prefix used for the input construction - 1, 2, 3")
     params = parser.parse_args()
     return params
@@ -284,7 +283,7 @@ if __name__ == '__main__':
 
     # NOTE: Load checkpoint
     if args.load_checkpoint:
-        search_dir = os.path.join('./code/finetune/Checkpoints_new', args.checkpoint_name)
+        search_dir = os.path.join('./code/finetune/Checkpoints_new', args.run_name)
         for file in os.listdir(search_dir):
             ckpt_file = os.path.join(search_dir, file)
         print('ckpt_file', ckpt_file)
