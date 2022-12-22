@@ -225,6 +225,8 @@ def add_params():
     parser.add_argument("-MT", "--model_type", type=str, default="t", help="T for T5 and B for BART")
     parser.add_argument("-MN", "--model_name", type=str, default="t5-small", help="Variant of the Transformer model for finetuning")
     parser.add_argument("-N", "--run_name", type=str, default="t5-small", help="Name of the Run (Used in storing the model)")
+    parser.add_argument('-LC', '--load_checkpoint', action=argparse.BooleanOptionalAction, help='Load Checkpoint for re-finetuning')
+    parser.add_argument("-CN", "--checkpoint_name", type=str, default="flan_t5_large_codex_0.00_augment", help="Variant of the trained Transformer Base Model")
     parser.add_argument("-P", "--prefix_choice", type=int, default=1, help="Choice of prefix used for the input construction - 1, 2, 3")
     params = parser.parse_args()
     return params
@@ -279,16 +281,32 @@ if __name__ == '__main__':
     print('Loaded Dataloader!')
 
     max_epochs = args.num_epochs
-    model = FinetuneTransformer(model_type = args.model_type, model_name = args.model_name, 
-        training_dl=training_dataloader, valid_dl=valid_dataloader, 
-        num_train_epochs=max_epochs, lr=args.learning_rate)
+
+    # NOTE: Load checkpoint
+    if args.load_checkpoint:
+        search_dir = os.path.join('./code/finetune/Checkpoints_new', args.checkpoint_name)
+        for file in os.listdir(search_dir):
+            ckpt_file = os.path.join(search_dir, file)
+        print('ckpt_file', ckpt_file)
+        # model_pl = FinetuneTransformer(model_type = args.model_type, model_name = args.model_name)
+        model = FinetuneTransformer.load_from_checkpoint(ckpt_file, model_type = args.model_type)
+        print('Successfully loaded the saved checkpoint!')
+        save_name = 'reft_' + args.run_name
+    
+    else:
+        model = FinetuneTransformer(model_type = args.model_type, model_name = args.model_name, 
+            training_dl=training_dataloader, valid_dl=valid_dataloader, 
+            num_train_epochs=max_epochs, lr=args.learning_rate)
+        save_name = args.run_name
+    
+    print('Save name:', save_name)
 
     # Trainig code
     if args.wandb:
         wandb.login()
-        logger = WandbLogger(name=args.run_name, project='Quest_Gen_Challenge')
+        logger = WandbLogger(name=save_name, project='Quest_Gen_Challenge')
     else:
-        logger = CSVLogger("run_results", name=args.run_name)
+        logger = CSVLogger("run_results", name=save_name)
 
 
     early_stop_callback = EarlyStopping(
@@ -301,7 +319,7 @@ if __name__ == '__main__':
 
     lr_monitor = LearningRateMonitor(logging_interval='step')
     
-    save_directory = os.path.join('./code/finetune/Checkpoints_new', args.run_name)
+    save_directory = os.path.join('./code/finetune/Checkpoints_new', save_name)
     save_checkpoint =  ModelCheckpoint(dirpath=save_directory, monitor='validation_loss', save_top_k=1)
 
 
