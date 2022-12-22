@@ -303,16 +303,20 @@ if __name__ == '__main__':
     print('Tokenized Data!')
 
     # Get Loss weights
-    train_loss_weights = [] 
-    for aug_type in train_df['aug_type'].tolist():
-        if aug_type == 'org':
-            train_loss_weights.append(args.lambda_weight)
-        elif aug_type == 'codex':
-            train_loss_weights.append(1-args.lambda_weight)
-        else:
-            print('Unknown aug_type')
-    train_loss_weights = torch.tensor(train_loss_weights)
-    val_loss_weights = torch.ones(len(val_df))
+    try:
+        train_loss_weights = [] 
+        for aug_type in train_df['aug_type'].tolist():
+            if aug_type == 'org':
+                train_loss_weights.append(args.lambda_weight)
+            elif aug_type == 'codex':
+                train_loss_weights.append(1-args.lambda_weight)
+            else:
+                print('Unknown aug_type')
+        train_loss_weights = torch.tensor(train_loss_weights)
+        val_loss_weights = torch.ones(len(val_df))
+    except KeyError:
+        train_loss_weights = torch.ones(len(train_df))
+        val_loss_weights = torch.ones(len(val_df))
 
     train_dataset = FairyDataset(train_input_ids, train_attention_mask, train_labels, train_loss_weights)
     val_dataset = FairyDataset(val_input_ids, val_attention_mask, val_labels, val_loss_weights)
