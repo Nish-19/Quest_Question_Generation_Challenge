@@ -16,6 +16,7 @@ import torch
 from torch.utils.data import Dataset, TensorDataset, DataLoader
 from transformers import T5Tokenizer
 from transformers import BartTokenizer
+from sklearn.metrics import classification_report
 
 from code.utils.create_dataset_split import RAW_DIR, save_csv
 from code.finetune.finetune import FinetuneTransformer
@@ -50,7 +51,7 @@ def get_parallel_corpus(ip_df, story_df):
         story.append(story_str)
         answer.append(clean_str(row['answer']))
         question.append(clean_str(row['question']))
-        attr.append(clean_str[row['attribute1']])
+        attr.append(clean_str(row['attribute1']))
     
     return story, answer, question, attr
 
@@ -146,6 +147,16 @@ def get_preds(tokenizer, generated_tokens):
         val_preds.append(sample)
     return val_preds
 
+def split_preds(preds):
+    all_attr, all_ques = [], []
+    for pred in preds:
+        pre_attr, pre_ques = pred.split('The question is:')
+        pre_attr = pre_attr.split('The attribute is:')[1]
+        pre_attr, pre_ques = clean_str(pre_attr), clean_str(pre_ques)
+        all_attr.append(pre_attr)
+        all_ques.append(pre_ques)
+    return all_attr, all_ques
+
 class Monitor(Thread):
     def __init__(self, delay):
         super(Monitor, self).__init__()
@@ -210,25 +221,25 @@ if __name__=='__main__':
         print('Wrong model type - either T or B only')
 
     # %%
-    train_input_ids, train_attention_mask, train_labels = get_transformer_encoding(tokenizer, train_inps, train_question)
+    # train_input_ids, train_attention_mask, train_labels = get_transformer_encoding(tokenizer, train_inps, train_question)
     val_input_ids, val_attention_mask, val_labels = get_transformer_encoding(tokenizer, val_inps, val_question)
     print('Tokenized Data!')
 
     # %%
-    train_dataset = FairyDataset(train_input_ids, train_attention_mask, train_labels)
+    # train_dataset = FairyDataset(train_input_ids, train_attention_mask, train_labels)
     val_dataset = FairyDataset(val_input_ids, val_attention_mask, val_labels)
     print('Created Pytorch Dataset')
 
     # %%
     batch_size = args.batch_size
-    train_dataloader = get_dataloader(batch_size, train_dataset)
+    # train_dataloader = get_dataloader(batch_size, train_dataset)
     valid_dataloader = get_dataloader(batch_size, val_dataset, datatype='val')
     print('Loaded Dataloader!')
 
     # %%
     # Load the Generative Head 
     # search for ckpt file
-    search_dir = os.path.join('./code/finetune/Checkpoints_new', args.run_name)
+    search_dir = os.path.join('./code/finetune_mtask/Checkpoints', args.run_name)
     for file in os.listdir(search_dir):
         ckpt_file = os.path.join(search_dir, file)
     print('ckpt_file', ckpt_file)
@@ -258,6 +269,10 @@ if __name__=='__main__':
     val_preds = get_preds(tokenizer, val_outputs)
     print('Done Decoding!')
 
+    # NOTE: Split attribute and question
+    attr_preds, ques_preds = split_preds(val_preds)
+
+
     # NOTE: Saving val_preds
     val_df['prompt'] = val_inps
     val_df['question'] = val_question
@@ -268,6 +283,9 @@ if __name__=='__main__':
     else:
         new_val_df = val_df
         save_csv_name = args.run_name
+    
+    # NOTE: Report attribute pred statistics
+    print(classification_report(new_val_df['attribute1'].apply(clean_str), attr_preds))
 
     # Save predictions
     preds_df = pd.DataFrame()
@@ -281,7 +299,8 @@ if __name__=='__main__':
         preds_df['answer'] = new_val_df['answer']
     preds_df['prompt'] = new_val_df['prompt']
     preds_df['question'] = new_val_df['question']
-    preds_df['generated_question'] = val_preds
+    preds_df['predicted attribute'] = attr_preds
+    preds_df['generated_question'] = ques_preds
 
     output_path = os.path.join(RAW_DIR, "results/{}".format(args.eval_folder))
     if not os.path.exists(output_path):

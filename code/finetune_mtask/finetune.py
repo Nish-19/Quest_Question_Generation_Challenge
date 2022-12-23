@@ -331,7 +331,7 @@ if __name__ == '__main__':
 
     lr_monitor = LearningRateMonitor(logging_interval='step')
     
-    save_directory = os.path.join('./code/finetune/Checkpoints_new', save_name)
+    save_directory = os.path.join('./code/finetune_mtask/Checkpoints', save_name)
     save_checkpoint =  ModelCheckpoint(dirpath=save_directory, monitor='validation_loss', save_top_k=1)
 
 
