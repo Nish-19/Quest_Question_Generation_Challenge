@@ -3,21 +3,41 @@ Inference function for (finetuned) GPT-3 model.
 """
 import time
 import openai
+from openai.error import RateLimitError, Timeout, APIError, ServiceUnavailableError
 
 
-def run_gpt3(prompts, args):
+delay_time = 5
+decay_rate = 0.8
+key_index = 0
+
+
+def run_gpt3(prompts, args, api_keys):
+    global delay_time
+    global key_index
     # Slow down requests to avoid rate limit for codex
     if("code" in args.model_name):
-        time.sleep(30)
-    # TODO increase max_tokens if attribute has to be predicted as well
-    response = openai.Completion.create(model=args.model_name, 
-                                    prompt=prompts, 
-                                    max_tokens=args.max_tokens, 
-                                    temperature=args.temperature, 
-                                    top_p=args.top_p, 
-                                    n=args.n, 
-                                    best_of = args.best_of,
-                                    stop=[args.stop])
+        time.sleep(delay_time)
+
+    # Alternate keys to avoid rate limit for codex
+    openai.api_key = api_keys[key_index]
+    #print(f"Using key {key_index} with delay {delay_time:.3f}")
+    key_index = (key_index + 1) % len(api_keys)
+
+    # Send request
+    try:
+        response = openai.Completion.create(model=args.model_name, 
+                                        prompt=prompts, 
+                                        max_tokens=args.max_tokens, 
+                                        temperature=args.temperature, 
+                                        top_p=args.top_p, 
+                                        n=args.n, 
+                                        best_of = args.best_of,
+                                        stop=[args.stop])
+        delay_time *= decay_rate
+    except (RateLimitError, Timeout, APIError, ServiceUnavailableError) as exc:
+        #print(f"Open AI exception = {exc}")
+        delay_time *= 2
+        return run_gpt3(prompts, args, api_keys)
     
     # Match completions to prompts by index since completions are not returned in the same order as prompts
     questions = [None] * len(prompts) * args.n

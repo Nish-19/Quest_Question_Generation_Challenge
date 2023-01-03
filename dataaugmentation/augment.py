@@ -5,7 +5,7 @@ python3.9 -m code.dataaugmentation.augment \
     --model_name "code-davinci-002" \
     --stop "[End]" \
     --start_row 0 \
-    --end_row 5
+    --end_row 10
 """
 import os
 import argparse
@@ -35,8 +35,8 @@ def add_params():
     parser.add_argument("--start_row", type=int, default=0, help="Number of stories for in-context augmentation prompt")
     parser.add_argument("--end_row", type=int, default=6005, help="Number of stories for in-context augmentation prompt")
     # NUM_QA_EXAMPLES = 5 gives train_set like distribution over question attribute tags
-    # NUM_QA_EXAMPLES = 8 is max acceptable distribution with prediction tag being 4.3%
-    # NUM_QA_EXAMPLES = 10 excludes 
+    # NUM_QA_EXAMPLES = 8 is also an acceptable distribution with prediction tag being 4.3%
+    # NUM_QA_EXAMPLES = 10 excludes prediction tag
     parser.add_argument("--num_qa_examples", type=int, default=8, help="Number of QA examples per story for in-context augmentation prompt")
     # Codex generation parameters
     parser.add_argument("--max_tokens", type=int, default=512, help="Maximum number of tokens to generate")
@@ -51,16 +51,27 @@ def add_params():
     return params
 
 
+def get_openai_api_keys():
+    api_keys = []
+    for i in range(0, 6):
+        api_key = os.getenv(f"OPENAI_API_KEY_{i}")
+        if api_key:
+            api_keys.append(api_key)
+    
+    return api_keys
+
+
 def augment_data(df_train, df_incontext, story_map, args):
     tqdm.pandas()
     # Create prompt 
     print(f"Creating prompts...")
     df_train = df_train.progress_apply(lambda row: create_prompt_data_aug(row, df_incontext, story_map, args), axis=1)
     # Augment using Codex
+    api_keys = get_openai_api_keys()
     print(f"Running model for augmentation...")
     df_train["augmented_qa_samples"] = ""
     for chunk in tqdm(np.split(df_train, np.arange(MAX_PARALLEL_PROMPTS_CODEX, len(df_train), MAX_PARALLEL_PROMPTS_CODEX))):
-        out_text = run_gpt3(chunk["prompt"].tolist(), args)
+        out_text = run_gpt3(chunk["prompt"].tolist(), args, api_keys)
         chunk["augmented_qa_samples"] = out_text
         df_train.update(chunk)
     # Explode augmented_qa_samples column since top-n augmentation completion (each completion has k QA samples) candidates could have been generated
