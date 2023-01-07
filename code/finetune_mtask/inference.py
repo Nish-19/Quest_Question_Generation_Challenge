@@ -120,7 +120,7 @@ def get_dataloader(batch_size, dataset, datatype='train'):
         return DataLoader(dataset=dataset, batch_size = batch_size)
 
 # Generate from saved model
-def get_generation(model, val_dataloader, force_words_ids, decoding_strategy='B', num_beams=3, prob_p=0.9, temp=1, num_samples=10):
+def get_generation(model, val_dataloader, force_words_ids, decoding_strategy='B', num_beams=3, prob_p=0.9, temp=1, K=6, alpha=0.6, num_samples=10):
     val_outputs = []
     for batch in tqdm(val_dataloader):
         val_input_ids = batch['input_ids'].to(device)
@@ -132,6 +132,10 @@ def get_generation(model, val_dataloader, force_words_ids, decoding_strategy='B'
         elif decoding_strategy == 'N': # Nucleus Sampling
             generation = model.generate(val_input_ids, do_sample=True, max_new_tokens=64,
                                         top_p=prob_p, temperature=temp,
+                                        num_return_sequences=num_samples)
+        elif decoding_strategy == 'C': # Contrastive Decoding
+            generation = model.generate(val_input_ids, do_sample=True, max_new_tokens=64,
+                                        penalty_alpha=alpha, top_k=K,
                                         num_return_sequences=num_samples)
         else:
             generation = model.generate(val_input_ids, temperature=temp, max_new_tokens=64)
@@ -180,9 +184,11 @@ def add_params():
     parser.add_argument("-MT", "--model_type", type=str, default="t", help="T for T5 and B for BART")
     parser.add_argument("-MN", "--model_name", default="t5-small", help="Variant of the Transformer model for finetuning")
     parser.add_argument("-N", "--run_name", type=str, default="t5-small", help="Name of the Run (Used in storing the model)")
-    parser.add_argument('-DS', '--decoding_strategy', type=str, default="G", help='Specify the decoding strategy (B-Beam Search, N-Nucleus sampling, G-Greedy)')
+    parser.add_argument('-DS', '--decoding_strategy', type=str, default="G", help='Specify the decoding strategy (B-Beam Search, N-Nucleus sampling, G-Greedy, C-Contrastive)')
     parser.add_argument("-PS", "--p_sampling", type=float, default=0.9, help="Value of P used in the P-sampling")
     parser.add_argument("-T", "--temperature", type=float, default=1, help="Temperature for softmax decoding")
+    parser.add_argument("-K", "--top_K", type=int, default=4, help="Value of K used for contrastive decoding")
+    parser.add_argument("-alpha", "--alpha", type=float, default=0.6, help="Value of alpha used for contrastive decoding")
     parser.add_argument("-NS", "--num_of_samples", type=int, default=10, help="Number of samples to generate when using sampling")
     parser.add_argument('-NB', '--num_of_beams', type=int, default=3, help="Number of beams for decoding")
     parser.add_argument("-PC", "--prefix_choice", type=int, default=1, help="Choice of prefix used for the input construction - 1, 2, 3")
@@ -259,6 +265,7 @@ if __name__=='__main__':
     val_outputs = get_generation(model, valid_dataloader, force_words_ids, 
                     args.decoding_strategy, args.num_of_beams, 
                     args.p_sampling, args.temperature, 
+                    args.top_K, args.alpha,
                     args.num_of_samples)
     print('Done Generating!')
 
@@ -280,6 +287,10 @@ if __name__=='__main__':
         times = [args.num_of_samples for _ in range(len(val_df))]
         new_val_df = val_df.loc[val_df.index.repeat(times)].reset_index(drop=True)
         save_csv_name = 'nucleus_{:s}_{:.2f}_{:.2f}_{:d}'.format(args.run_name, args.p_sampling, args.temperature, args.num_of_samples)
+    elif args.decoding_strategy == 'C':
+        times = [args.num_of_samples for _ in range(len(val_df))]
+        new_val_df = val_df.loc[val_df.index.repeat(times)].reset_index(drop=True)
+        save_csv_name = 'contrastive_{:s}_{:d}_{:.2f}_{:d}'.format(args.run_name, args.top_K, args.alpha, args.num_of_samples)
     else:
         new_val_df = val_df
         save_csv_name = args.run_name
