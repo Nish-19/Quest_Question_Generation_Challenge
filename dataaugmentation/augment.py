@@ -5,7 +5,9 @@ python3.9 -m code.dataaugmentation.augment \
     --model_name "code-davinci-002" \
     --stop "[End]" \
     --start_row 0 \
-    --end_row 10
+    --end_row 1 \
+    --question_attribute_after \
+    --question_attributes_desc
 """
 import os
 import argparse
@@ -38,6 +40,9 @@ def add_params():
     # NUM_QA_EXAMPLES = 8 is also an acceptable distribution with prediction tag being 4.3%
     # NUM_QA_EXAMPLES = 10 excludes prediction tag
     parser.add_argument("--num_qa_examples", type=int, default=8, help="Number of QA examples per story for in-context augmentation prompt")
+    parser.add_argument('--question_attribute_before', action='store_true', help='Add question attribute before each incontext QA example in prompt')
+    parser.add_argument('--question_attribute_after', action='store_true', help='Add question attribute after each incontext QA example in prompt')
+    parser.add_argument('--question_attributes_desc', action='store_true', help='Add explanation of all question attributes as a prefix header to the prompt')
     # Codex generation parameters
     parser.add_argument("--max_tokens", type=int, default=512, help="Maximum number of tokens to generate")
     parser.add_argument("--temperature", type=float, default=0.7, help="Temperature for sampling")
@@ -53,7 +58,7 @@ def add_params():
 
 def get_openai_api_keys():
     api_keys = []
-    for i in range(0, 6):
+    for i in range(0, 5):
         api_key = os.getenv(f"OPENAI_API_KEY_{i}")
         if api_key:
             api_keys.append(api_key)
