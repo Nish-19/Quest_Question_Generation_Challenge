@@ -98,12 +98,7 @@ def add_params():
 def main():
     args = add_params()
 
-    filenames = ["code-davinci-002_20221213-170934_start_0_end_1000.csv",
-                "code-davinci-002_20221213-170726_start_1000_end_2000.csv", 
-                "code-davinci-002_20221213-170812_start_2000_end_3000.csv",
-                "code-davinci-002_20221213-171010_start_3000_end_4000.csv",
-                "code-davinci-002_20221213-170959_start_4000_end_5000.csv",
-                "code-davinci-002_20221213-171237_start_5000_end_6005.csv"
+    filenames = ["code-davinci-002_20230108-202236_start_989_end_992.csv",
                 ]
 
     if(args.step == 1):

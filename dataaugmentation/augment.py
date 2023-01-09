@@ -4,9 +4,9 @@ Augment training set using Codex.
 python3.9 -m code.dataaugmentation.augment \
     --model_name "code-davinci-002" \
     --stop "[End]" \
-    --start_row 0 \
-    --end_row 1 \
-    --question_attribute_after \
+    --start_row 989 \
+    --end_row 992 \
+    --question_attribute_before \
     --question_attributes_desc
 """
 import os

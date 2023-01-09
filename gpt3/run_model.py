@@ -3,7 +3,7 @@ Inference function for (finetuned) GPT-3 model.
 """
 import time
 import openai
-from openai.error import RateLimitError, Timeout, APIError, ServiceUnavailableError
+from openai.error import RateLimitError, Timeout, APIError, ServiceUnavailableError, InvalidRequestError
 
 
 delay_time = 5
@@ -35,9 +35,14 @@ def run_gpt3(prompts, args, api_keys):
                                         stop=[args.stop])
         delay_time *= decay_rate
     except (RateLimitError, Timeout, APIError, ServiceUnavailableError) as exc:
-        #print(f"Open AI exception = {exc}")
         delay_time *= 2
         return run_gpt3(prompts, args, api_keys)
+    except (InvalidRequestError) as exc:
+        # Usually thrown when the prompt exceeds max tokens allowed
+        print(f"InvalidRequestError = {exc}")
+        questions = ["Error"] * len(prompts) * args.n
+        questions = [questions[i:i+args.n] for i in range(0, len(questions), args.n)]
+        return questions
     
     # Match completions to prompts by index since completions are not returned in the same order as prompts
     questions = [None] * len(prompts) * args.n

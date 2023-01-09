@@ -14,9 +14,9 @@ def get_length(s):
 
 def create_prompt_incontext(row, story_map, df_train, df_eval, args, device, embedder=None, corpus_embeddings=None, corpus=None):
     target_story = get_story(row, story_map)
-    # Max tokens for code-davinci-002 is 4000 while for text-curie-001 is 2000
+    # Max tokens for code-davinci-002 is 8000 while for text-curie-001 is 2000
     # Max  words <= 4/3 * max_tokens
-    max_words = 3000 if "code" in args.model_name else 1500
+    max_words = 6000 if "code" in args.model_name else 1500
     samples, retrieval_query = get_incontext_samples(row, story_map, df_train, df_eval, args, device, embedder, corpus_embeddings, corpus)
     samples_text = ""
     num = 0

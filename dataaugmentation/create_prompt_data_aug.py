@@ -12,6 +12,7 @@ SEP_TOKEN = "\n"
 PROMPT_END_TOKEN = f'The {number_to_ordinal_word[1]} question is:'
 PROMPT_END_TOKEN_WITH_ATTRIBUTE_BEFORE = f'The {number_to_ordinal_word[1]} attribute is:'
 PROMPT_START_TOKEN = f"Each question attribute is explained below."
+MAX_WORDS = 6000
 
 
 def filter_df(df_train, args):
@@ -54,35 +55,41 @@ def get_attributes_desc():
 def create_prompt_data_aug(row, df_incontext, story_map, args):
     prompt = ""
     instructions = f"Write {number_to_cardinal_word[args.num_qa_examples]} questions and answers for the story."
+    target_story = get_story(row, story_map)
 
     if( args.question_attributes_desc ):
         attributes_desc = get_attributes_desc()
         prompt += f"{PROMPT_START_TOKEN}{SEP_TOKEN}{attributes_desc}{SEP_TOKEN}"
 
-
     # Add story and QA examples to prompt
+    num_ex_stories = 0
     for story in df_incontext["source_title"].unique():
+        curr_ex_text = ""
         df_incontext_story = df_incontext[df_incontext["source_title"] == story]
         # Add current story to prompt
-        prompt += f"[Begin]{SEP_TOKEN}{instructions}{SEP_TOKEN}The story is: {get_story(df_incontext_story.iloc[0], story_map)}{SEP_TOKEN}"
+        curr_ex_text += f"[Begin]{SEP_TOKEN}{instructions}{SEP_TOKEN}The story is: {get_story(df_incontext_story.iloc[0], story_map)}{SEP_TOKEN}"
         # Add QA examples for current story to prompt
         i = 0
         for index, incontext_row in df_incontext_story.iterrows():
             if( args.question_attribute_after ):
-                prompt += f'The {number_to_ordinal_word[i+1]} question is: {incontext_row["question"]}{SEP_TOKEN}The {number_to_ordinal_word[i+1]} answer is: {incontext_row["answer"]}{SEP_TOKEN}The {number_to_ordinal_word[i+1]} attribute is: {incontext_row["attribute1"]}{SEP_TOKEN}'
+                curr_ex_text += f'The {number_to_ordinal_word[i+1]} question is: {incontext_row["question"]}{SEP_TOKEN}The {number_to_ordinal_word[i+1]} answer is: {incontext_row["answer"]}{SEP_TOKEN}The {number_to_ordinal_word[i+1]} attribute is: {incontext_row["attribute1"]}{SEP_TOKEN}'
             elif( args.question_attribute_before ):
-                prompt += f'The {number_to_ordinal_word[i+1]} attribute is: {incontext_row["attribute1"]}{SEP_TOKEN}The {number_to_ordinal_word[i+1]} question is: {incontext_row["question"]}{SEP_TOKEN}The {number_to_ordinal_word[i+1]} answer is: {incontext_row["answer"]}{SEP_TOKEN}'
+                curr_ex_text += f'The {number_to_ordinal_word[i+1]} attribute is: {incontext_row["attribute1"]}{SEP_TOKEN}The {number_to_ordinal_word[i+1]} question is: {incontext_row["question"]}{SEP_TOKEN}The {number_to_ordinal_word[i+1]} answer is: {incontext_row["answer"]}{SEP_TOKEN}'
             else:
-                prompt += f'The {number_to_ordinal_word[i+1]} question is: {incontext_row["question"]}{SEP_TOKEN}The {number_to_ordinal_word[i+1]} answer is: {incontext_row["answer"]}{SEP_TOKEN}'
+                curr_ex_text += f'The {number_to_ordinal_word[i+1]} question is: {incontext_row["question"]}{SEP_TOKEN}The {number_to_ordinal_word[i+1]} answer is: {incontext_row["answer"]}{SEP_TOKEN}'
             i += 1
-        prompt += f"[End]{SEP_TOKEN}"
+        curr_ex_text += f"[End]{SEP_TOKEN}"
+        if( get_length(prompt + curr_ex_text + target_story) > MAX_WORDS ):
+            break
+        prompt += curr_ex_text
+        num_ex_stories += 1
     
     # Add target story for augmentation
-    target_story = get_story(row, story_map)
     prompt_end_token = PROMPT_END_TOKEN_WITH_ATTRIBUTE_BEFORE if args.question_attribute_before else PROMPT_END_TOKEN
     prompt += f"[Begin]{SEP_TOKEN}{instructions}{SEP_TOKEN}The story is: {target_story}{SEP_TOKEN}{prompt_end_token}"
     
     row["prompt"] = prompt
+    row["num_ex_stories_prompt"] = num_ex_stories
     row["num_words_prompt"] = get_length(prompt)
 
     return row
