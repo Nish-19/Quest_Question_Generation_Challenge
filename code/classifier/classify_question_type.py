@@ -99,7 +99,7 @@ def get_dataloader(batch_size, dataset, datatype='train'):
 
 # %%
 class BERTClassifier(pl.LightningModule):
-  def __init__(self, model_name, training_dl=None, valid_dl=None, lr=3e-4, num_train_epochs=5, warmup_steps=1000):
+  def __init__(self, model_name, training_dl=None, valid_dl=None, lr=3e-4, num_train_epochs=5, warmup_steps=50):
     super().__init__()
     self.model = BertForSequenceClassification.from_pretrained(model_name, num_labels=7)
     self.training_dataloader = training_dl
@@ -215,6 +215,7 @@ if __name__ == '__main__':
     training_dataloader = get_dataloader(batch_size, train_dataset)
     valid_dataloader = get_dataloader(batch_size, val_dataset, datatype='val')
     print('Loaded Dataloader!')
+    # set_trace()
 
     max_epochs = args.num_epochs
     model = BERTClassifier(model_name = args.model_name, training_dl=training_dataloader, 

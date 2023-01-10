@@ -26,9 +26,9 @@ from pytorch_lightning.callbacks import EarlyStopping, LearningRateMonitor, Mode
 
 from pdb import set_trace
 
-set_trace()
 
-os.environ['TRANSFORMERS_CACHE'] = '/data/zw16/huggingface/models'
+
+# os.environ['TRANSFORMERS_CACHE'] = '/data/zw16/huggingface/models'
 os.environ['WANDB_NOTEBOOK_NAME'] = 'FinetuneT5'
 os.environ['MASTER_PORT'] = '12345'
 wandb.login()
@@ -42,7 +42,7 @@ def clean_str(text):
 
 
 # load dataset
-def get_parallel_corpus(ip_df, story_df):
+def get_parallel_corpus(ip_df, story_df, io_type='story-answer'):
     # hash stories and sections
     story_sec_hash = defaultdict(dict)
     for i, row in story_df.iterrows():
@@ -56,9 +56,21 @@ def get_parallel_corpus(ip_df, story_df):
             story_str += story_sec_hash[row['source_title']][int(sec_num)]
         story.append(story_str)
         answer.append(clean_str(row['answer']))
-        question.append(clean_str(row['question']))
-        question_type.append(clean_str(row['attribute1']))
-        
+
+        if io_type == 'story-taskAsOutput':
+            # The prediction target (stored in the "question" variable) here is: question type + task + question.
+            q_type_str = clean_str(row['attribute1'])
+            task_str = construct_task(answer, q_type_str)
+            question_str = clean_str(row['question'])
+            output_str = '[Question attribute] ' + q_type_str + ' [Task] ' + task_str + ' [Question] ' + question_str
+            question.append(output_str)
+        elif io_type == 'story-answer' or io_type == 'story-taskAsInput':
+            # The prediction target here is the raw question.
+            question.append(clean_str(row['question']))
+            question_type.append(clean_str(row['attribute1']))
+        else:
+            raise Exception('unknown io_type; must be {story-answer, story-taskAsInput, story-taskAsOutput}')
+
     return story, answer, question, question_type
 
 def get_stats(story, answer, question):
@@ -85,18 +97,23 @@ def construct_task(answer, question_type):
     return task
 
 # Constrcut t5 input 
-def construct_t5_input(story, answer, question_type, input_type='story-answer'):
+def construct_t5_input(story, answer, question_type, io_type='story-answer'):
     inps = []
     
-    if input_type == 'story-answer':
+    if io_type == 'story-answer':
         prefix = 'Generate question from story and answer: '
         for stry, ans in zip(story, answer):
             t5_input = prefix + ' The story is ' + stry + ' The answer is ' + ans 
             inps.append(t5_input)
-    elif input_type == 'story-task':
+    elif io_type == 'story-taskAsInput':
         for stry, ans, q_type in zip(story, answer, question_type):
             task = construct_task(ans, q_type)
-            t5_input = '[Story] ' + stry + ' [Task] ' + task
+            t5_input = '[Story] ' + stry + ' [Answer] ' + ans + ' [Task] ' + task
+            inps.append(t5_input)
+    elif io_type == 'story-taskAsOutput':
+        prefix = 'Generate question and attribute from story and answer. '
+        for stry, ans in zip(story, answer):
+            t5_input = prefix + '[Story] ' + stry + ' [Answer] ' + ans
             inps.append(t5_input)
 
     return inps
@@ -160,15 +177,16 @@ def get_dataloader(batch_size, dataset, datatype='train'):
 
 # %%
 class FinetuneT5(pl.LightningModule):
-    def __init__(self, model_name, training_dl=None, valid_dl=None, lr=3e-4, num_train_epochs=5, warmup_steps=1000):
+    def __init__(self, model_name, niters, lr=3e-4, num_train_epochs=5, warmup_steps=1000):
         super().__init__()
         self.model = T5ForConditionalGeneration.from_pretrained(model_name)
-        self.training_dataloader = training_dl
-        self.valid_dataloader = valid_dl
+        # self.training_dataloader = training_dl
+        # self.valid_dataloader = valid_dl
         self.hparams.max_epochs = num_train_epochs
         self.hparams.num_train_epochs = num_train_epochs
         self.hparams.warmup_steps = warmup_steps
         self.hparams.lr = lr
+        self.hparams.niters = niters
         self.save_hyperparameters()
     
     def forward(self, input_ids, attention_mask, labels=None):     
@@ -207,36 +225,46 @@ class FinetuneT5(pl.LightningModule):
         with open('debug.txt', 'w') as outfile:
             print('In optmizer', file=outfile)
             print(self.hparams.lr, file=outfile)
+            print(self.hparams.niters, file=outfile)
             print(self.hparams.num_train_epochs, file=outfile)
             print(self.hparams.warmup_steps, file=outfile)
 
-        num_train_optimization_steps = self.hparams.num_train_epochs * len(self.training_dataloader)
-        lr_scheduler = {'scheduler': get_linear_schedule_with_warmup(optimizer,
-                                                    num_warmup_steps=self.hparams.warmup_steps,
-                                                    num_training_steps=num_train_optimization_steps),
+        num_train_optimization_steps = self.hparams.num_train_epochs * self.hparams.niters
+        lr_scheduler = {'scheduler': get_linear_schedule_with_warmup(
+                                        optimizer,
+                                        num_warmup_steps=self.hparams.warmup_steps,
+                                        num_training_steps=num_train_optimization_steps
+                                        ),
                         'name': 'learning_rate',
                         'interval':'step',
                         'frequency': 1}
         
         return {"optimizer": optimizer, "lr_scheduler": lr_scheduler}
     
-    def train_dataloader(self):
-        return self.training_dataloader
+    # def train_dataloader(self):
+    #     return self.training_dataloader
 
-    def val_dataloader(self):
-        return self.valid_dataloader
+    # def val_dataloader(self):
+    #     return self.valid_dataloader
 
 # %%
 
 def add_params():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-B", "--batch_size", type=int, default=8, help="Batch size for training the T5 Model")
-    parser.add_argument("-L", "--learning_rate", type=float, default=3e-4, help="Learning Rate for training the T5 Model")
-    parser.add_argument("-E", "--num_epochs", type=int, default=5, help="Total Number of Epochs")
-    parser.add_argument("-D", "--num_devices", type=int, default=1, help="Devices used for training")
-    parser.add_argument("-M", "--model_name", type=str, default="t5-small", help="Variant of the T5 model for finetuning")
-    parser.add_argument("--input_type", type=str, default='story-answer', help='Options: story-answer, story-task')
-    parser.add_argument("--question_prefix", type=bool, default=False, help="Whether to use a prefix [Question] before each question")
+    parser.add_argument("-B", "--batch_size", type=int, default=8, 
+                        help="Batch size for training the T5 Model")
+    parser.add_argument("-L", "--learning_rate", type=float, default=3e-4, 
+                        help="Learning Rate for training the T5 Model")
+    parser.add_argument("-E", "--num_epochs", type=int, default=5, 
+                        help="Total Number of Epochs")
+    parser.add_argument("-D", "--num_devices", type=int, default=1, 
+                        help="Devices used for training")
+    parser.add_argument("-M", "--model_name", type=str, default="t5-small", 
+                        help="Variant of the T5 model for finetuning")
+    parser.add_argument("--io_type", type=str, default='story-answer', 
+                        help='Options: story-answer, story-taskAsInput, story-taskAsOutput')
+    parser.add_argument("--question_prefix", type=bool, default=False, 
+                        help="Whether to use a prefix [Question] before each question. Use only with 'story-taskAsInput'")
     params = parser.parse_args()
     
     return params
@@ -245,7 +273,7 @@ def add_params():
 # %%
 if __name__ == '__main__':
     args = add_params()
-    run_name  = f'{args.model_name}.InputType-{args.input_type}.Qprefix-{args.question_prefix}.ep-{args.num_epochs}.bs-{args.batch_size}.lr-{args.learning_rate}.Ndevices-{args.num_devices}'
+    run_name  = f'{args.model_name}.IOType-{args.io_type}.Qprefix-{args.question_prefix}.ep-{args.num_epochs}.bs-{args.batch_size}.lr-{args.learning_rate}.Ndevices-{args.num_devices}'
 
     story_file = '../../../data/original/source_texts.csv'
     story_df = pd.read_csv(story_file)
@@ -255,8 +283,8 @@ if __name__ == '__main__':
     val_file = '../../../data/train_val_split_csv/val.csv'
     val_df = pd.read_csv(val_file)
 
-    train_story, train_answer, train_question, train_question_type = get_parallel_corpus(train_df, story_df)
-    val_story, val_answer, val_question, val_question_type = get_parallel_corpus(val_df, story_df)
+    train_story, train_answer, train_question, train_question_type = get_parallel_corpus(train_df, story_df, args.io_type)
+    val_story, val_answer, val_question, val_question_type = get_parallel_corpus(val_df, story_df, args.io_type)
 
     if args.question_prefix:
         for idx in range(len(train_question)):
@@ -264,9 +292,8 @@ if __name__ == '__main__':
         for idx in range(len(val_question)):
             val_question[idx] = '[Question] ' + val_question[idx]
     
-    train_inps = construct_t5_input(train_story, train_answer, train_question_type, input_type=args.input_type)
-    val_inps = construct_t5_input(val_story, val_answer, val_question_type, input_type=args.input_type)
-    # set_trace()
+    train_inps = construct_t5_input(train_story, train_answer, train_question_type, io_type=args.io_type)
+    val_inps = construct_t5_input(val_story, val_answer, val_question_type, io_type=args.io_type)
 
     # avg_tr_tk_len, max_tr_tk_len = get_token_len_stats(args.model_name, train_inps)
     # avg_val_tk_len, max_val_tk_len = get_token_len_stats(args.model_name, val_inps)
@@ -293,9 +320,10 @@ if __name__ == '__main__':
     print('Loaded Dataloader!')
 
     max_epochs = args.num_epochs
-    model = FinetuneT5(model_name = args.model_name, training_dl=training_dataloader, 
-        valid_dl=valid_dataloader, num_train_epochs=max_epochs, 
-        lr=args.learning_rate)
+    model = FinetuneT5(model_name=args.model_name,
+                        niters=len(training_dataloader), 
+                        num_train_epochs=max_epochs, 
+                        lr=args.learning_rate)
 
     # Trainig code
     wandb_logger = WandbLogger(name=run_name, project='Quest_Gen_Challenge')
@@ -313,21 +341,22 @@ if __name__ == '__main__':
     save_directory = os.path.join('../Checkpoints', run_name)
     save_checkpoint =  ModelCheckpoint(dirpath=save_directory, monitor='validation_loss', save_top_k=1)
 
-    trainer = Trainer(accelerator='gpu', devices=args.num_devices, 
-                    default_root_dir=save_directory, 
-                    logger=wandb_logger, 
-                    max_epochs=max_epochs,
-                    callbacks=[early_stop_callback, lr_monitor, save_checkpoint],
-                    # strategy = DDPStrategy(find_unused_parameters=False)
-                    # strategy = 'deepspeed_stage_3', precision=16
-                    strategy = DeepSpeedStrategy(
-                                    stage=3,
-                                    offload_optimizer=True,
-                                    offload_parameters=True,
-                                    )
-                    )
+    trainer = Trainer(default_root_dir=save_directory, 
+                      logger=wandb_logger, 
+                      max_epochs=max_epochs,
+                      callbacks=[early_stop_callback, lr_monitor, save_checkpoint],
+                    #   strategy="ddp",
+                      accelerator='gpu', devices=args.num_devices, 
+                      strategy = DeepSpeedStrategy(
+                                      stage=3,
+                                      offload_optimizer=True,
+                                      offload_parameters=True,
+                                      )
+                      )
 
-    trainer.fit(model)
+    trainer.fit(model, 
+                train_dataloaders=training_dataloader, 
+                val_dataloaders=valid_dataloader)
 
     # if not os.path.exists(save_directory):
     #     os.mkdir(save_directory)
