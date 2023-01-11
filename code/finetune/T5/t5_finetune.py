@@ -27,8 +27,7 @@ from pytorch_lightning.callbacks import EarlyStopping, LearningRateMonitor, Mode
 from pdb import set_trace
 
 
-
-# os.environ['TRANSFORMERS_CACHE'] = '/data/zw16/huggingface/models'
+os.environ['TRANSFORMERS_CACHE'] = '/data/zw16/huggingface/models'
 os.environ['WANDB_NOTEBOOK_NAME'] = 'FinetuneT5'
 os.environ['MASTER_PORT'] = '12345'
 wandb.login()
@@ -60,10 +59,11 @@ def get_parallel_corpus(ip_df, story_df, io_type='story-answer'):
         if io_type == 'story-taskAsOutput':
             # The prediction target (stored in the "question" variable) here is: question type + task + question.
             q_type_str = clean_str(row['attribute1'])
-            task_str = construct_task(answer, q_type_str)
+            task_str = construct_task(row['answer'], q_type_str)
             question_str = clean_str(row['question'])
             output_str = '[Question attribute] ' + q_type_str + ' [Task] ' + task_str + ' [Question] ' + question_str
             question.append(output_str)
+            
         elif io_type == 'story-answer' or io_type == 'story-taskAsInput':
             # The prediction target here is the raw question.
             question.append(clean_str(row['question']))
@@ -140,7 +140,7 @@ def get_t5_encoding(model_name, t5_inputs, question):
                         return_tensors="pt"
                     )
     input_ids, attention_mask = inp_encoding.input_ids, inp_encoding.attention_mask
-
+    
     target_encoding = tokenizer(question, padding='longest', 
                         max_length=max_target_length,
                         truncation=True,
@@ -285,7 +285,7 @@ if __name__ == '__main__':
 
     train_story, train_answer, train_question, train_question_type = get_parallel_corpus(train_df, story_df, args.io_type)
     val_story, val_answer, val_question, val_question_type = get_parallel_corpus(val_df, story_df, args.io_type)
-
+    
     if args.question_prefix:
         for idx in range(len(train_question)):
             train_question[idx] = '[Question] ' + train_question[idx]
