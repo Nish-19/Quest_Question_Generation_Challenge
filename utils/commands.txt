@@ -1,5 +1,8 @@
+(rtx8000) 
 srun --pty -p gpu-long --mem=32000 --partition=gypsum-rtx8000 --gres=gpu:1 bash
-srun --pty -p gpu-long --mem=32000 --constraint="v100" --gres=gpu:1 bash
+srun --pty -p gpu-long --mem=32000 --constraint="linux-ubuntu20.04-skylake_avx512" --gres=gpu:1 --time=14-00:00:00 bash
+(v100)
+srun --pty -p gpu-long --mem=32000 --constraint="v100" --gres=gpu:1 --time=14-00:00:00 bash
 srun --pty -p gpu-long --mem=32000 --partition=gypsum-2080ti --gres=gpu:1 bash
 srun --pty -p gpu-long --mem=32000 --partition=gypsum-m40 --gres=gpu:2 bash
 srun --pty -p gpu-long --mem=32000 --partition=gypsum-titanx --gres=gpu:1 bash
@@ -481,3 +484,6 @@ python3.9 -m code.dataaugmentation.augment \
     --stop "[End]" \
     --question_attribute_before \
     --question_attributes_desc
+
+
+srun --pty -p gpu-long --mem=32000 --constraint="v100" --gres=gpu:1 --time=14-00:00:00 bash

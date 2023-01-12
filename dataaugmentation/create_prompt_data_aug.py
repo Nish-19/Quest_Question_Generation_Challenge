@@ -6,8 +6,8 @@ from code.incontext.create_prompt_incontext import get_length
 
 
 RAW_DIR = "./data/"
-number_to_cardinal_word = {1: "one", 2: "two", 3: "three", 4: "four", 5: "five", 6: "six", 7: "seven", 8: "eight", 9: "nine", 10: "ten"}
-number_to_ordinal_word = {1: "first", 2: "second", 3: "third", 4: "fourth", 5: "fifth", 6: "sixth", 7: "seventh", 8: "eighth", 9: "ninth", 10: "tenth"}
+number_to_cardinal_word = {1: "one", 2: "two", 3: "three", 4: "four", 5: "five", 6: "six", 7: "seven", 8: "eight", 9: "nine", 10: "ten", 11: "eleven"}
+number_to_ordinal_word = {1: "first", 2: "second", 3: "third", 4: "fourth", 5: "fifth", 6: "sixth", 7: "seventh", 8: "eighth", 9: "ninth", 10: "tenth", 11: "eleventh"}
 SEP_TOKEN = "\n"
 PROMPT_END_TOKEN = f'The {number_to_ordinal_word[1]} question is:'
 PROMPT_END_TOKEN_WITH_ATTRIBUTE_BEFORE = f'The {number_to_ordinal_word[1]} attribute is:'
@@ -54,7 +54,6 @@ def get_attributes_desc():
 
 def create_prompt_data_aug(row, df_incontext, story_map, args):
     prompt = ""
-    instructions = f"Write {number_to_cardinal_word[args.num_qa_examples]} questions and answers for the story."
     target_story = get_story(row, story_map)
 
     if( args.question_attributes_desc ):
@@ -66,8 +65,9 @@ def create_prompt_data_aug(row, df_incontext, story_map, args):
     for story in df_incontext["source_title"].unique():
         curr_ex_text = ""
         df_incontext_story = df_incontext[df_incontext["source_title"] == story]
+        instructions = f"Write {number_to_cardinal_word[args.num_qa_examples]} questions and answers for the {number_to_ordinal_word[num_ex_stories+1]} story."
         # Add current story to prompt
-        curr_ex_text += f"[Begin]{SEP_TOKEN}{instructions}{SEP_TOKEN}The story is: {get_story(df_incontext_story.iloc[0], story_map)}{SEP_TOKEN}"
+        curr_ex_text += f"[Begin]{SEP_TOKEN}{instructions}{SEP_TOKEN}The {number_to_ordinal_word[num_ex_stories+1]} story is: {get_story(df_incontext_story.iloc[0], story_map)}{SEP_TOKEN}"
         # Add QA examples for current story to prompt
         i = 0
         for index, incontext_row in df_incontext_story.iterrows():
@@ -79,14 +79,16 @@ def create_prompt_data_aug(row, df_incontext, story_map, args):
                 curr_ex_text += f'The {number_to_ordinal_word[i+1]} question is: {incontext_row["question"]}{SEP_TOKEN}The {number_to_ordinal_word[i+1]} answer is: {incontext_row["answer"]}{SEP_TOKEN}'
             i += 1
         curr_ex_text += f"[End]{SEP_TOKEN}"
-        if( get_length(prompt + curr_ex_text + target_story) > MAX_WORDS ):
+        # 384 = 3/4 * 512 tokens reserved for completion
+        if( (get_length(prompt + curr_ex_text + target_story) + 384) > MAX_WORDS ):
             break
         prompt += curr_ex_text
         num_ex_stories += 1
     
     # Add target story for augmentation
     prompt_end_token = PROMPT_END_TOKEN_WITH_ATTRIBUTE_BEFORE if args.question_attribute_before else PROMPT_END_TOKEN
-    prompt += f"[Begin]{SEP_TOKEN}{instructions}{SEP_TOKEN}The story is: {target_story}{SEP_TOKEN}{prompt_end_token}"
+    instructions = f"Write {number_to_cardinal_word[args.num_qa_examples]} questions and answers for the {number_to_ordinal_word[num_ex_stories+1]} story."
+    prompt += f"[Begin]{SEP_TOKEN}{instructions}{SEP_TOKEN}The {number_to_ordinal_word[num_ex_stories+1]} story is: {target_story}{SEP_TOKEN}{prompt_end_token}"
     
     row["prompt"] = prompt
     row["num_ex_stories_prompt"] = num_ex_stories
