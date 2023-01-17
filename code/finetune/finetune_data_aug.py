@@ -261,13 +261,15 @@ if __name__ == '__main__':
     story_file = './data/original/source_texts.csv'
     story_df = pd.read_csv(story_file)
     # Train-Val split
-    train_file = './data/train_val_split_csv/Codex_Augment_Train.csv'
+    train_file = './data/train_val_split_csv/Codexattremmatch_augment.csv'
     train_df = pd.read_csv(train_file)
     val_file = './data/train_val_split_csv/val.csv'
     val_df = pd.read_csv(val_file)
 
     prefix = train_file.split('/')[-1].split('_')[0]
-    if 'Codex' in prefix:
+    if 'Codexattrbalanced' in prefix or 'Codexattremmatch' in prefix:
+        suffix = '_{:s}_augment'.format(prefix.lower())
+    elif 'Codex' in prefix:
         suffix = '_{:s}_{:.2f}_augment'.format(prefix.lower(), args.lambda_weight)
     elif 'Sel' in prefix:
         suffix =  '_{:s}_em_augment'.format(prefix.lower())
