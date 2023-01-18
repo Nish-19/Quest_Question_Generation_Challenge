@@ -267,8 +267,10 @@ if __name__ == '__main__':
     val_df = pd.read_csv(val_file)
 
     prefix = train_file.split('/')[-1].split('_')[0]
-    if 'Codexattrbalanced' in prefix or 'Codexattremmatch' in prefix:
+    if 'Codexattrbalanced' in prefix:
         suffix = '_{:s}_augment'.format(prefix.lower())
+    elif 'Codexattremmatch' in prefix:
+        suffix = '_{:s}_{:.2f}_augment'.format(prefix.lower(), args.lambda_weight)
     elif 'Codex' in prefix:
         suffix = '_{:s}_{:.2f}_augment'.format(prefix.lower(), args.lambda_weight)
     elif 'Sel' in prefix:

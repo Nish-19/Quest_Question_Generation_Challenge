@@ -141,7 +141,7 @@ def get_dataloader(batch_size, dataset, datatype='train'):
 
 # %%
 class FinetuneTransformer(pl.LightningModule):
-    def __init__(self, model_type, model_name, training_dl=None, valid_dl=None, lr=3e-4, num_train_epochs=5, warmup_steps=1000):
+    def __init__(self, model_type, model_name, lp=False, training_dl=None, valid_dl=None, lr=3e-4, num_train_epochs=5, warmup_steps=1000):
         super().__init__()
         if model_type == 'T': # for the t5 model
             self.model = T5ForConditionalGeneration.from_pretrained(model_name)
@@ -149,6 +149,15 @@ class FinetuneTransformer(pl.LightningModule):
             self.model = BartForConditionalGeneration.from_pretrained(model_name)
         else:
             print('Unkown Model Type - T or B options only')
+        # Check Linear Probing
+        if lp:
+            for name, param in self.model.named_parameters():
+                if 'DenseReluDense' in name or 'layer_norm' in name:
+                    param.requires_grad = True
+                else:
+                    param.requires_grad = False
+            self.model.shared.requires_grad = True
+            self.model.lm_head.requires_grad = True
         self.training_dataloader = training_dl
         self.valid_dataloader = valid_dl
         self.hparams.max_epochs = num_train_epochs
@@ -222,10 +231,12 @@ def add_params():
     parser.add_argument("-L", "--learning_rate", type=float, default=3e-4, help="Learning Rate for training the Transformer Model")
     parser.add_argument("-E", "--num_epochs", type=int, default=5, help="Total Number of Epochs")
     parser.add_argument("-D", "--num_devices", type=int, default=1, help="Devices used for training")
+    parser.add_argument('-LP', '--linear_probing', action=argparse.BooleanOptionalAction, help='For Linear Probing (Train only the lm head)')
     parser.add_argument("-MT", "--model_type", type=str, default="t", help="T for T5 and B for BART")
     parser.add_argument("-MN", "--model_name", type=str, default="t5-small", help="Variant of the Transformer model for finetuning")
     parser.add_argument("-N", "--run_name", type=str, default="t5-small", help="Name of the Run (Used in storing the model)")
     parser.add_argument('-LC', '--load_checkpoint', action=argparse.BooleanOptionalAction, help='Load Checkpoint for re-finetuning')
+    parser.add_argument("-CN", "--checkpoint_name", type=str, default="flan_t5_large_codex_0.00_augment", help="Variant of the trained Transformer Base Model")
     parser.add_argument("-P", "--prefix_choice", type=int, default=1, help="Choice of prefix used for the input construction - 1, 2, 3")
     params = parser.parse_args()
     return params
@@ -283,7 +294,7 @@ if __name__ == '__main__':
 
     # NOTE: Load checkpoint
     if args.load_checkpoint:
-        search_dir = os.path.join('./code/finetune/Checkpoints_new', args.run_name)
+        search_dir = os.path.join('./code/finetune/Checkpoints_new', args.checkpoint_name)
         for file in os.listdir(search_dir):
             ckpt_file = os.path.join(search_dir, file)
         print('ckpt_file', ckpt_file)
@@ -291,12 +302,15 @@ if __name__ == '__main__':
         model = FinetuneTransformer.load_from_checkpoint(ckpt_file, model_type = args.model_type)
         print('Successfully loaded the saved checkpoint!')
         save_name = 'reft_' + args.run_name
-    
     else:
         model = FinetuneTransformer(model_type = args.model_type, model_name = args.model_name, 
-            training_dl=training_dataloader, valid_dl=valid_dataloader, 
-            num_train_epochs=max_epochs, lr=args.learning_rate)
-        save_name = args.run_name
+            lp=args.linear_probing, training_dl=training_dataloader, 
+            valid_dl=valid_dataloader, num_train_epochs=max_epochs, 
+            lr=args.learning_rate)
+        if args.linear_probing:
+            save_name = 'lp_' + args.run_name
+        else:
+            save_name = args.run_name
     
     print('Save name:', save_name)
 
@@ -320,7 +334,6 @@ if __name__ == '__main__':
     
     save_directory = os.path.join('./code/finetune/Checkpoints_new', save_name)
     save_checkpoint =  ModelCheckpoint(dirpath=save_directory, monitor='validation_loss', save_top_k=1)
-
 
     if args.training_strategy == 'DP':
         strategy = DDPStrategy(find_unused_parameters=False)
