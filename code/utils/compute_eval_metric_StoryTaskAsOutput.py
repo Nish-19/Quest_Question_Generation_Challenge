@@ -63,6 +63,15 @@ def normalize(text):
 
     return white_space_fix(remove_articles(remove_punc(lower(text))))
 
+def extract_question_and_normalize(text):
+    """Extract the question from the generated output and perform normalization."""
+    def extract_question(text):
+        if '[Question]' in text:
+            return text.split('[Question]')[-1].split('[')[0]
+        else:
+            return ''
+    return normalize(extract_question(text))
+
 
 def grade_score(df, bleurt):
     nls = []
@@ -84,11 +93,11 @@ def ceildiv(a, b):
     return -(a // -b)
 
 
-def grade_score_with_batching_question(df, bleurt, batch_size=64):
+def grade_score_with_batching(df, bleurt, batch_size=64):
     # Add batching to speed up BLEURT model computation
     # Note: BLEURT metric is non commutative, therefore predictions must match questions generated
     df['question'] = df['question'].apply(normalize)
-    df['generated_question'] = df['generated_question'].apply(normalize)
+    df['generated_question'] = df['generated_question'].apply(extract_question_and_normalize)
 
     # set_trace()
 
@@ -101,21 +110,6 @@ def grade_score_with_batching_question(df, bleurt, batch_size=64):
         batch_scores = bleurt.compute(predictions=gen_q_batch, references=ref_q_batch)
         scores.extend(batch_scores["scores"])
 
-    return scores
-
-
-def grade_score_with_batching_answer(df, bleurt, batch_size=64):
-    # Add batching to speed up BLEURT model computation
-    # Note: BLEURT metric is non commutative, therefore predictions must match questions generated
-    df['answer'] = df['answer'].apply(normalize)
-    df['generated_answer'] = df['generated_answer'].apply(normalize)
-    ref_q = df['answer'].tolist()
-    gen_q = df['generated_answer'].tolist()
-    scores = []
-    num_batches = ceildiv(len(ref_q), batch_size)
-    for ref_q_batch, gen_q_batch in tqdm( zip(get_batch(ref_q, batch_size), get_batch(gen_q, batch_size)), total=num_batches ):
-        batch_scores = bleurt.compute(predictions=gen_q_batch, references=ref_q_batch)
-        scores.extend(batch_scores["scores"])
     return scores
 
 
@@ -143,10 +137,11 @@ def report_pairidwise_preds(df_pred):
     print("Mean BLEURT grouped by question explicit vs implicit:\n", reduced_df.groupby('ex_or_im')['bleurt_score'].agg(['mean', 'count']))
 
 
-
 def main():
-    args = add_params()
+
     RAW_DIR = "/mnt/QG/data/"
+
+    args = add_params()
     
     # Load BLUERT metric
     bleurt = evaluate.load('bleurt', 'bleurt-20')
@@ -160,9 +155,7 @@ def main():
     #print("BLEURT: ", np.mean([x["scores"][0] for x in bleurt_list]))
     
     # Batching method
-    # bleurt_scores = grade_score_with_batching(df_pred, bleurt, args.batch_size)
-    bleurt_scores = grade_score_with_batching_question(df_pred, bleurt, args.batch_size)
-
+    bleurt_scores = grade_score_with_batching(df_pred, bleurt, args.batch_size)
     #print(bleurt_scores)
     # print("Mean BLEURT over all samples: ", np.mean(bleurt_scores))
 
@@ -171,7 +164,7 @@ def main():
     df_pred['bleurt_score'] = df_pred['bleurt_score'].astype(float)
 
     report_pairidwise_preds(df_pred)
-
+    
     # print("Mean BLEURT grouped by question attribute type:\n", df_pred.groupby('attribute1')['bleurt_score'].agg(['mean', 'count']))
     # print("Mean BLEURT grouped by question local vs summary:\n", df_pred.groupby('local_or_sum')['bleurt_score'].agg(['mean', 'count']))
     # print("Mean BLEURT grouped by question explicit vs implicit:\n", df_pred.groupby('ex_or_im')['bleurt_score'].agg(['mean', 'count']))
