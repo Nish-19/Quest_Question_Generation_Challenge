@@ -1,3 +1,7 @@
+'''
+CUDA_VISIBLE_DEVICES=0 accelerate launch finetune.py
+'''
+
 import pathlib, sys
 from typing import List
 import pandas as pd
