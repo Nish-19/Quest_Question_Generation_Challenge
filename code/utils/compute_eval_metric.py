@@ -125,7 +125,7 @@ def report_pairidwise_preds(df_pred):
     for grp_full in grp_pair_ids:
         grp = grp_full[1]
         max_score = max(grp['bleurt_score'])
-        print('max_score:', max_score)
+        # print('max_score:', max_score)
         grp_wise_max_bluert.append(max_score)
         attr.append(grp['attribute1'].tolist()[0])
         ex_or_im.append(grp['ex_or_im'].tolist()[0])
