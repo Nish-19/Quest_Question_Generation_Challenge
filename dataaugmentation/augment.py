@@ -20,7 +20,7 @@ from code.utils.create_dataset_split import load_df, save_csv
 from code.gpt3.evaluate import clean_data, save_params
 from code.gpt3.prepare_dataset import load_stories
 from code.gpt3.run_model import run_gpt3
-from code.dataaugmentation.create_prompt_data_aug import filter_df, create_prompt_data_aug, explore_prompt, PROMPT_END_TOKEN, SEP_TOKEN
+from code.dataaugmentation.create_prompt_data_aug import filter_df_balance_attributes, filter_df, create_prompt_data_aug, explore_prompt, PROMPT_END_TOKEN, SEP_TOKEN
 
 
 RAW_DIR = "./data"
@@ -39,7 +39,7 @@ def add_params():
     # NUM_QA_EXAMPLES = 5 gives train_set like distribution over question attribute tags
     # NUM_QA_EXAMPLES = 8 is also an acceptable distribution with prediction tag being 4.3%
     # NUM_QA_EXAMPLES = 10 excludes prediction tag
-    parser.add_argument("--num_qa_examples", type=int, default=8, help="Number of QA examples per story for in-context augmentation prompt")
+    parser.add_argument("--num_qa_examples", type=int, default=7, help="Number of QA examples per story for in-context augmentation prompt")
     parser.add_argument('--question_attribute_before', action='store_true', help='Add question attribute before each incontext QA example in prompt')
     parser.add_argument('--question_attribute_after', action='store_true', help='Add question attribute after each incontext QA example in prompt')
     parser.add_argument('--question_attributes_desc', action='store_true', help='Add explanation of all question attributes as a prefix header to the prompt')
@@ -81,8 +81,6 @@ def augment_data(df_train, df_incontext, story_map, args):
         df_train.update(chunk)
     # Explode augmented_qa_samples column since top-n augmentation completion (each completion has k QA samples) candidates could have been generated
     df_train = df_train.explode("augmented_qa_samples")
-    # Parse augmented_qa_samples column
-    #df_train = parse_augmented_qa_samples(df_train)
 
     return df_train
 
@@ -99,9 +97,9 @@ def main():
     df_train = clean_data(df_train)
 
     # Select story with QA examples to use as in-context examples for augmentation prompt
-    df_incontext = filter_df(df_train, args)
-    #explore_prompt(df_incontext)
-
+    df_incontext = filter_df_balance_attributes(df_train, args)
+    explore_prompt(df_incontext)
+    
     # Run Codex model for augmentation
     args.start_row = 0 if args.debug else args.start_row
     args.end_row = 5 if args.debug else args.end_row
@@ -113,7 +111,8 @@ def main():
     timestr = time.strftime("%Y%m%d-%H%M%S")
     model_name = args.model_name.replace(":", "_")
     filename = model_name + "_" + timestr + "_start_" + str(args.start_row) + "_end_" + str(args.end_row) 
-    df_augment = df_augment.drop(columns=["key"])#, "augmented_qa_samples"])
+    columns_to_drop = ["key"] + [col for col in df_augment.columns if "count" in col]
+    df_augment = df_augment.drop(columns_to_drop, axis=1)
     save_csv(df_augment, filename, folder)
 
     # Save parameters in a json file for later reference

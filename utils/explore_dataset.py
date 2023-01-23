@@ -63,7 +63,7 @@ def explore_data_aug(filepath):
 def main():
     filepath = os.path.join(RAW_DIR, "original")
     explore_data_aug(filepath)
-    #explore_train_set(filepath)
+    explore_train_set(filepath)
     #explore_test_set(filepath)
     #explore_story_source_texts(filepath)
 

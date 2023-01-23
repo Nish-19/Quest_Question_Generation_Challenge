@@ -1,4 +1,5 @@
 import os
+import pandas as pd
 
 from code.utils.create_dataset_split import SEED
 from code.gpt3.prepare_dataset import get_story
@@ -13,6 +14,52 @@ PROMPT_END_TOKEN = f'The {number_to_ordinal_word[1]} question is:'
 PROMPT_END_TOKEN_WITH_ATTRIBUTE_BEFORE = f'The {number_to_ordinal_word[1]} attribute is:'
 PROMPT_START_TOKEN = f"Each question attribute is explained below."
 MAX_WORDS = 6000
+# Attributes sorted in ascending order of frequency of occurence in the dataset
+ATTRIBUTES_SORTED = ["prediction", "setting", "feeling", "outcome resolution", "character", "causal relationship", "action"]
+
+
+def filter_df_balance_attributes(df_train, args):
+    # Group by source_title and cor_section, 
+    df_train["count"] = df_train.groupby(["source_title", "cor_section"])["attribute1"].transform(len)
+    # Count frequency of each question attribute1 in each group
+    for attr in ATTRIBUTES_SORTED:
+        df_train[attr.split(" ")[0] + "_count"] = df_train.groupby(["source_title", "cor_section"])["attribute1"].transform(lambda x: x.value_counts().get(attr, default=0))
+    df_filter = df_train.drop_duplicates(["source_title", "cor_section"])
+    # Filter groups which have QA example count >= args.num_qa_examples
+    df_filter = df_filter[df_filter['count'] >= args.num_qa_examples]
+    # Sort groups by descending order of attribute frequency, scanning from least to most frequent attributes
+    df_filter = df_filter.sort_values(by=["prediction_count", "setting_count", "feeling_count", "outcome_count", "character_count", "causal_count", "action_count"], ascending=False)
+
+    # Add args.num_qa_examples QA examples for each story
+    df_train['key'] = df_train['source_title'] + df_train['cor_section']
+    # Keep track of stories already added to df_incontext, so we don't repeat stories
+    current_unique_stories = []
+    df_incontext = pd.DataFrame()
+    for source_title, cor_section in zip(df_filter['source_title'], df_filter['cor_section']):
+        df_story_sec = df_train[df_train['key'].isin([source_title + cor_section])].drop(['key'], axis=1)
+        # If the story with the same or diferent section is not already added to df_incontext, and it has at least 5 unique attributes
+        if( ( source_title not in current_unique_stories ) and ( len(df_story_sec["attribute1"].unique()) >= 5 ) ):
+            current_unique_stories.append(source_title)
+            num_ex = 0
+            break_while = False
+            while(True):
+                # Add QA examples starting from least to most frequent attributes
+                for attribute in ATTRIBUTES_SORTED:
+                    df_ex = df_story_sec[df_story_sec['attribute1'] == attribute].head(1)
+                    if( len(df_ex) != 0 ):
+                        df_incontext = pd.concat([df_incontext, df_ex])
+                        # Remove the added example from df_story_sec by index
+                        df_story_sec = df_story_sec.drop(df_ex.index)
+                        num_ex += 1
+                        if( num_ex == args.num_qa_examples ):
+                            break_while = True
+                            break
+                if( break_while ):
+                    break
+        if( len(current_unique_stories) == args.num_stories ):
+            break
+        
+    return df_incontext
 
 
 def filter_df(df_train, args):
@@ -31,14 +78,11 @@ def filter_df(df_train, args):
 
     # Filter df_train to only include samples matching story and section from df_filter
     df_train['key'] = df_train['source_title'] + df_train['cor_section']
-    df_incontext = df_train[df_train['key'].isin(df_filter['source_title'] + df_filter['cor_section'])].drop(['key'], axis=1)
-    #print(len(df_incontext["attribute1"].unique()))
-    assert len(df_incontext["source_title"].unique()) == args.num_stories
+    df_train = df_train[df_train['key'].isin(df_filter['source_title'] + df_filter['cor_section'])].drop(['key'], axis=1)
+    assert len(df_train["source_title"].unique()) == args.num_stories
 
     # Randomly select args.num_qa_examples QA examples from each story
-    df_incontext = df_incontext.groupby(['source_title']).apply(lambda x: x.sample(n=args.num_qa_examples, random_state=SEED)).reset_index(drop=True)
-    #print(len(df_incontext))
-    #print(len(df_incontext["attribute1"].unique()))
+    df_incontext = df_train.groupby(['source_title']).apply(lambda x: x.sample(n=args.num_qa_examples, random_state=SEED)).reset_index(drop=True)
     print(df_incontext)
 
     return df_incontext
@@ -97,6 +141,9 @@ def create_prompt_data_aug(row, df_incontext, story_map, args):
     return row
 
 
-def explore_prompt(df_data_aug):
+def explore_prompt(df):
+    print(f'No of unique stories: {len(df["source_title"].unique())}')
+    print(f'No of unique examples: {len(df)}')
+    print(f'No of unique attributes: {len(df["attribute1"].unique())}')
     # Explore question attribute1 tags distribution
-    print(df_data_aug['attribute1'].value_counts(normalize=True))
+    print(df['attribute1'].value_counts(normalize=True))
