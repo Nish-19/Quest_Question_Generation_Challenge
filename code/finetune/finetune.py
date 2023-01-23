@@ -226,7 +226,7 @@ class FinetuneTransformer(pl.LightningModule):
 def add_params():
     parser = argparse.ArgumentParser()
     parser.add_argument('-W', '--wandb', action=argparse.BooleanOptionalAction, help='For Wandb logging')
-    parser.add_argument('-TFN', '--train_file_name', type=str, default="DP", help="DP for dataparalle and DS for deepspeed")
+    parser.add_argument('-TFN', '--train_file_name', type=str, default="train.csv", help="Training File name")
     parser.add_argument('-TS', '--training_strategy', type=str, default="DP", help="DP for dataparalle and DS for deepspeed")
     parser.add_argument("-B", "--batch_size", type=int, default=8, help="Batch size for training the Transformer Model")
     parser.add_argument("-L", "--learning_rate", type=float, default=3e-4, help="Learning Rate for training the Transformer Model")
