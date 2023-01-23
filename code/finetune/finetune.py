@@ -226,6 +226,7 @@ class FinetuneTransformer(pl.LightningModule):
 def add_params():
     parser = argparse.ArgumentParser()
     parser.add_argument('-W', '--wandb', action=argparse.BooleanOptionalAction, help='For Wandb logging')
+    parser.add_argument('-TFN', '--train_file_name', type=str, default="DP", help="DP for dataparalle and DS for deepspeed")
     parser.add_argument('-TS', '--training_strategy', type=str, default="DP", help="DP for dataparalle and DS for deepspeed")
     parser.add_argument("-B", "--batch_size", type=int, default=8, help="Batch size for training the Transformer Model")
     parser.add_argument("-L", "--learning_rate", type=float, default=3e-4, help="Learning Rate for training the Transformer Model")
@@ -249,7 +250,7 @@ if __name__ == '__main__':
     story_file = './data/original/source_texts.csv'
     story_df = pd.read_csv(story_file)
     # Train-Val split
-    train_file = './data/train_val_split_csv/train.csv'
+    train_file = os.path.join('./data/train_val_split_csv/', args.train_file_name)
     train_df = pd.read_csv(train_file)
     val_file = './data/train_val_split_csv/val.csv'
     val_df = pd.read_csv(val_file)
