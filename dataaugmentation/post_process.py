@@ -13,8 +13,8 @@ Step 2: Aggregate all parsed codex runs:
 python -m code.dataaugmentation.post_process\
     --step 2\
     --attribute\
-    --folder_name "with_question_attribute" \
-    --max_runs 3
+    --folder_name "balanced_with_question_attribute" \
+    --max_runs 6
 
 
 Without question attribute:
