@@ -20,13 +20,6 @@ class LanguageModelBase(nn.Module):
 
 
     def forward(self, **kwargs):
-        #print("inside forward, kwargs['input_ids'].size", kwargs["input_ids"].size())
-        #print("inside forward, kwargs['attention_mask'].size", kwargs["attention_mask"].size())
-        #print("inside forward, kwargs['labels'].size", kwargs["labels"].size())
-        #print("inside forward, kwargs['input_ids'].size", kwargs["input_ids"].device)
-        #print("inside forward, kwargs['attention_mask'].size", kwargs["attention_mask"].device)
-        #print("inside forward, kwargs['labels'].size", kwargs["labels"].device)
-        import pdb; pdb.set_trace()
         return self.model(**kwargs)
 
 
@@ -81,8 +74,6 @@ class LanguageModelBaseWrapper():
         else:
             outputs = self.model(**batch["inputs"])
         loss = outputs.loss
-        print(outputs.logits)
-        print(loss)
 
         # Multi gpu training
         if( torch.cuda.device_count() > 1 ):
@@ -120,7 +111,6 @@ class LanguageModelBaseWrapper():
 
 
     def test_step(self, batch):
-        #print("evaluation step")
         with torch.no_grad():
             if( self.params.amp ):
                 with torch.cuda.amp.autocast():
@@ -128,12 +118,9 @@ class LanguageModelBaseWrapper():
             else:
                 outputs = self.model(**batch["inputs"])
         loss = outputs.loss
-        print(outputs.logits)
-        print(loss)
 
         if( torch.cuda.device_count() > 1 ):
             loss = loss.mean()
-        #print(loss)
 
         return {
             'loss': loss.detach().cpu()

@@ -40,6 +40,7 @@ python -m code.private.gpt3.eval_local \
 
 
 
+
 ->Public test leaderboad evaluation
 
 Finetuned curie model:
@@ -487,3 +488,21 @@ python3.9 -m code.dataaugmentation.augment \
 
 
 srun --pty -p gpu-long --mem=32000 --constraint="v100" --gres=gpu:1 --time=14-00:00:00 bash
+
+
+
+-----
+->Flan-T5 finetuning:
+
+S+A -> Q
+
+
+
+
+(external data)
+
+
+
+
+-----
+->Overgenerate and rank:

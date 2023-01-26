@@ -1,6 +1,22 @@
 {
-    "train_val_split": {
+    "seed_21": {
         "train": "f38407d8cb043746e68f000dd405aa9b003cf5f5",
         "val": "74904f0b9da29ccd2bb2e2be92e815b9a29e741e"
+    },
+    "seed_0": {
+        "train": "52cb0efb59096ea82f781e822d5467fc23f7fcd0",
+        "val": "e324c980d62f78ef945e84c99433ee8be287c4a6"
+    },
+    "seed_1": {
+        "train": "8e30af51de42b0d640c6270757c46e08bb4c3136",
+        "val": "dba9cd095ae8a9ab28e019fbc4aafc24b49d114a"
+    },
+    "seed_2": {
+        "train": "9af3cc3a8a086cc629430fb209880c58985c1363",
+        "val": "bcd9d7183f83629815712083e601db010d7bdb1d"
+    },
+    "seed_3": {
+        "train": "a3ddc5141db5ff58ff68b73485def9e9954ea1ee",
+        "val": "7a898cde1e4b67520aef248ae1b88b4be0abfddf"
     }
 }

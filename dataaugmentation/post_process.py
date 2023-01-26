@@ -5,14 +5,14 @@ Step 1: Parse each codex run:
 python -m code.dataaugmentation.post_process\
     --step 1\
     --attribute\
-    --filename "code-davinci-002_20230118-223900_start_0_end_6005_corrected.csv"\
-    --run 1
+    --filename "code-davinci-002_20230124-081840_start_0_end_6005_corrected.csv"\
+    --run 4
 
 Step 2: Aggregate all parsed codex runs:
 python -m code.dataaugmentation.post_process\
     --step 2\
     --attribute\
-    --max_runs 2
+    --max_runs 5
 
 
 Without question attribute:
