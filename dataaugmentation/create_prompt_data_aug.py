@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 
-from code.utils.create_dataset_split import SEED
+from code.score_prediction.prepare_dataset_qg_model import SEED
 from code.gpt3.prepare_dataset import get_story
 from code.incontext.create_prompt_incontext import get_length
 
@@ -70,9 +70,6 @@ def filter_df(df_train, args):
     df_filter = df_group[df_group['count'] >= args.num_qa_examples]
     # Remove duplicate stories, and keep the first occurence (since we have sorted by count) with most QA examples
     df_filter = df_filter.drop_duplicates(subset=['source_title'])
-    print(f"No of unique stories with >={args.num_qa_examples} QA examples: {len(df_filter)}")
-    print(df_filter.head(10))
-
     # Keep args.num_stories random stories
     df_filter = df_filter.sample(n=args.num_stories, random_state=SEED)
 
@@ -83,7 +80,6 @@ def filter_df(df_train, args):
 
     # Randomly select args.num_qa_examples QA examples from each story
     df_incontext = df_train.groupby(['source_title']).apply(lambda x: x.sample(n=args.num_qa_examples, random_state=SEED)).reset_index(drop=True)
-    print(df_incontext)
 
     return df_incontext
 

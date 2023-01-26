@@ -20,7 +20,7 @@ from code.utils.create_dataset_split import load_df, save_csv
 from code.gpt3.evaluate import clean_data, save_params
 from code.gpt3.prepare_dataset import load_stories
 from code.gpt3.run_model import run_gpt3
-from code.dataaugmentation.create_prompt_data_aug import filter_df_balance_attributes, filter_df, create_prompt_data_aug, explore_prompt, PROMPT_END_TOKEN, SEP_TOKEN
+from code.dataaugmentation.create_prompt_data_aug import filter_df_balance_attributes, filter_df, create_prompt_data_aug, explore_prompt
 
 
 RAW_DIR = "./data"
@@ -32,14 +32,12 @@ def add_params():
 
     parser.add_argument("--model_name", type=str, default="code-davinci-002", help="GPT-3 off-the-shelf or finetuned model name")
     parser.add_argument('--debug', action='store_true', help='Debug mode for augmenting on a small subset of 5 samples')
-    # Incontext augmenration parameters
+    # Incontext augmentation parameters
+    parser.add_argument('--balance_attributes', action='store_true', help='Balance distribution of question attributes in in-context augmentation prompt')
     parser.add_argument("--num_stories", type=int, default=10, help="Number of stories for in-context augmentation prompt")
+    parser.add_argument("--num_qa_examples", type=int, default=8, help="Number of QA examples per story for in-context augmentation prompt")
     parser.add_argument("--start_row", type=int, default=0, help="Number of stories for in-context augmentation prompt")
     parser.add_argument("--end_row", type=int, default=6005, help="Number of stories for in-context augmentation prompt")
-    # NUM_QA_EXAMPLES = 5 gives train_set like distribution over question attribute tags
-    # NUM_QA_EXAMPLES = 8 is also an acceptable distribution with prediction tag being 4.3%
-    # NUM_QA_EXAMPLES = 10 excludes prediction tag
-    parser.add_argument("--num_qa_examples", type=int, default=7, help="Number of QA examples per story for in-context augmentation prompt")
     parser.add_argument('--question_attribute_before', action='store_true', help='Add question attribute before each incontext QA example in prompt')
     parser.add_argument('--question_attribute_after', action='store_true', help='Add question attribute after each incontext QA example in prompt')
     parser.add_argument('--question_attributes_desc', action='store_true', help='Add explanation of all question attributes as a prefix header to the prompt')
@@ -92,12 +90,20 @@ def main():
     story_map = load_stories()
 
     # Load train data to augment
-    folder = os.path.join(RAW_DIR, "train_val_split_csv")
+    folder = os.path.join(RAW_DIR, "folds/seed_21/train_val_split_csv")
     df_train = load_df("train.csv", folder)
     df_train = clean_data(df_train)
 
     # Select story with QA examples to use as in-context examples for augmentation prompt
-    df_incontext = filter_df_balance_attributes(df_train, args)
+    if( args.balance_attributes ):
+        assert args.num_stories == 10, "num_stories must be 10 when balancing question attributes"
+        assert args.num_qa_examples == 7, "num_stories must be 7 when balancing question attributes"
+        df_incontext = filter_df_balance_attributes(df_train, args)
+    else:
+        assert args.num_stories == 10, "num_stories must be 10 when not balancing question attributes"
+        assert args.num_qa_examples == 8, "num_stories must be 8 when not balancing question attributes"
+        df_incontext = filter_df(df_train, args)
+    # Explore in-context examples used in prompt
     explore_prompt(df_incontext)
     
     # Run Codex model for augmentation

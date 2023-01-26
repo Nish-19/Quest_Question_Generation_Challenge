@@ -5,14 +5,16 @@ Step 1: Parse each codex run:
 python -m code.dataaugmentation.post_process\
     --step 1\
     --attribute\
-    --filename "code-davinci-002_20230124-081840_start_0_end_6005_corrected.csv"\
-    --run 4
+    --filename "code-davinci-002_20230112-221511_start_0_end_6005_corrected.csv"\
+    --folder_name "with_question_attribute" \
+    --run 2
 
 Step 2: Aggregate all parsed codex runs:
 python -m code.dataaugmentation.post_process\
     --step 2\
     --attribute\
-    --max_runs 5
+    --folder_name "with_question_attribute" \
+    --max_runs 3
 
 
 Without question attribute:
@@ -51,7 +53,7 @@ import argparse
 import pandas as pd
 
 from code.utils.create_dataset_split import load_df, save_csv
-from code.dataaugmentation.create_prompt_data_aug import PROMPT_END_TOKEN, PROMPT_END_TOKEN_WITH_ATTRIBUTE_BEFORE, filter_df_balance_attributes
+from code.dataaugmentation.create_prompt_data_aug import PROMPT_END_TOKEN, PROMPT_END_TOKEN_WITH_ATTRIBUTE_BEFORE, filter_df_balance_attributes, filter_df
 from code.gpt3.prepare_dataset import load_stories
 from code.gpt3.evaluate import clean_data
 
@@ -65,10 +67,12 @@ def add_params():
     parser.add_argument("--step", type=int, default=2, help="Post processing step to run, run step 1 followed by step 2")
     parser.add_argument("--attribute", action='store_true', help='Question attribute included in augmented data')
     parser.add_argument("--filename", type=str, default="code-davinci-002_20230109-160155_start_0_end_6005_corrected.csv", help="Filename to parse")
+    parser.add_argument("--folder_name", type=str, default="with_question_attribute", help="Folder name")
     parser.add_argument("--run", type=int, default=0, help="Codex run ID")
     parser.add_argument("--max_runs", type=int, default=1, help="Number of codex runs to aggregate")
     # Params to recreate incontext df used for prompt
-    parser.add_argument("--num_qa_examples", type=int, default=7, help="Number of QA examples per story for in-context augmentation prompt")
+    parser.add_argument('--balance_attributes', action='store_true', help='Balance distribution of question attributes in in-context augmentation prompt')
+    parser.add_argument("--num_qa_examples", type=int, default=8, help="Number of QA examples per story for in-context augmentation prompt")
     parser.add_argument("--num_stories", type=int, default=10, help="Number of stories for in-context augmentation prompt")
 
     
@@ -82,10 +86,13 @@ def split_qa(row, df_incontext, has_attribute, num_qa_examples):
     x = row["augmented_qa_samples"]
     # Check for errors
     divisor = 3 if has_attribute else 2
-    if( len(x) % divisor != 0 ):
+    if( len(x) == 1 and "Error" in x[0] ):
+        # Codex output error (prompt too long, etc)
+        return "Error"
+    elif( len(x) % divisor != 0 ):
         print(f"\n(Manual) Error: missing A/Q for Q/A in, manually run prompt on OpenAI playground for:\n{row['pair_id']}")
         x = x[:len(x)-(len(x)%divisor)]
-    if( len(x) > num ):
+    elif( len(x) > num ):
         print(f"\nError: More than 8 augmented QA samples for:\n{row['pair_id']}")
         # Keep first 8 QA samples
         x = x[:num]
@@ -98,7 +105,7 @@ def split_qa(row, df_incontext, has_attribute, num_qa_examples):
         if( sample == "" ):
             print(f"\n(Manual) Error: Empty string in Q/A, manually run prompt on OpenAI playground for:\n{row['pair_id']}")
         elif("is:" not in sample):
-            print(f"\nError: Missing 'is:' in Q/A for:\n{row['pair_id']}\n{x}")
+            print(f"\nError: Missing 'is:' in Q/A for:\n{row['pair_id']}")
         else:
             sample = sample.split("is:")[1][1:]
             if( sample == "" ):
@@ -110,8 +117,7 @@ def split_qa(row, df_incontext, has_attribute, num_qa_examples):
         if( question+answer in (df_incontext["question"] + df_incontext["answer"]).values):
             # Ignore if the target story and prompt story are the same, since it will repeat in this case
             if( row['source_title'] != df_incontext[df_incontext["question"] == question]["source_title"].values[0] ):
-                l = "error"
-                #print(f"\nError: Prompt QA repeated augmented QA:\n{row['pair_id']}")
+                l = "Repeat"
                 break
     
     return l
@@ -121,11 +127,13 @@ def parse_augmented_qa_samples(df, df_incontext, args):
     # Split augmented QA samples
     prompt_end_token = PROMPT_END_TOKEN_WITH_ATTRIBUTE_BEFORE if args.attribute else PROMPT_END_TOKEN
     df["augmented_qa_samples"] = df["augmented_qa_samples"].apply(lambda x: (prompt_end_token + " " + x).split("\n"))
-    #df["augmented_qa_samples"] = df["augmented_qa_samples"].apply(lambda x: split_qa(x, args.attribute))
     df["augmented_qa_samples"] = df.apply(lambda row: split_qa(row, df_incontext, args.attribute, args.num_qa_examples), axis=1)
+    # Clean up
+    print("No of rows dropped where Codex output error (prompt too long, etc): ", len(df.loc[df['augmented_qa_samples']=="Error"]))
+    df.drop(df.loc[df['augmented_qa_samples']=="Error"].index, inplace=True)
+    print("No of rows dropped where prompt QA was in repeated augmented QA: ", len(df.loc[df['augmented_qa_samples']=="Repeat"]))
+    df.drop(df.loc[df['augmented_qa_samples']=="Repeat"].index, inplace=True)
     # Separate attributes and questions and answers
-    print("No of rows dropped where prompt QA was in repeated augmented QA: ", len(df.loc[df['augmented_qa_samples']=="error"]))
-    df.drop(df.loc[df['augmented_qa_samples']=="error"].index, inplace=True)
     if(args.attribute):
         df["attribute1"] = df.apply(lambda row: row["augmented_qa_samples"][0::3], axis=1)
         df["question"] = df.apply(lambda row: row["augmented_qa_samples"][1::3], axis=1)
@@ -174,15 +182,25 @@ def main():
 
     if(args.step == 1):
         # Recreate incontext prompt to check if any augmented QA are repeated from incontext QA examples
-        folder = os.path.join(RAW_DIR, "train_val_split_csv")
+        folder = os.path.join(RAW_DIR, "folds/seed_21/train_val_split_csv")
         df_train = load_df("train.csv", folder)
         df_train = clean_data(df_train)
+        
         # Select story with QA examples to use as in-context examples for augmentation prompt
-        df_incontext = filter_df_balance_attributes(df_train, args)
+        if( args.balance_attributes ):
+            assert args.folder_name == "balanced_with_question_attribute", "folder_name must be balanced_with_question_attribute when balancing question attributes"
+            assert args.num_stories == 10, "num_stories must be 10 when balancing question attributes"
+            assert args.num_qa_examples == 7, "num_stories must be 7 when balancing question attributes"
+            df_incontext = filter_df_balance_attributes(df_train, args)
+        else:
+            assert args.folder_name == "with_question_attribute", "folder_name must be with_question_attribute when not balancing question attributes"
+            assert args.num_stories == 10, "num_stories must be 10 when not balancing question attributes"
+            assert args.num_qa_examples == 8, "num_stories must be 8 when not balancing question attributes"
+            df_incontext = filter_df(df_train, args)
 
         # Load unparsed augmented data
         print(f"\n->Parsing file: {args.filename}")
-        folder = os.path.join(RAW_DIR, f"augmentation/balanced_with_question_attribute/codex_run_{args.run}")
+        folder = os.path.join(RAW_DIR, f"augmentation/{args.folder_name}/codex_run_{args.run}")
         df = load_df(args.filename, folder)
         df_parsed = parse_augmented_qa_samples(df, df_incontext, args)
         # Save parsed responses
@@ -190,7 +208,6 @@ def main():
             df_parsed = df_parsed.drop(columns=["local_or_sum", "attribute2", "ex_or_im", "prompt", "num_words_prompt", "augmented_qa_samples", "num_ex_stories_prompt"])
         else:
             df_parsed = df_parsed.drop(columns=["local_or_sum", "attribute1", "attribute2", "ex_or_im", "prompt", "num_words_prompt", "augmented_qa_samples"])
-        
         # Drop duplicate samples
         df_parsed = drop_duplicate_samples(df_parsed)
         save_csv(df_parsed, "parsed", folder)
@@ -198,7 +215,7 @@ def main():
     elif(args.step == 2):
         df_all = pd.DataFrame()
         for run in range(args.max_runs):
-            folder = os.path.join(RAW_DIR, f"augmentation/balanced_with_question_attribute/codex_run_{run}")
+            folder = os.path.join(RAW_DIR, f"augmentation/{args.folder_name}/codex_run_{run}")
             # Combine all parsed files into a single file
             filename = "parsed.csv"
             df = load_df(filename, folder)
@@ -209,8 +226,8 @@ def main():
         print("No of samples in combined parsed file: ", len(df_all))
         # Print distribution of attributes
         print(df_all["attribute1"].value_counts())
-        folder = os.path.join(RAW_DIR, f"augmentation/balanced_with_question_attribute/")
-        filename = "all_augmented_with_balanced_question_attribute_parsed" if args.attribute else "all_augmented_without_question_attribute_parsed"
+        folder = os.path.join(RAW_DIR, f"augmentation/{args.folder_name}/")
+        filename = f"all_augmented_{args.folder_name}_parsed"
         save_csv(df_all.reset_index(drop=True), filename, folder)
 
 
