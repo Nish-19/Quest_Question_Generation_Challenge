@@ -1,5 +1,8 @@
 """
-python -m code.utils.create_dataset_split
+python -m code.utils.create_dataset_split 
+
+Only for first creation:
+python -m code.utils.create_dataset_split --first_creation
 """
 
 import pandas as pd
@@ -39,6 +42,21 @@ def load_df(filename, folder, nrows=None):
     return df
 
 
+def get_stats(seed, train_stories, val_stories, df_train, df_val, df, stories):
+    # Print stats
+    print(f"\nCreated fold with seed: {seed}")
+    print("=== Stories ===")
+    print("Num train stories: ", len(train_stories))
+    print("Num val stories: ", len(val_stories))
+    print("Percent train stories: ", len(train_stories)/len(stories))
+    print("Percent val stories: ", len(val_stories)/len(stories))
+    print("=== Samples ===")
+    print("Num train samples: ", len(df_train))
+    print("Num val samples: ", len(df_val))
+    print("Percent train samples: ", len(df_train)/len(df))
+    print("Percent val samples: ", len(df_val)/len(df))
+
+
 def create_train_val_split(df, seed, args, table, train_ratio=0.85):
     # Ensure stories in validation set are not in training set, so split across stories
     stories = df['source_title'].unique()
@@ -54,20 +72,9 @@ def create_train_val_split(df, seed, args, table, train_ratio=0.85):
     # Shuffle dataframes
     df_train = df_train.sample(frac=1, random_state=seed).reset_index(drop=True)
     df_val = df_val.sample(frac=1, random_state=seed).reset_index(drop=True)
-    
     # Print stats
-    print(f"\nCreated fold with seed: {seed}")
-    print("=== Stories ===")
-    print("Num train stories: ", len(train_stories))
-    print("Num val stories: ", len(val_stories))
-    print("Percent train stories: ", len(train_stories)/len(stories))
-    print("Percent val stories: ", len(val_stories)/len(stories))
-    print("=== Samples ===")
-    print("Num train samples: ", len(df_train))
-    print("Num val samples: ", len(df_val))
-    print("Percent train samples: ", len(df_train)/len(df))
-    print("Percent val samples: ", len(df_val)/len(df))
-    
+    get_stats(seed, train_stories, val_stories, df_train, df_val, df, stories)
+
     if( args.first_creation ):
         # Create data hash if data splits created for the first time
         table[f"seed_{seed}"] = {}
@@ -90,16 +97,6 @@ def save_data_splits(df_train, df_val, seed):
     for split, name in [(df_train, "train"), (df_val, "val")]:
         save_json(split, name, json_dirname)
         save_csv(split, name, csv_dirname)
-
-
-def create_train_val_test_split(df):
-    # Ensure stories in validation and test set are not in training set, so split across stories
-    pass
-
-
-def create_cross_validation_split(df):
-    # Create folds across stories not samples, to ensure stories are not seen across folds
-    pass
 
 
 def save_csv(df, filename, dirname):
