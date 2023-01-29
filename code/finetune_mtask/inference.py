@@ -1,5 +1,5 @@
 '''
-python -m code.finetune.inference -N t5_small -M t5-small
+python -m code.finetune_mtask.inference -N t5_small -M t5-small
 '''
 
 from tqdm import tqdm
@@ -19,7 +19,7 @@ from transformers import BartTokenizer
 from sklearn.metrics import classification_report
 
 from code.utils.create_dataset_split import RAW_DIR, save_csv
-from code.finetune.finetune import FinetuneTransformer
+from code.finetune_mtask.finetune import FinetuneTransformer
 
 os.environ['WANDB_NOTEBOOK_NAME'] = 'FinetuneTransformer'
 
@@ -36,7 +36,7 @@ def clean_str(text):
     return text.strip()
 
 
-def get_parallel_corpus(ip_df, story_df):
+def get_parallel_corpus(ip_df, story_df, filetype='train'):
     # hash stories and sections
     story_sec_hash = defaultdict(dict)
     for i, row in story_df.iterrows():
@@ -50,8 +50,12 @@ def get_parallel_corpus(ip_df, story_df):
             story_str += story_sec_hash[row['source_title']][int(sec_num)]
         story.append(story_str)
         answer.append(clean_str(row['answer']))
-        question.append(clean_str(row['question']))
-        attr.append(clean_str(row['attribute1']))
+        if filetype == 'train':
+            question.append(clean_str(row['question']))
+            attr.append(clean_str(row['attribute1']))
+        else:
+            question.append('None')
+            attr.append('None')
     
     return story, answer, question, attr
 
@@ -179,7 +183,7 @@ class Monitor(Thread):
 def add_params():
     parser = argparse.ArgumentParser()
     parser.add_argument('-TGU', '--track_gpu_usage', action=argparse.BooleanOptionalAction, help='Track GPU Usage')
-    parser.add_argument("-F", "--eval_folder", type=str, default="train_val_split_csv", help="Evaluation Folder where output is saved")
+    parser.add_argument("-F", "--eval_folder", type=str, default="train_val_split_csv", help="Evaluation Folder where output is saved (testset for testing on test set)")
     parser.add_argument("-B", "--batch_size", type=int, default=8, help="Batch size for passing through the Transformer Model")
     parser.add_argument("-MT", "--model_type", type=str, default="t", help="T for T5 and B for BART")
     parser.add_argument("-MN", "--model_name", default="t5-small", help="Variant of the Transformer model for finetuning")
@@ -208,12 +212,17 @@ if __name__=='__main__':
     train_df = pd.read_csv(train_file)
     if args.eval_folder == 'train_val_split_csv':
         val_file = './data/train_val_split_csv/val.csv'
+        filetype = 'train'
     elif args.eval_folder == 'data_augmentation':
         val_file = './data/train_val_split_csv/train.csv'
+        filetype = 'train'
+    elif args.eval_folder == 'testset':
+        val_file = './data/original/test.csv'
+        filetype = 'test'
     val_df = pd.read_csv(val_file)
 
     train_story, train_answer, train_question, train_attr = get_parallel_corpus(train_df, story_df)
-    val_story, val_answer, val_question, val_attr = get_parallel_corpus(val_df, story_df)
+    val_story, val_answer, val_question, val_attr = get_parallel_corpus(val_df, story_df, filetype=filetype)
 
     # %%
     train_inps = construct_transformer_input(train_story, train_answer, args.prefix_choice)
@@ -281,8 +290,9 @@ if __name__=='__main__':
 
 
     # NOTE: Saving val_preds
-    val_df['prompt'] = val_inps
-    val_df['question'] = val_question
+    if args.eval_folder != 'testset':
+        val_df['prompt'] = val_inps
+        val_df['question'] = val_question
     if args.decoding_strategy == 'N':
         times = [args.num_of_samples for _ in range(len(val_df))]
         new_val_df = val_df.loc[val_df.index.repeat(times)].reset_index(drop=True)
@@ -296,24 +306,27 @@ if __name__=='__main__':
         save_csv_name = args.run_name
     
     # NOTE: Report attribute pred statistics
-    print(classification_report(new_val_df['attribute1'].apply(clean_str), attr_preds))
+    if args.eval_folder != 'testset':
+        print(classification_report(new_val_df['attribute1'].apply(clean_str), attr_preds))
 
     # Save predictions
     preds_df = pd.DataFrame()
     preds_df['pair_id'] = new_val_df['pair_id']
-    preds_df['attribute1'] = new_val_df['attribute1']
-    preds_df['local_or_sum'] = new_val_df['local_or_sum']
-    preds_df['ex_or_im'] = new_val_df['ex_or_im']
-    if args.eval_folder == 'data_augmentation':
-        preds_df['source_title'] = new_val_df['source_title']
-        preds_df['cor_section'] = new_val_df['cor_section']
-        preds_df['answer'] = new_val_df['answer']
-    preds_df['prompt'] = new_val_df['prompt']
-    preds_df['question'] = new_val_df['question']
-    preds_df['predicted attribute'] = attr_preds
+    if args.eval_folder != 'testset':
+        preds_df['attribute1'] = new_val_df['attribute1']
+        preds_df['local_or_sum'] = new_val_df['local_or_sum']
+        preds_df['ex_or_im'] = new_val_df['ex_or_im']
+        if args.eval_folder == 'data_augmentation':
+            preds_df['source_title'] = new_val_df['source_title']
+            preds_df['cor_section'] = new_val_df['cor_section']
+            preds_df['answer'] = new_val_df['answer']
+        preds_df['prompt'] = new_val_df['prompt']
+        preds_df['question'] = new_val_df['question']
+        preds_df['predicted attribute'] = attr_preds
     preds_df['generated_question'] = ques_preds
 
     output_path = os.path.join(RAW_DIR, "results/{}".format(args.eval_folder))
     if not os.path.exists(output_path):
         os.mkdir(output_path)
+    
     save_csv(preds_df, save_csv_name, output_path)
