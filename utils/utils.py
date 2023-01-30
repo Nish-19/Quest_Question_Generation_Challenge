@@ -11,10 +11,7 @@ def tonp(x):
     return x.detach().cpu().numpy()
 
 
-def agg_all_metrics(outputs):
-    # TODO p2: cross check calculations and aggregation
-    if len(outputs) == 0:
-        return outputs
+def agg_all_metrics(outputs):    
     res = {}
     keys = [k for k in outputs[0].keys() if not isinstance(outputs[0][k], dict)]
     for k in keys:

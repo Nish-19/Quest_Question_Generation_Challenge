@@ -93,14 +93,15 @@ def clean_str(text):
     return text.strip()
 
 
-def create_story_map(df_stories):
+def create_story_map(df_stories, assertion=True):
     df_stories["source_title"] = df_stories["source_title"].apply(clean_str)
     story_map = collections.defaultdict(dict)
     for index, row in df_stories.iterrows():
         # Clean strings since stories have \n in between sentences
         story_text = clean_str(row["text"])
         # Check if story contains the SEP_TOKEN or PROMPT_END_TOKEN or COMPLETION_END_TOKEN
-        assert SEP_TOKEN not in story_text and PROMPT_END_TOKEN not in story_text and COMPLETION_END_TOKEN not in story_text
+        if( assertion ):
+            assert SEP_TOKEN not in story_text and PROMPT_END_TOKEN not in story_text and COMPLETION_END_TOKEN not in story_text
         story_map[row["source_title"]][row["cor_section"]] = story_text
     
     #print("Num stories:", len(story_map))
@@ -117,10 +118,10 @@ def save_dataset(df, filename, folder):
     df[:10].to_json(filename + "_small.jsonl", orient="records", lines=True)
 
 
-def load_stories():
-    folder = os.path.join(RAW_DIR, "original")
+def load_stories(folder=None, assertion=True):
+    folder = os.path.join(RAW_DIR, "original") if folder is None else folder
     df_stories = load_df("source_texts.csv", folder)
-    story_map = create_story_map(df_stories)
+    story_map = create_story_map(df_stories, assertion)
 
     return story_map
 

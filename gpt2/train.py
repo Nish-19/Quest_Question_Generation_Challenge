@@ -36,12 +36,8 @@ from code.utils.utils import agg_all_metrics
 from code.gpt2.model import LanguageModelBaseWrapper
 
 
-# disable warnings in hugging face logger
-#logging.set_verbosity_error()
-
-
 def add_learner_params():
-    parser = argparse.ArgumentParser(description='qg_challenge')
+    parser = argparse.ArgumentParser(description='qg-challenge')
 
     parser.add_argument('--name', default='train', help='Name for the experiment')
     parser.add_argument('--wandb_project', default="qg-challenge", help='Name of weights and biases project')

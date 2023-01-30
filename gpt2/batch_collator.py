@@ -59,6 +59,7 @@ def create_prompt(row, story_map, add_instructions=True):
 
 
 def create_completion(row):
+    # TODO: do we need the preeceding single space?
     # Precede completion text with a single space
     # Suffix completetion with END_TOKEN
     completion = f""" {clean_str(row['question'])}{COMPLETION_END_TOKEN}"""
@@ -80,7 +81,6 @@ class CollateWraperParent:
 class CollateWraperGenerative(CollateWraperParent):
     def __init__(self, tokenizer, params, story_map, lm_loss_location="question"):
         super().__init__(tokenizer, params)
-        self.params = params
         self.story_map = story_map
         self.lm_loss_location = lm_loss_location
     

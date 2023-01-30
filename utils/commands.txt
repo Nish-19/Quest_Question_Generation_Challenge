@@ -6,10 +6,11 @@ srun --pty -p gpu-long --mem=32000 --constraint="v100" --gres=gpu:1 --time=14-00
 srun --pty -p gpu-long --mem=32000 --partition=gypsum-2080ti --gres=gpu:1 bash
 srun --pty -p gpu-long --mem=32000 --partition=gypsum-m40 --gres=gpu:2 bash
 srun --pty -p gpu-long --mem=32000 --partition=gypsum-titanx --gres=gpu:1 bash
+(a100 preempt)
+srun --pty -p gpu-preempt --mem=32000 --constraint="a100" --gres=gpu:1 --time=14-00:00:00 bash
 
-
-module load python/3.9.1 && module load cuda/11.0.1 && source /gypsum/home/nigel/naep/env/bin/activate && cd /home/nigel_umass_edu/qg_challenge
 module load python/3.9.1 && module load cuda/11.0.1 && source /work/nigel_umass_edu/myenv/bin/activate && cd /home/nigel_umass_edu/qg_challenge
+module load python/3.9.1 && module load cuda/11.0.1 && source /work/nigel_umass_edu/env-a100/bin/activate && cd /home/nigel_umass_edu/qg_challenge
 
 
 Finetune full model name: curie:ft-umass-amherst:curie-train-2022-11-03-00-04-39
@@ -494,12 +495,95 @@ srun --pty -p gpu-long --mem=32000 --constraint="v100" --gres=gpu:1 --time=14-00
 -----
 ->Flan-T5 finetuning:
 
-S+A -> Q
+qg challenge data: S+A -> Q
+
+(local)
+python3.9 -m code.t5.train \
+    --lm google/flan-t5-small \
+    --cross_val_fold 21 \
+    --debug --iters 1 \
+    --neptune
+
+(server)
+python3.9 -m code.t5.train \
+    --lm google/flan-t5-large \
+    --cross_val_fold 21 \
+    --neptune --cuda \
+    --batch_size 6
 
 
 
+evaluate:
+(local)
+python -m code.t5.evaluate \
+    --model_folder "qg_challenge/QGCHAL-60/cross_val_fold_21/best_val_score" \
+    --eval_type "local_val" \
+    --eval_folder "folds/seed_21/train_val_split_csv" \
+    --eval_filename "val.csv" \
+    --decoding_type "contrastive_search" \
+    --debug \
+    --num_return_sequences 10
 
-(external data)
+(server)
+python -m code.t5.evaluate \
+    --model_folder "qg_challenge/QGCHAL-80/cross_val_fold_21/best_val_score/" \
+    --eval_type "local_val" \
+    --eval_folder "folds/seed_21/train_val_split_csv" \
+    --eval_filename "val.csv" \
+    --decoding_type "contrastive_search" \
+    --num_return_sequences 10 \
+    --cuda
+
+
+
+external data then qg challenge data: S+A -> Q
+
+(external data augment first)
+(local)
+python3.9 -m code.t5.train \
+    --lm google/flan-t5-small \
+    --cross_val_fold 21 \
+    --augment \
+    --debug --iters 1 \
+    --neptune
+
+
+(server)
+python3.9 -m code.t5.train \
+    --lm google/flan-t5-large \
+    --cross_val_fold 21 \
+    --augment \
+    --neptune --cuda \
+    --batch_size_eval 64 \
+    --batch_size 4
+
+
+(then continue from checkpoint on S+A -> Q)
+(local)
+python3.9 -m code.t5.train \
+    --lm google/flan-t5-small \
+    --checkpoint \
+    --model_folder qg_challenge/QGCHAL-60/cross_val_fold_21/best_val_score \
+    --cross_val_fold 21 \
+    --debug --iters 1 \
+    --neptune
+
+(server)
+(flan-t5-large)
+python3.9 -m code.t5.train \
+    --lm google/flan-t5-large \
+    --checkpoint \
+    --model_folder qg_challenge/QGCHAL-63/cross_val_fold_21/best_val_score \
+    --cross_val_fold 21 \
+    --neptune --cuda
+
+(flan-t5-base)
+python3.9 -m code.t5.train \
+    --lm google/flan-t5-base \
+    --checkpoint \
+    --model_folder qg_challenge/QGCHAL-64/cross_val_fold_21/best_val_score \
+    --cross_val_fold 21 \
+    --neptune --cuda
 
 
 

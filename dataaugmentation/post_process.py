@@ -5,16 +5,16 @@ Step 1: Parse each codex run:
 python -m code.dataaugmentation.post_process\
     --step 1\
     --attribute\
-    --filename "code-davinci-002_20230112-221511_start_0_end_6005_corrected.csv"\
+    --filename "code-davinci-002_20230128-053905_start_0_end_6005_corrected.csv"\
     --folder_name "with_question_attribute" \
-    --run 2
+    --run 4
 
 Step 2: Aggregate all parsed codex runs:
 python -m code.dataaugmentation.post_process\
     --step 2\
     --attribute\
-    --folder_name "balanced_with_question_attribute" \
-    --max_runs 6
+    --folder_name "with_question_attribute" \
+    --max_runs 5
 
 
 Without question attribute:

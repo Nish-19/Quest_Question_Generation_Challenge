@@ -6,6 +6,26 @@ srun --pty -p gpu-long --mem=32000 --constraint="v100" --gres=gpu:1 bash
 
 module load cuda/10.1.243 && source /home/nigel_umass_edu/env/bin/activate && cd /home/nigel_umass_edu/qg_challenge
 
+Finetuned Flan-t5:
+
+python -m code.utils.compute_eval_metric \
+    --eval_folder flan_t5/folds/seed_21/train_val_split_csv \
+    --eval_filename QGCHAL-80_20230130-045623_contrastive_search.csv \
+    --batch_size 128
+
+(beam search with beam size 5)
+QGCHAL-54_20230130-023538_beam_search.csv = 0.4868478372057037
+QGCHAL-55_20230130-023220_beam_search.csv = 0.4764932113873765
+QGCHAL-79_20230130-025423_beam_search.csv = 0.4827133711366876
+QGCHAL-80_20230130-023306_beam_search.csv = 0.47534446515960666
+
+(contrastive search with alpha=0.6 and top-k=4)
+QGCHAL-54_20230130-050419_contrastive_search.csv =
+QGCHAL-55_20230130-045631_contrastive_search.csv =
+QGCHAL-79_20230130-050349_contrastive_search.csv =
+QGCHAL-80_20230130-045623_contrastive_search.csv =
+
+
 Finetuned results:
 python -m code.utils.compute_eval_metric \
     --eval_folder train_val_split_csv \

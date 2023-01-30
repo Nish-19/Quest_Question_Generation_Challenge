@@ -14,7 +14,7 @@ from code.gpt2.batch_collator import CollateWraperGenerative
 
 
 class LanguageModelBase(nn.Module):
-    def __init__(self, params, device):
+    def __init__(self, params):
         super().__init__()
         self.model = GPT2LMHeadModel.from_pretrained(params.lm, return_dict=True)
 
@@ -45,10 +45,10 @@ class LanguageModelBaseWrapper():
     def dataloaders(self):
         CollateWraper = CollateWraperGenerative
         train_loader = torch.utils.data.DataLoader(self.trainset, collate_fn=CollateWraper(self.tokenizer, self.params, self.story_map, self.params.lm_loss_location), 
-                                    batch_size=self.params.batch_size, num_workers=self.params.workers, shuffle=True, drop_last=True)
+                                    batch_size=self.params.batch_size, num_workers=self.params.workers, shuffle=True, drop_last=False)
         # For validation set, compute CLM loss only on question tokens                            
         val_loader = torch.utils.data.DataLoader(self.valset, collate_fn=CollateWraper(self.tokenizer, self.params, self.story_map, lm_loss_location = "question"), 
-                                    batch_size=self.params.batch_size, num_workers=self.params.workers, shuffle=False, drop_last=True)
+                                    batch_size=self.params.batch_size, num_workers=self.params.workers, shuffle=False, drop_last=False)
         
         return train_loader, val_loader
 
