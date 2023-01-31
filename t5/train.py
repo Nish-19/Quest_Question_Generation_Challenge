@@ -8,7 +8,7 @@ import pathlib
 import os
 from tqdm import tqdm
 import numpy as np
-
+import neptune.new as neptune
 
 from code.utils.utils import agg_all_metrics
 from code.t5.model import QuestionGenerationModelWrapper
@@ -28,7 +28,7 @@ def add_learner_params():
     parser.add_argument('--checkpoint', action='store_true', help='Continue training from model checkpoint')
     parser.add_argument('--model_folder', default=None, help='Model folder relative to saved models dir')
     # Optimizer params for AdamW
-    parser.add_argument('--iters', default=10, type=int, help='number of epochs')
+    parser.add_argument('--iters', default=5, type=int, help='number of epochs')
     parser.add_argument('--lr', default=3e-4, type=float, help='base learning rate')
     parser.add_argument('--warmup', default=0.1, type=float, help='Fraction of train steps for warmup')
     parser.add_argument('--batch_size', default=8, type=int, help='batch size')
@@ -128,7 +128,7 @@ def evaluate(model, best_val_score, best_iter, args, iter, val_loader, device, r
         best_val_score = float(val_logs["loss"])
         best_iter = iter
         # Save model with best validation score
-        dir_best_val_model = os.path.join(saved_models_dir, args.name, run.get_run_url().split("/")[-1], "cross_val_fold_{}".format(args.cross_val_fold), "best_val_score/")
+        dir_best_val_model = os.path.join(saved_models_dir, args.name, run.get_url().split("/")[-1], "cross_val_fold_{}".format(args.cross_val_fold), "best_val_score/")
         save_model(dir_best_val_model, model)
 
     # Push logs to neptune
@@ -179,7 +179,6 @@ def main():
     # Link training to neptune
     run = None
     if args.neptune:
-        import neptune.new as neptune
         run = neptune.init_run(project = args.neptune_project, name = args.name)  
         run["parameters"] = vars(args)
     # Train model

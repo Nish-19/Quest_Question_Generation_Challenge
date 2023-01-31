@@ -9,8 +9,10 @@ srun --pty -p gpu-long --mem=32000 --partition=gypsum-titanx --gres=gpu:1 bash
 (a100 preempt)
 srun --pty -p gpu-preempt --mem=32000 --constraint="a100" --gres=gpu:1 --time=14-00:00:00 bash
 
-module load python/3.9.1 && module load cuda/11.0.1 && source /work/nigel_umass_edu/myenv/bin/activate && cd /home/nigel_umass_edu/qg_challenge
-module load python/3.9.1 && module load cuda/11.0.1 && source /work/nigel_umass_edu/env-a100/bin/activate && cd /home/nigel_umass_edu/qg_challenge
+
+(a100) module load python/3.9.1 && module load cuda/11.0.1 && source /work/nigel_umass_edu/env-a100/bin/activate && cd /work/nigel_umass_edu/code/qg_challenge
+(old) module load python/3.9.1 && module load cuda/11.0.1 && source /work/nigel_umass_edu/myenv/bin/activate && cd /work/nigel_umass_edu/code/qg_challenge
+(old) module load python/3.9.1 && module load cuda/11.0.1 && source /work/nigel_umass_edu/myenv/bin/activate && cd /home/nigel_umass_edu/qg_challenge
 
 
 Finetune full model name: curie:ft-umass-amherst:curie-train-2022-11-03-00-04-39
@@ -509,7 +511,7 @@ python3.9 -m code.t5.train \
     --lm google/flan-t5-large \
     --cross_val_fold 21 \
     --neptune --cuda \
-    --batch_size 6
+    --debug --iters 2
 
 
 
@@ -526,7 +528,7 @@ python -m code.t5.evaluate \
 
 (server)
 python -m code.t5.evaluate \
-    --model_folder "qg_challenge/QGCHAL-80/cross_val_fold_21/best_val_score/" \
+    --model_folder "qg_challenge/QGCHAL-79/cross_val_fold_21/best_val_score/" \
     --eval_type "local_val" \
     --eval_folder "folds/seed_21/train_val_split_csv" \
     --eval_filename "val.csv" \

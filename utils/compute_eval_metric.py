@@ -1,29 +1,32 @@
 """
+(new) module load cuda/10.1.243 && source /home/nigel_umass_edu/env/bin/activate && cd /work/nigel_umass_edu/code/qg_challenge
+(old) module load cuda/10.1.243 && source /home/nigel_umass_edu/env/bin/activate && cd /home/nigel_umass_edu/qg_challenge
+
 Run following command in virtual environment with tensorflow:
-
-srun --pty -p gpu-long --mem=32000 --partition=gypsum-rtx8000 --gres=gpu:1 bash
-srun --pty -p gpu-long --mem=32000 --constraint="v100" --gres=gpu:1 bash
-
-module load cuda/10.1.243 && source /home/nigel_umass_edu/env/bin/activate && cd /home/nigel_umass_edu/qg_challenge
 
 Finetuned Flan-t5:
 
 python -m code.utils.compute_eval_metric \
-    --eval_folder flan_t5/folds/seed_21/train_val_split_csv \
-    --eval_filename QGCHAL-80_20230130-045623_contrastive_search.csv \
+    --eval_folder results/flan_t5/folds/seed_21/train_val_split_csv \
+    --eval_filename QGCHAL-79_20230130-053742_contrastive_search.csv \
     --batch_size 128
 
+python -m code.utils.compute_eval_metric \
+    --eval_folder score_prediction/score_model \
+    --eval_filename seed21_val.csv \
+    --batch_size 128 
+
 (beam search with beam size 5)
-QGCHAL-54_20230130-023538_beam_search.csv = 0.4868478372057037
-QGCHAL-55_20230130-023220_beam_search.csv = 0.4764932113873765
-QGCHAL-79_20230130-025423_beam_search.csv = 0.4827133711366876
-QGCHAL-80_20230130-023306_beam_search.csv = 0.47534446515960666
+(flan-t5-large) QGCHAL-54_20230130-023538_beam_search.csv = 0.4868478372057037
+(flan-t5-base) QGCHAL-55_20230130-023220_beam_search.csv = 0.4764932113873765
+(flan-t5-large + augment) QGCHAL-79_20230130-025423_beam_search.csv = 0.4827133711366876
+(flan-t5-base + augment) QGCHAL-80_20230130-023306_beam_search.csv = 0.47534446515960666
 
 (contrastive search with alpha=0.6 and top-k=4)
-QGCHAL-54_20230130-050419_contrastive_search.csv =
-QGCHAL-55_20230130-045631_contrastive_search.csv =
-QGCHAL-79_20230130-050349_contrastive_search.csv =
-QGCHAL-80_20230130-045623_contrastive_search.csv =
+QGCHAL-54_20230130-050419_contrastive_search.csv = 0.6110344887748966
+QGCHAL-55_20230130-045631_contrastive_search.csv = 0.5983508246140631
+QGCHAL-79_20230130-050349_contrastive_search.csv = 0.6183827544706382
+QGCHAL-80_20230130-045623_contrastive_search.csv = 0.598290389343127
 
 
 Finetuned results:
@@ -187,7 +190,7 @@ def main():
     bleurt = evaluate.load('bleurt', 'bleurt-20')
     
     # Load question generations
-    folder = os.path.join(RAW_DIR, "results/{}".format(args.eval_folder))
+    folder = os.path.join(RAW_DIR, args.eval_folder)
     nrows = 5 if args.debug else None
     df_pred = load_df(args.eval_filename, folder, nrows)
     
