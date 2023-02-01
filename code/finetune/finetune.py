@@ -46,7 +46,10 @@ def get_parallel_corpus(ip_df, story_df):
     
     story, answer, question = [], [], []
     for i, row in ip_df.iterrows():
-        sec_nums = row['cor_section'].split(',')
+        try:
+            sec_nums = row['cor_section'].split(',')
+        except AttributeError:
+            sec_nums = [row['cor_section']]
         story_str = ''
         for sec_num in sec_nums:
             story_str += story_sec_hash[row['source_title']][int(sec_num)]
@@ -65,7 +68,7 @@ def get_stats(story, answer, question):
 def construct_transformer_input(story, answer, choice=1):
     inps = []
     if choice == 1:
-        prefix = 'Generate question from story and answer: '
+        prefix = 'Generate question from answer and story: '
         suffix = ''
     elif choice == 2:
         prefix = 'Generate question: '
@@ -74,10 +77,10 @@ def construct_transformer_input(story, answer, choice=1):
         prefix = ''
         suffix = ''
     elif choice == 4:
-        prefix = 'Generate question from story and answer: '
+        prefix = 'Generate question from answer and story: '
         suffix = '\nThe question is:'
     for stry, ans in zip(story, answer):
-        transformer_input = prefix + '\nThe story is ' + stry + '\nThe answer is ' + ans + suffix
+        transformer_input = prefix + '\nThe answer is ' + ans + '\nThe story is ' + stry + suffix
         inps.append(transformer_input)
     return inps
 
@@ -96,7 +99,7 @@ def get_token_len_stats(tokenizer, inputs):
 # Tokenization
 def get_transformer_encoding(tokenizer, transformer_inputs, question):
     # tokenizer = T5Tokenizer.from_pretrained(model_name)
-    max_source_length, max_target_length = 512, 128
+    max_source_length, max_target_length = 1024, 128
 
     inp_encoding = tokenizer(transformer_inputs, padding='longest', 
                         max_length=max_source_length,
@@ -226,6 +229,7 @@ class FinetuneTransformer(pl.LightningModule):
 def add_params():
     parser = argparse.ArgumentParser()
     parser.add_argument('-W', '--wandb', action=argparse.BooleanOptionalAction, help='For Wandb logging')
+    parser.add_argument('-EXT', '--external_data', action=argparse.BooleanOptionalAction, help='For Using External Data')
     parser.add_argument('-TFN', '--train_file_name', type=str, default="train.csv", help="Training File name")
     parser.add_argument('-TS', '--training_strategy', type=str, default="DP", help="DP for dataparalle and DS for deepspeed")
     parser.add_argument("-B", "--batch_size", type=int, default=8, help="Batch size for training the Transformer Model")
@@ -247,16 +251,24 @@ def add_params():
 if __name__ == '__main__':
     args = add_params()
 
-    story_file = './data/original/source_texts.csv'
+    if args.external_data:
+        story_file = './data/original/source_texts_external.csv'
+        train_file = './data/train_val_split_csv/train_external.csv'
+    else:
+        story_file = './data/original/source_texts.csv'
+        train_file = os.path.join('./data/train_val_split_csv/', args.train_file_name)
     story_df = pd.read_csv(story_file)
+    # For validation only
+    val_story_file = './data/original/source_texts.csv'
+    val_story_df = pd.read_csv(val_story_file)
+
     # Train-Val split
-    train_file = os.path.join('./data/train_val_split_csv/', args.train_file_name)
     train_df = pd.read_csv(train_file)
     val_file = './data/train_val_split_csv/val.csv'
     val_df = pd.read_csv(val_file)
 
     train_story, train_answer, train_question = get_parallel_corpus(train_df, story_df)
-    val_story, val_answer, val_question = get_parallel_corpus(val_df, story_df)
+    val_story, val_answer, val_question = get_parallel_corpus(val_df, val_story_df)
 
     train_inps = construct_transformer_input(train_story, train_answer, args.prefix_choice)
     val_inps = construct_transformer_input(val_story, val_answer, args.prefix_choice)
@@ -308,10 +320,14 @@ if __name__ == '__main__':
             lp=args.linear_probing, training_dl=training_dataloader, 
             valid_dl=valid_dataloader, num_train_epochs=max_epochs, 
             lr=args.learning_rate)
-        if args.linear_probing:
-            save_name = 'lp_' + args.run_name
-        else:
-            save_name = args.run_name
+        
+        save_name = args.run_name
+
+    if args.linear_probing:
+        save_name = 'lp_' + save_name
+        
+    if args.external_data:
+        save_name = save_name + '_external'
     
     print('Save name:', save_name)
 
