@@ -65,7 +65,7 @@ def get_stats(story, answer, question):
 def construct_transformer_input(story, question, choice=1):
     inps = []
     if choice == 1:
-        prefix = 'Generate answer from story and question:'
+        prefix = 'Generate answer from question and story:'
         suffix = ''
     elif choice == 2:
         prefix = 'Generate answer:'
@@ -74,10 +74,10 @@ def construct_transformer_input(story, question, choice=1):
         prefix = ''
         suffix = ''
     elif choice == 4:
-        prefix = 'Generate answer from story and question:'
+        prefix = 'Generate answer from question and story:'
         suffix = '\nThe answer is:'
     for stry, ques in zip(story, question):
-        transformer_input = prefix + '\nThe story is ' + stry + '\nThe question is ' + ques + suffix
+        transformer_input = prefix + '\nThe question is ' + ques + '\nThe story is ' + stry + suffix
         inps.append(transformer_input)
     return inps
 
@@ -96,7 +96,7 @@ def get_token_len_stats(tokenizer, inputs):
 # Tokenization
 def get_transformer_encoding(tokenizer, transformer_inputs, answer):
     # tokenizer = T5Tokenizer.from_pretrained(model_name)
-    max_source_length, max_target_length = 512, 128
+    max_source_length, max_target_length = 1024, 128
 
     inp_encoding = tokenizer(transformer_inputs, padding='longest', 
                         max_length=max_source_length,

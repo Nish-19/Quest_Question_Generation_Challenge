@@ -47,7 +47,7 @@ def clean_str(text):
 
 
 # load dataset
-def get_parallel_corpus(ip_df, story_df):
+def get_parallel_corpus(ip_df, story_df, is_codex=False):
     # hash stories and sections
     story_sec_hash = defaultdict(dict)
     print(story_df.columns)
@@ -62,7 +62,10 @@ def get_parallel_corpus(ip_df, story_df):
             story_str += story_sec_hash[row['source_title']][int(sec_num)]
         story.append(story_str)
         answer.append(clean_str(row['answer']))
-        question.append(clean_str(row['generated_question']))
+        if is_codex:
+            question.append(clean_str(row['question']))
+        else:
+            question.append(clean_str(row['generated_question']))
     
     return story, answer, question
 
@@ -176,6 +179,7 @@ class Monitor(Thread):
 def add_params():
     parser = argparse.ArgumentParser()
     parser.add_argument('-TGU', '--track_gpu_usage', action=argparse.BooleanOptionalAction, help='Track GPU Usage')
+    parser.add_argument('-Codex', '--codex_use', action=argparse.BooleanOptionalAction, help='If using codex data')
     parser.add_argument("-F", "--eval_folder", type=str, default="data_augmentation", help="Evaluation Folder where output is saved")
     parser.add_argument("-EF", "--eval_filename", type=str, default="nucleus_flan_t5_large_0.95_1.20.csv", help="Evaluation filename")
     parser.add_argument("-B", "--batch_size", type=int, default=8, help="Batch size for passing through the Transformer Model")
@@ -203,11 +207,15 @@ if __name__=='__main__':
     train_file = './data/train_val_split_csv/train.csv'
     train_df = pd.read_csv(train_file)
     # val_file = './data/train_val_split_csv/val.csv'
-    ques_path = os.path.join(RAW_DIR, "results/{}".format(args.eval_folder))
-    val_file = os.path.join(ques_path, args.eval_filename)
-    val_df = pd.read_csv(val_file)
+    if args.codex_use:
+        ques_path = './data/train_val_split_csv'
+    else:
+        ques_path = os.path.join(RAW_DIR, "results/{}".format(args.eval_folder))
 
-    val_story, val_answer, val_question = get_parallel_corpus(val_df, story_df)
+    val_file = os.path.join(ques_path, args.eval_filename)
+    val_df = pd.read_csv(val_file)[:32]
+
+    val_story, val_answer, val_question = get_parallel_corpus(val_df, story_df, is_codex=args.codex_use)
 
     # %%
     val_inps = construct_transformer_input(val_story, val_question, args.prefix_choice)
@@ -278,12 +286,16 @@ if __name__=='__main__':
 
     # Save predictions
     preds_df = pd.DataFrame()
-    preds_df['pair_id'] = new_val_df['pair_id']
-    preds_df['attribute1'] = new_val_df['attribute1']
-    preds_df['local_or_sum'] = new_val_df['local_or_sum']
-    preds_df['ex_or_im'] = new_val_df['ex_or_im']
-    preds_df['prompt'] = new_val_df['prompt']
-    preds_df['generated_question'] = new_val_df['generated_question']
+    for col in new_val_df.columns:
+        preds_df[col] = new_val_df[col]
+    # preds_df['pair_id'] = new_val_df['pair_id']
+    # preds_df['attribute1'] = new_val_df['attribute1']
+    # if not args.codex_use:
+    #     preds_df['local_or_sum'] = new_val_df['local_or_sum']
+    #     preds_df['ex_or_im'] = new_val_df['ex_or_im']
+    #     preds_df['prompt'] = new_val_df['prompt']
+    #     preds_df['generated_question'] = new_val_df['generated_question']
+    
     preds_df['answer'] = new_val_df['answer']
     preds_df['generated_answer'] = val_preds
 
