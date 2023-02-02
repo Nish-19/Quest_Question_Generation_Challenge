@@ -1,13 +1,13 @@
 from code.gpt3.prepare_dataset import clean_str
 
 
-PROMPT_END_TOKEN = "Question:"
+PROMPT_END_TOKEN = "question:"
 COMPLETION_END_TOKEN = ""
-INSTRUCTIONS = "Write a question from context and answer:"
+INSTRUCTIONS = "write a question from context and answer:"
 SEP_TOKEN = " "
 
 
-def tokenize_function(tokenizer, max_length, sentences_1, sentences_2=None):
+def tokenize_function(tokenizer, sentences_1, sentences_2=None, max_length=512):
     if(sentences_2 == None):
         return tokenizer(sentences_1, padding="longest", max_length=max_length, truncation=True, return_tensors="pt")
     else:
@@ -27,9 +27,9 @@ def create_prompt(row, story_map, add_instructions=False):
     answer_txt = clean_str(row['answer'])
     story_txt = get_story_txt(row["source_title"], row["cor_section"], story_map)
     if( add_instructions ):
-        prompt = f"""{INSTRUCTIONS}{SEP_TOKEN}Answer: {answer_txt}{SEP_TOKEN}Context: {story_txt}{SEP_TOKEN}{PROMPT_END_TOKEN}"""
+        prompt = f"""{INSTRUCTIONS}{SEP_TOKEN}answer: {answer_txt}{SEP_TOKEN}context: {story_txt}{SEP_TOKEN}{PROMPT_END_TOKEN}"""
     else:
-        prompt = f"""Answer: {answer_txt}{SEP_TOKEN}Context: {story_txt}{SEP_TOKEN}{PROMPT_END_TOKEN}"""
+        prompt = f"""answer: {answer_txt}{SEP_TOKEN}context: {story_txt}{SEP_TOKEN}{PROMPT_END_TOKEN}"""
 
     return prompt
 
@@ -65,8 +65,8 @@ class CollateWraperGenerative(CollateWraperParent):
             features_labels.append(completion)
         
         # Tokenize
-        input_encoding = tokenize_function(self.tokenizer, self.params.max_source_length , features_input)
-        labels_encoding = tokenize_function(self.tokenizer, self.params.max_target_length , features_labels)
+        input_encoding = tokenize_function(self.tokenizer, features_input, max_length=self.params.max_source_length)
+        labels_encoding = tokenize_function(self.tokenizer, features_labels, max_length=self.params.max_source_length)
 
         input_ids, attention_mask = input_encoding.input_ids, input_encoding.attention_mask
         labels = labels_encoding.input_ids
@@ -79,11 +79,11 @@ class CollateWraperGenerative(CollateWraperParent):
         """
         # Print sample batch
         print("Sample batch:")
+        for ids in input_ids:
+            print(self.tokenizer.decode(ids))
         print("Input ids:", input_ids)
         print("Attention mask:", attention_mask)
         print("Labels:", labels)
-        for ids in input_ids:
-            print(self.tokenizer.decode(ids))
         """
 
         return {

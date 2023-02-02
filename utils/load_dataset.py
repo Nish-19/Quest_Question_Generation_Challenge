@@ -11,6 +11,26 @@ from code.utils.create_dataset_split import load_df
 RAW_DIR = "./data/"
 
 
+def load_dataset_score_prediction(data_folder="score_prediction", debug=False):
+    data = {}
+    dir_name = os.path.join(RAW_DIR, data_folder, "score_model", "train_val_test_split_json") 
+    names = ["train", "val", "test"]
+    for name in names:
+        filepath = os.path.join(dir_name, "{}.json".format(name))
+        with open(filepath, "r") as f:
+            data[name] = json.load(f)
+    # Load stories
+    story_map = load_stories()
+
+    # Debug with less data
+    if(debug):
+        data["train"] = data["train"][0:8]
+        data["val"] = data["val"][0:8]
+        data["test"] = data["test"][0:8]
+
+    return data, story_map
+
+
 def load_dataset(data_folder="folds", cross_val_fold=21, debug=False, augment=False, data_augment_folder="augmentation"):
     data = {}
     if( augment ):
@@ -41,7 +61,7 @@ def load_dataset(data_folder="folds", cross_val_fold=21, debug=False, augment=Fa
 
     # Debug with less data
     if(debug):
-        data["train"] = data["train"][0:16]
-        data["val"] = data["val"][0:16]
+        data["train"] = data["train"][0:8]
+        data["val"] = data["val"][0:8]
 
     return data, story_map

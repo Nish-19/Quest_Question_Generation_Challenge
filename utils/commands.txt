@@ -10,7 +10,8 @@ srun --pty -p gpu-long --mem=32000 --partition=gypsum-titanx --gres=gpu:1 bash
 srun --pty -p gpu-preempt --mem=32000 --constraint="a100" --gres=gpu:1 --time=14-00:00:00 bash
 
 
-(a100) module load python/3.9.1 && module load cuda/11.0.1 && source /work/nigel_umass_edu/env-a100/bin/activate && cd /work/nigel_umass_edu/code/qg_challenge
+(a100) 
+module load python/3.9.1 && module load cuda/11.0.1 && source /work/nigel_umass_edu/env-a100/bin/activate && cd /work/nigel_umass_edu/code/qg_challenge
 (old) module load python/3.9.1 && module load cuda/11.0.1 && source /work/nigel_umass_edu/myenv/bin/activate && cd /work/nigel_umass_edu/code/qg_challenge
 (old) module load python/3.9.1 && module load cuda/11.0.1 && source /work/nigel_umass_edu/myenv/bin/activate && cd /home/nigel_umass_edu/qg_challenge
 
@@ -590,5 +591,48 @@ python3.9 -m code.t5.train \
 
 
 
+
 -----
 ->Overgenerate and rank:
+
+
+(local)
+((flan-t5-small)
+python3.9 -m code.score_prediction.train \
+    --lm google/flan-t5-small \
+    --debug --iters 10 \
+    --neptune
+
+(bert)
+python3.9 -m code.score_prediction.train \
+    --lm bert-base-uncased \
+    --debug --iters 10 \
+    --neptune
+
+
+(server)
+(flan-t5-large with iters 5)
+python3.9 -m code.score_prediction.train \
+    --lm google/flan-t5-large \
+    --iters 5 \
+    --neptune --cuda
+
+(flan-t5-large with iters 10)
+python3.9 -m code.score_prediction.train \
+    --lm google/flan-t5-large \
+    --neptune --cuda
+
+(flan-t5-base)
+python3.9 -m code.score_prediction.train \
+    --lm google/flan-t5-base \
+    --neptune --cuda
+
+(bert-base)
+python3.9 -m code.score_prediction.train \
+    --lm bert-base-uncased \
+    --neptune --cuda 
+
+(bert-large)
+python3.9 -m code.score_prediction.train \
+    --lm bert-large-uncased \
+    --neptune --cuda

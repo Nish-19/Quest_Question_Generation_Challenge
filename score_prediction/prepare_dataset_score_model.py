@@ -22,33 +22,45 @@ def get_train_data():
         filepath = os.path.join(RAW_DIR, f"score_prediction/qg_model/fold_{fold}/train_val_split_csv")
         df_val = load_df("val.csv", filepath)
         filepath = os.path.join(RAW_DIR, "score_prediction/qg_model/predictions_top_100")
-        df_preds = load_df(f"fold_{fold}_bleurt.csv", filepath)
+        df_preds = load_df(f"fold_{fold}.csv", filepath)
+        df_preds_bleurt = load_df(f"fold_{fold}_bleurt.csv", filepath)
         assert check_data_error(df_val) == False
         assert check_data_error(df_preds) == False
-        
+        assert check_data_error(df_preds_bleurt) == False
+        # Add normalized suffix to question column names for df_preds_bleurt
+        df_preds_bleurt = df_preds_bleurt.rename(columns={"generated_question": "generated_question_normalized", "question": "question_normalized"})
+        # Add original col generated_question and col question from df_preds to df_preds_bleurt
+        df_preds_bleurt["question_original"] = df_preds["question"].values
+        df_preds_bleurt["generated_question_original"] = df_preds["generated_question"].values
         # Add source_title and cor_section from df_val to df_preds 
-        df_preds = pd.merge(df_preds, df_val[["pair_id", "source_title", "cor_section"]], on="pair_id", how="left")
+        df_preds_bleurt = pd.merge(df_preds_bleurt, df_val[["pair_id", "source_title", "cor_section", "answer"]], on="pair_id", how="left")
         
         # Keep last fold as validation set
         if( fold != 4 ):
-            df_train = pd.concat([df_train, df_preds])
+            df_train = pd.concat([df_train, df_preds_bleurt])
         else:
-            df_val = df_preds
+            df_val = df_preds_bleurt
     
     # Rearrange columns
     df_train = rearrange_columns(df_train)
     df_val = rearrange_columns(df_val)
     # Remove duplicates
-    print(f"No of train samples before removing duplicates: {len(df_train)}")
-    print(f"No of val samples before removing duplicates: {len(df_val)}")
-    df_train = df_train.drop_duplicates(subset=["pair_id", "generated_question"])
-    df_val = df_val.drop_duplicates(subset=["pair_id", "generated_question"])
-    print(f"No of train samples after removing duplicates: {len(df_train)}")
-    print(f"No of val samples after removing duplicates: {len(df_val)}")
+    df_train = remove_duplicates(df_train, "train")
+    df_val = remove_duplicates(df_val, "val")
     # Shuffle train set
     df_train = df_train.sample(frac=1, random_state=SEED).reset_index(drop=True)
 
     return df_train, df_val
+
+
+def remove_duplicates(df, name):
+    # Remove duplicates
+    print(f"No of {name} samples before removing duplicates: {len(df)}")
+    # Use generated_question_normalized and not generated_question_original to remove duplicates since the former is used for bleurt score
+    df = df.drop_duplicates(subset=["pair_id", "generated_question_normalized"])
+    print(f"No of {name} samples after removing duplicates: {len(df)}")
+
+    return df
 
 
 def get_test_data():
@@ -56,20 +68,30 @@ def get_test_data():
     filepath = os.path.join(RAW_DIR, "folds/seed_21/train_val_split_csv")
     df_val = load_df("val.csv", filepath)
     filepath = os.path.join(RAW_DIR, "score_prediction/qg_model/predictions_top_100")
-    df_preds = load_df("seed_21_val_bleurt.csv", filepath)
+    df_preds = load_df("seed_21_val.csv", filepath)
+    df_preds_bleurt = load_df("seed_21_val_bleurt.csv", filepath)
     assert check_data_error(df_val) == False
     assert check_data_error(df_preds) == False
+    assert check_data_error(df_preds_bleurt) == False
+    # Add normalized suffix to question column names for df_preds_bleurt
+    df_preds_bleurt = df_preds_bleurt.rename(columns={"generated_question": "generated_question_normalized", "question": "question_normalized"})
+    # Add original col generated_question and col question from df_preds to df_preds_bleurt
+    df_preds_bleurt["question_original"] = df_preds["question"].values
+    df_preds_bleurt["generated_question_original"] = df_preds["generated_question"].values
     # Add source_title and cor_section from df_val to df_preds 
-    df_preds = pd.merge(df_preds, df_val[["pair_id", "source_title", "cor_section"]], on="pair_id", how="left")
+    df_preds_bleurt = pd.merge(df_preds_bleurt, df_val[["pair_id", "source_title", "cor_section", "answer"]], on="pair_id", how="left")
     # Rearrange columns
-    df_preds = rearrange_columns(df_preds)
+    df_preds_bleurt = rearrange_columns(df_preds_bleurt)
+    # Remove duplicates
+    df_preds_bleurt = remove_duplicates(df_preds_bleurt, "test")
 
-    return df_preds
+    return df_preds_bleurt
 
 
 def rearrange_columns(df):
     # Rearrange columns and drop column prompt
-    cols = ['pair_id', 'source_title', 'cor_section', 'attribute1', 'local_or_sum', 'ex_or_im', 'question', 'generated_question', 'bleurt_score']
+    cols = ["pair_id", "source_title", "answer", "question_original", "question_normalized", "cor_section", "attribute1", "local_or_sum", "ex_or_im", "generated_question_original", "generated_question_normalized", "bleurt_score"]
+
     df = df[cols]
 
     return df
