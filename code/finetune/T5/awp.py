@@ -1,4 +1,5 @@
 import torch
+from pdb import set_trace
 
 class AWP:
     """
@@ -13,7 +14,6 @@ class AWP:
     def __init__(
         self,
         model,
-        optimizer,
         adv_param="weight",
         adv_lr=1,
         adv_eps=0.2,
@@ -22,7 +22,6 @@ class AWP:
         scaler=None
     ):
         self.model = model
-        self.optimizer = optimizer
         self.adv_param = adv_param
         self.adv_lr = adv_lr
         self.adv_eps = adv_eps
@@ -32,7 +31,7 @@ class AWP:
         self.backup_eps = {}
         self.scaler = scaler
 
-    def attack_backward(self, x, y, attention_mask,epoch):
+    def attack_backward(self, batch, epoch, optimizer):
         # 满足启动条件开始对抗训练
         if (self.adv_lr == 0) or (epoch < self.start_epoch):
             return None
@@ -40,10 +39,12 @@ class AWP:
         self._save()  # 保存攻击的参数权重
         for i in range(self.adv_step):
             self._attack_step()  # 在embedding上添加对抗扰动
-            with torch.cuda.amp.autocast():
-                adv_loss = self.model(input_ids=x, attention_mask=attention_mask, labels=y).loss
-                adv_loss = adv_loss.mean()
-            self.optimizer.zero_grad()
+            # with torch.cuda.amp.autocast():
+            adv_loss = self.model(**batch).loss
+            adv_loss = adv_loss.mean()
+            optimizer.zero_grad()
+            # adv_loss.backward()
+            assert(~torch.isnan(adv_loss))
             self.scaler.scale(adv_loss).backward()  # 反向传播，并在正常的grad基础上，累加对抗训练的梯度
             
         self._restore()  # 恢复embedding参数
