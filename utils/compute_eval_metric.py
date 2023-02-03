@@ -4,18 +4,16 @@
 
 Run following command in virtual environment with tensorflow:
 
-Finetuned Flan-t5:
+Score model:
 
 python -m code.utils.compute_eval_metric \
-    --eval_folder results/flan_t5/folds/seed_21/train_val_split_csv \
-    --eval_filename QGCHAL-79_20230130-053742_contrastive_search.csv \
-    --batch_size 128
+    --eval_folder results/score_prediction/score_model/train_val_test_split_csv \
+    --eval_filename QGCHAL-158_20230202-114840.csv \
+    --batch_size 128 \
+    --score_model
 
-python -m code.utils.compute_eval_metric \
-    --eval_folder score_prediction/score_model \
-    --eval_filename seed21_val.csv \
-    --batch_size 128 
 
+Finetuned flan-T5 for question generation:
 (beam search with beam size 5)
 (flan-t5-large) QGCHAL-54_20230130-023538_beam_search.csv = 0.4868478372057037
 (flan-t5-base) QGCHAL-55_20230130-023220_beam_search.csv = 0.4764932113873765
@@ -90,7 +88,6 @@ nucleus_sampling:
 nucleus_sampling_with_top_k: 0.37089890807988196
 """
 
-import numpy as np
 import evaluate
 import string
 import re
@@ -106,6 +103,7 @@ def add_params():
     parser.add_argument("--eval_folder", type=str, default="train_val_split_csv", help="Folder containing evaluation file relative to data folder")
     parser.add_argument("--eval_filename", type=str, default="val.csv", help="Evaluation filename with timestamp and .csv extension")
     parser.add_argument("--batch_size", type=int, default=64, help="Evaluation batch size for BLEURT model")
+    parser.add_argument('--score_model', action='store_true', help='Output format of score model')
     parser.add_argument('--debug', action='store_true', help='Debug mode evaluating on a small subset of 5 samples')
     params = parser.parse_args()
     
@@ -132,7 +130,7 @@ def normalize(text):
     return white_space_fix(remove_articles(remove_punc(lower(text))))
 
 
-def grade_score(df, bleurt):
+def grade_score_without_batching(df, bleurt):
     nls = []
     for curit, (q, gq) in enumerate(zip(df['question'], df['generated_question'])):
         result = bleurt.compute(predictions=[normalize(gq)], references=[normalize(q)])
@@ -152,9 +150,13 @@ def ceildiv(a, b):
     return -(a // -b)
 
 
-def grade_score_with_batching(df, bleurt, batch_size=64):
+def grade_score_with_batching(df, bleurt, args):
     # Add batching to speed up BLEURT model computation
     # Note: BLEURT metric is non commutative, therefore predictions named function argument must match questions generated
+    if( args.score_model ):
+        # Rename columns if output file is from score/ranker model
+        df = df.rename(columns={"generated_question_original": "generated_question", "question_original": "question"})
+
     df['question'] = df['question'].apply(normalize)
     df['generated_question'] = df['generated_question'].apply(normalize)
 
@@ -162,8 +164,8 @@ def grade_score_with_batching(df, bleurt, batch_size=64):
     gen_q = df['generated_question'].tolist()
 
     scores = []
-    num_batches = ceildiv(len(ref_q), batch_size)
-    for ref_q_batch, gen_q_batch in tqdm( zip(get_batch(ref_q, batch_size), get_batch(gen_q, batch_size)), total=num_batches ):
+    num_batches = ceildiv(len(ref_q), args.batch_size)
+    for ref_q_batch, gen_q_batch in tqdm( zip(get_batch(ref_q, args.batch_size), get_batch(gen_q, args.batch_size)), total=num_batches ):
         batch_scores = bleurt.compute(predictions=gen_q_batch, references=ref_q_batch)
         scores.extend(batch_scores["scores"])
 
@@ -175,12 +177,12 @@ def keep_best_bleurt(df):
     return df.sort_values('bleurt_score', ascending=False).drop_duplicates(['pair_id'])
 
 
-def compute_bleurt_score(df_pred):
+def compute_overall_bleurt_score(df_pred):
     df_pred = keep_best_bleurt(df_pred)
-    print("Mean BLEURT over all samples: ", df_pred['bleurt_score'].mean())
     print("Mean BLEURT grouped by question attribute type:\n", df_pred.groupby('attribute1')['bleurt_score'].agg(['mean', 'count']))
     print("Mean BLEURT grouped by question local vs summary:\n", df_pred.groupby('local_or_sum')['bleurt_score'].agg(['mean', 'count']))
     print("Mean BLEURT grouped by question explicit vs implicit:\n", df_pred.groupby('ex_or_im')['bleurt_score'].agg(['mean', 'count']))
+    print("Mean BLEURT over all samples: ", df_pred['bleurt_score'].mean())
 
 
 def main():
@@ -195,15 +197,14 @@ def main():
     df_pred = load_df(args.eval_filename, folder, nrows)
     
     # Non batching method
-    #bleurt_list = grade_score(df_pred, bleurt)
+    #bleurt_list = grade_score_without_batching(df_pred, bleurt)
     
     # Batching method
-    bleurt_scores = grade_score_with_batching(df_pred, bleurt, args.batch_size)
-
+    bleurt_scores = grade_score_with_batching(df_pred, bleurt, args)
     df_pred['bleurt_score'] = bleurt_scores
     df_pred['bleurt_score'] = df_pred['bleurt_score'].astype(float)
 
-    compute_bleurt_score(df_pred)
+    compute_overall_bleurt_score(df_pred)
 
     # Save file with BLEURT scores
     save_csv(df_pred, "{}_bleurt".format(args.eval_filename.split(".")[0]), folder)

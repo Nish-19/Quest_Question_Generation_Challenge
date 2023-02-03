@@ -1,8 +1,8 @@
+import os
 import torch
 from torch import nn
-from transformers import get_linear_schedule_with_warmup, T5Tokenizer, T5EncoderModel
+from transformers import get_linear_schedule_with_warmup, AutoTokenizer, T5EncoderModel
 from torch.optim import AdamW
-
 
 from code.score_prediction.batch_collator import CollateWraperScorePredictionFlanT5
 from code.score_prediction.models.model_wrapper import ScorePredictionModelWrapper
@@ -32,15 +32,13 @@ class ScorePredictionModelFlanT5(nn.Module):
     def __init__(self, params):
         super().__init__()
         self.params = params
-        self.tokenizer = T5Tokenizer.from_pretrained(params.lm) 
-        self.model = T5EncoderModel.from_pretrained(params.lm)
-        self.config = self.model.config
-        self.regression_head = RegressionHead(self.config)
+        self.flan_t5_encoder = T5EncoderModel.from_pretrained(params.lm)
+        self.regression_head = RegressionHead(self.flan_t5_encoder.config)
         self.loss_fct = nn.MSELoss()
 
 
     def forward(self, **batch):
-        outputs = self.model(input_ids=batch["input_ids"], attention_mask=batch["attention_mask"])
+        outputs = self.flan_t5_encoder(input_ids=batch["input_ids"], attention_mask=batch["attention_mask"])
         logits = self.regression_head(outputs.last_hidden_state, batch["attention_mask"])
         loss = self.loss_fct(logits.squeeze(), batch["labels"].squeeze())
 
@@ -53,14 +51,27 @@ class ScorePredictionModelFlanT5(nn.Module):
 class ScorePredictionModelFlanT5Wrapper(ScorePredictionModelWrapper):
     def __init__(self, params, device):
         super().__init__(params, device)
-        self.model = ScorePredictionModelFlanT5(params).to(device)
+        if( params.model_folder == None ):
+            self.tokenizer = AutoTokenizer.from_pretrained(params.lm) 
+            self.model = ScorePredictionModelFlanT5(params).to(device)
+        else:
+            self.tokenizer = AutoTokenizer.from_pretrained(params.model_folder)
+            checkpoint = torch.load(os.path.join(params.model_folder, "model.pt"))
+            self.model = ScorePredictionModelFlanT5(params)
+            # Overwrite pretrained weights with saved finetuned weights
+            self.model.load_state_dict(checkpoint["model_state_dict"])
+            self.model.to(device)
         # Batch collator function
         self.batch_collator = CollateWraperScorePredictionFlanT5
-        self.prepare_data()
-        self.dataloaders()
-        # TODO: change optimizer to AdaFactor
+        
+
+    def set_optimizer(self):
+        # TODO P1: change optimizer to AdaFactor
         self.optimizer = AdamW(self.model.parameters(), lr=self.params.lr)
+
+
+    def set_lr_scheduler(self):
         # LR scheduler
-        num_training_steps = len(self.train_loader) * params.iters
-        num_warmup_steps = params.warmup * num_training_steps
+        num_training_steps = len(self.train_loader) * self.params.iters
+        num_warmup_steps = self.params.warmup * num_training_steps
         self.lr_scheduler = get_linear_schedule_with_warmup(self.optimizer, num_warmup_steps, num_training_steps)

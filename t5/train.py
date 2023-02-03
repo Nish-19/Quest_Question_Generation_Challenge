@@ -133,7 +133,7 @@ def evaluate(model, best_val_score, best_iter, args, iter, val_loader, device, r
 
     # Push logs to neptune
     if args.neptune:
-        run["metrics/val/loss"].log(val_logs['loss'])
+        run["metrics/val/loss"].log(val_logs["loss"])
         run["metrics/val/best_loss"].log(best_val_score)
         run["logs/val/it_time"].log(val_it_time)
         run["logs/cur_iter"].log(iter)

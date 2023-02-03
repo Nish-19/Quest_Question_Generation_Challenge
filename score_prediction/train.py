@@ -23,6 +23,7 @@ def add_learner_params():
     # Model specification
     parser.add_argument('--lm', default='google/flan-t5-small', help='Base language model')
     parser.add_argument('--max_source_length', default=512, type=int, help='Maximum length of input sequence')
+    parser.add_argument("--model_folder", type=str, default=None, help="Finetuned model folder relative to saved models dir")
     # Optimizer params for AdamW
     parser.add_argument('--iters', default=10, type=int, help='number of epochs')
     parser.add_argument('--lr', default=3e-4, type=float, help='base learning rate')
@@ -55,18 +56,24 @@ def train(args, run, device, saved_models_dir):
     else:
         scaler = None
 
-    # Prepare model
+    # Load model wrapper
     if( "flan" in args.lm ):
-        model = ScorePredictionModelFlanT5Wrapper(args, device)
+        model_wrapper = ScorePredictionModelFlanT5Wrapper(args, device)
     elif( "bert" in args.lm ):
-        model = ScorePredictionModelBertWrapper(args, device)
+        model_wrapper = ScorePredictionModelBertWrapper(args, device)
     else:
         raise "Base LM not supported"
-
+    # Prepare data
+    model_wrapper.prepare_data()
+    model_wrapper.prepare_dataloaders()
+    # Set optimizer and LR scheduler
+    model_wrapper.set_optimizer()
+    model_wrapper.set_lr_scheduler()
+    
     # Multi-GPU training mode
     # TODO p2: multi-gpu training check all code related to multi-gpu training
     if( torch.cuda.device_count() > 1 ):
-        model.model = nn.DataParallel(model.model)
+        model_wrapper.model = nn.DataParallel(model_wrapper.model)
 
     # Best validation score (loss) to track best model, set to large value
     best_val_score = float('inf')
@@ -79,18 +86,18 @@ def train(args, run, device, saved_models_dir):
     with tqdm(range(args.iters)) as tepoch:
         for cur_iter in tepoch:
             tepoch.set_description("Epoch {}".format(cur_iter))
-            train_loader, val_loader, test_loader = model.train_loader, model.val_loader, model.test_loader
+            train_loader, val_loader, test_loader = model_wrapper.train_loader, model_wrapper.val_loader, model_wrapper.test_loader
             start_time = time.time()
             
             # Training epoch
             # Set train mode for model
-            model.set_train_mode()
+            model_wrapper.set_train_mode()
             train_logs = []
             with tqdm(train_loader, unit="batch", leave=False) as tbatch:
                 for batch_num, batch in enumerate(tbatch):
                     tbatch.set_description("Batch {}".format(batch_num))
                     batch = {k: v.to(device) for k, v in batch.items()}
-                    logs = model.train_step(batch, scaler)  
+                    logs = model_wrapper.train_step(batch, scaler)  
                     train_logs.append(logs)
             # Push logs to neptune after every training epoch, 
             train_it_time = time.time() - start_time
@@ -99,17 +106,17 @@ def train(args, run, device, saved_models_dir):
                 run["logs/train/it_time"].log(train_it_time)
                 run["metrics/train/loss"].log(train_logs['loss'])
                 for metric_name, _ in METRICS:
-                    run[f"metrics/train/{metric_name}"].log(train_logs[metric_name])
+                    run[f"metrics/train/{metric_name}"].log(train_logs["score_prediction"][metric_name])
 
             # Evaluation on validation and test sets after every training epoch
-            model.set_eval_mode()
-            test_logs, val_logs, best_val_score, test_score_for_best_val_score, best_iter = evaluate(model, best_val_score, test_score_for_best_val_score, best_iter, args, cur_iter, val_loader, test_loader, device, run, saved_models_dir)
+            model_wrapper.set_eval_mode()
+            test_logs, val_logs, best_val_score, test_score_for_best_val_score, best_iter = evaluate(model_wrapper, best_val_score, test_score_for_best_val_score, best_iter, args, cur_iter, val_loader, test_loader, device, run, saved_models_dir)
             
             # Update training tqdm progress bar
             tepoch.set_postfix({"Train loss" : train_logs['loss'], "Val loss" : val_logs['loss'], "Test loss" : test_logs['loss']})
 
 
-def evaluate(model, best_val_score, test_score_for_best_val_score, best_iter, args, iter, val_loader, test_loader, device, run, saved_models_dir=None):
+def evaluate(model_wrapper, best_val_score, test_score_for_best_val_score, best_iter, args, iter, val_loader, test_loader, device, run, saved_models_dir=None):
     # Evaluation on validation and test sets
     test_logs, val_logs = [], []
 
@@ -119,7 +126,7 @@ def evaluate(model, best_val_score, test_score_for_best_val_score, best_iter, ar
         for batch_num, batch in enumerate(tbatch):
             tbatch.set_description("Batch {}".format(batch_num))
             batch = {k: v.to(device) for k, v in batch.items()}
-            logs = model.val_step(batch)
+            logs = model_wrapper.val_step(batch)
             val_logs.append(logs)
     val_it_time = time.time()-val_start_time
 
@@ -129,7 +136,7 @@ def evaluate(model, best_val_score, test_score_for_best_val_score, best_iter, ar
         for batch_num, batch in enumerate(tbatch):
             tbatch.set_description("Batch {}".format(batch_num))
             batch = {k: v.to(device) for k, v in batch.items()}
-            logs = model.test_step(batch)
+            logs = model_wrapper.test_step(batch)
             test_logs.append(logs)
     test_it_time = time.time()-test_start_time
 
@@ -144,7 +151,7 @@ def evaluate(model, best_val_score, test_score_for_best_val_score, best_iter, ar
         best_iter = iter
         # Save model with best validation score
         dir_best_val_model = os.path.join(saved_models_dir, args.name, run.get_url().split("/")[-1], "best_val_score/")        
-        save_model(dir_best_val_model, model)
+        save_model(dir_best_val_model, model_wrapper, iter, float(val_logs["loss"]))
 
     # Push logs to neptune
     if args.neptune:
@@ -157,20 +164,34 @@ def evaluate(model, best_val_score, test_score_for_best_val_score, best_iter, ar
         run["logs/best_iter"].log(best_iter)
         for dataset, logs in [("val", val_logs), ("test", test_logs)]:
             for metric_name, _ in METRICS:
-                run[f"metrics/{dataset}/{metric_name}"].log(logs[metric_name])
+                run[f"metrics/{dataset}/{metric_name}"].log(logs["score_prediction"][metric_name])
     
     return test_logs, val_logs, best_val_score, test_score_for_best_val_score, best_iter
 
 
-def save_model(dir_model, model):
-    pathlib.Path(dir_model).mkdir(parents=True, exist_ok=True)
-    # Save model
-    if isinstance(model.model, torch.nn.DataParallel):
-        model.model.module.model.save_pretrained(dir_model)
+def unwrap_model(model):
+    # Since there could be multiple levels of wrapping (as used in distributed training), unwrap recursively
+    # https://github.com/huggingface/transformers/blob/v4.26.0/src/transformers/modeling_utils.py
+    if hasattr(model, "module"):
+        return unwrap_model(model.module)
     else:
-        model.model.model.save_pretrained(dir_model)
+        return model
+
+
+def save_model(dir_model, model_wrapper, iter, loss):
+    model_wrapper.model = unwrap_model(model_wrapper.model)
+    pathlib.Path(dir_model).mkdir(parents=True, exist_ok=True)
+    checkpoint = os.path.join(dir_model, "model.pt")
+    torch.save({
+                'epoch': iter,
+                'model_state_dict': model_wrapper.model.state_dict(),
+                'optimizer_state_dict': model_wrapper.optimizer.state_dict(),
+                'val_loss': loss,
+                }, checkpoint)
     # Save tokenizer
-    model.model.tokenizer.save_pretrained(dir_model)
+    model_wrapper.tokenizer.save_pretrained(dir_model)
+    # Save config
+    #model.model.config.save_pretrained(dir_model)
 
 
 def set_random_seed(seed):

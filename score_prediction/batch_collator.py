@@ -6,7 +6,7 @@ from code.t5.batch_collator import tokenize_function, get_story_txt, CollateWrap
 
 def create_prompt_flan_t5(row, story_map):    
     # Use generated question instead of original question
-    question_txt = clean_str(row['generated_question'])
+    question_txt = clean_str(row['generated_question_normalized'])
     answer_txt = clean_str(row['answer'])
     story_txt = get_story_txt(row["source_title"], row["cor_section"], story_map)
     prompt = f"""question: {question_txt}{SEP_TOKEN}answer: {answer_txt}{SEP_TOKEN}context: {story_txt}"""
@@ -26,7 +26,7 @@ class CollateWraperScorePredictionBert(CollateWraperParent):
         features_2 = []
         for row in batch:
             # Use generated question instead of original question
-            question_txt = clean_str(row['generated_question'])
+            question_txt = clean_str(row['generated_question_normalized'])
             answer_txt = clean_str(row['answer'])
             story_txt = get_story_txt(row["source_title"], row["cor_section"], self.story_map)
             features_1.append(f"question: {question_txt}")

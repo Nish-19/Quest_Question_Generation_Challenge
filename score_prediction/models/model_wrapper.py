@@ -17,12 +17,12 @@ class ScorePredictionModelWrapper():
         self.testset = data["test"]
 
 
-    def dataloaders(self):
-        self.train_loader = torch.utils.data.DataLoader(self.trainset, collate_fn=self.batch_collator(self.model.tokenizer, self.params, self.story_map), 
+    def prepare_dataloaders(self):
+        self.train_loader = torch.utils.data.DataLoader(self.trainset, collate_fn=self.batch_collator(self.tokenizer, self.params, self.story_map), 
                                     batch_size=self.params.batch_size, num_workers=self.params.workers, shuffle=True, drop_last=False)                           
-        self.val_loader = torch.utils.data.DataLoader(self.valset, collate_fn=self.batch_collator(self.model.tokenizer, self.params, self.story_map), 
+        self.val_loader = torch.utils.data.DataLoader(self.valset, collate_fn=self.batch_collator(self.tokenizer, self.params, self.story_map), 
                                     batch_size=self.params.batch_size_eval, num_workers=self.params.workers, shuffle=False, drop_last=False)
-        self.test_loader = torch.utils.data.DataLoader(self.testset, collate_fn=self.batch_collator(self.model.tokenizer, self.params, self.story_map), 
+        self.test_loader = torch.utils.data.DataLoader(self.testset, collate_fn=self.batch_collator(self.tokenizer, self.params, self.story_map), 
                                     batch_size=self.params.batch_size_eval, num_workers=self.params.workers, shuffle=False, drop_last=False)
 
 
@@ -70,10 +70,11 @@ class ScorePredictionModelWrapper():
             scaler.update()
         
         return {
-            "score_prediction" : True,
             "loss": loss.detach().cpu(),
-            "logits": logits.detach().cpu(),
-            "labels": batch["labels"].detach().cpu()
+            "score_prediction" : {
+                "logits": logits.detach().cpu(),
+                "labels": batch["labels"].detach().cpu()
+                }
             }
 
 
@@ -99,18 +100,17 @@ class ScorePredictionModelWrapper():
             loss = loss.mean()
 
         return {
-            "score_prediction" : True,
             "loss": loss.detach().cpu(),
-            "logits": logits.detach().cpu(),
-            "labels": batch["labels"].detach().cpu()
+            "score_prediction" : {
+                "logits": logits.detach().cpu(),
+                "labels": batch["labels"].detach().cpu()
+                }
             }
 
 
     def set_train_mode(self):
         self.model.train()
-        self.model.model.train()
 
 
     def set_eval_mode(self):
         self.model.eval()
-        self.model.model.eval() 

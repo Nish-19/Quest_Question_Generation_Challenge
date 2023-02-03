@@ -596,21 +596,22 @@ python3.9 -m code.t5.train \
 ->Overgenerate and rank:
 
 
-(local)
+#(local)
 ((flan-t5-small)
 python3.9 -m code.score_prediction.train \
     --lm google/flan-t5-small \
-    --debug --iters 10 \
+    --debug --iters 1 \
     --neptune
 
 (bert)
 python3.9 -m code.score_prediction.train \
     --lm bert-base-uncased \
-    --debug --iters 10 \
+    --batch_size 32 \
+    --debug --iters 1 \
     --neptune
 
 
-(server)
+#(server)
 (flan-t5-large with iters 5)
 python3.9 -m code.score_prediction.train \
     --lm google/flan-t5-large \
@@ -625,14 +626,96 @@ python3.9 -m code.score_prediction.train \
 (flan-t5-base)
 python3.9 -m code.score_prediction.train \
     --lm google/flan-t5-base \
+    --iters 20 \
     --neptune --cuda
 
 (bert-base)
 python3.9 -m code.score_prediction.train \
     --lm bert-base-uncased \
+    --batch_size 32 \
     --neptune --cuda 
 
 (bert-large)
 python3.9 -m code.score_prediction.train \
     --lm bert-large-uncased \
     --neptune --cuda
+
+
+-> evaluate OAR
+
+#(local)
+(bert-base)
+python3.9 -m code.score_prediction.evaluate \
+    --lm bert-base-uncased \
+    --model_folder "score_prediction/QGCHAL-/best_val_score" \
+    --eval_type "local_val" \
+    --eval_folder "score_prediction/score_model/train_val_test_split_csv" \
+    --eval_filename "test.csv" \
+    --debug
+
+(flan-t5-small)
+python3.9 -m code.score_prediction.evaluate \
+    --lm google/flan-t5-small \
+    --model_folder "score_prediction/QGCHAL-157/best_val_score" \
+    --eval_type "local_val" \
+    --eval_folder "score_prediction/score_model/train_val_test_split_csv" \
+    --eval_filename "test.csv" \
+    --debug
+
+#(server)
+(bert-base)
+python3.9 -m code.score_prediction.evaluate \
+    --lm bert-base-uncased \
+    --model_folder "score_prediction/QGCHAL-/best_val_score/" \
+    --eval_type "local_val" \
+    --eval_folder "score_prediction/score_model/train_val_test_split_csv" \
+    --eval_filename "test.csv" \
+    --cuda
+
+(bert-large)
+python3.9 -m code.score_prediction.evaluate \
+    --lm bert-large-uncased \
+    --model_folder "score_prediction/QGCHAL-/best_val_score/" \
+    --eval_type "local_val" \
+    --eval_folder "score_prediction/score_model/train_val_test_split_csv" \
+    --eval_filename "test.csv" \
+    --cuda 
+
+(flan-t5-base)
+python3.9 -m code.score_prediction.evaluate \
+    --lm google/flan-t5-base \
+    --model_folder "score_prediction/QGCHAL-151/best_val_score/" \
+    --eval_type "local_val" \
+    --eval_folder "score_prediction/score_model/train_val_test_split_csv" \
+    --eval_filename "test.csv" \
+    --cuda 
+
+(flan-t5-large)
+python3.9 -m code.score_prediction.evaluate \
+    --lm google/flan-t5-large \
+    --model_folder "score_prediction/QGCHAL-144/best_val_score/" \
+    --eval_type "local_val" \
+    --eval_folder "score_prediction/score_model/train_val_test_split_csv" \
+    --eval_filename "test.csv" \
+    --cuda 
+
+
+-> LB format
+
+(local)
+python3.9 -m code.score_prediction.evaluate \
+    --lm google/flan-t5-small \
+    --model_folder "score_prediction/QGCHAL-157/best_val_score" \
+    --eval_type "leaderboard_public_test" \
+    --eval_folder "score_prediction/score_model/train_val_test_split_csv" \
+    --eval_filename "contrastive_reft_flan_t5_large_nodup_selemaugment_4_0.60_200_no_duplicate.csv" \
+    --debug
+
+
+(server)
+python3.9 -m code.score_prediction.evaluate \
+    --lm google/flan-t5-large \
+    --model_folder "score_prediction/QGCHAL-144/best_val_score" \
+    --eval_type "leaderboard_public_test" \
+    --eval_folder "score_prediction/score_model/train_val_test_split_csv" \
+    --eval_filename "contrastive_reft_flan_t5_large_nodup_selemaugment_4_0.60_200_no_duplicate.csv"
