@@ -19,6 +19,7 @@ from torch.utils.data import Dataset, TensorDataset, DataLoader
 from transformers import T5Tokenizer, T5ForConditionalGeneration
 from transformers import BartTokenizer, BartForConditionalGeneration
 from transformers import AdamW, get_linear_schedule_with_warmup
+from transformers.optimization import Adafactor
 import pytorch_lightning as pl
 from pytorch_lightning import Trainer
 from pytorch_lightning.strategies.ddp import DDPStrategy
@@ -81,6 +82,46 @@ def construct_transformer_input(story, answer, choice=1):
         suffix = '\nThe question is:'
     for stry, ans in zip(story, answer):
         transformer_input = prefix + '\nThe answer is ' + ans + '\nThe story is ' + stry + suffix
+        inps.append(transformer_input)
+    return inps
+
+# Constrcut transformer input 
+def construct_transformer_input_newer(story, answer, choice=1):
+    inps = []
+    if choice == 1:
+        prefix = 'Generate question from answer and context: '
+        suffix = ''
+    elif choice == 2:
+        prefix = 'Generate question: '
+        suffix = ''
+    elif choice == 3:
+        prefix = ''
+        suffix = ''
+    elif choice == 4:
+        prefix = 'Generate question from answer and context: '
+        suffix = '\nThe question is:'
+    for stry, ans in zip(story, answer):
+        transformer_input = prefix + '\nAnswer: ' + ans + '\nContext: ' + stry + suffix
+        inps.append(transformer_input)
+    return inps
+
+# Constrcut transformer input 
+def construct_transformer_input_old_vary(story, answer, choice=1):
+    inps = []
+    if choice == 1:
+        prefix = 'Generate question from context and answer: '
+        suffix = ''
+    elif choice == 2:
+        prefix = 'Generate question: '
+        suffix = ''
+    elif choice == 3:
+        prefix = ''
+        suffix = ''
+    elif choice == 4:
+        prefix = 'Generate question from context and answer: '
+        suffix = '\nThe question is:'
+    for stry, ans in zip(story, answer):
+        transformer_input = prefix + '\nContext: ' + stry + '\nAnswer: ' + ans + suffix
         inps.append(transformer_input)
     return inps
 
@@ -201,12 +242,14 @@ class FinetuneTransformer(pl.LightningModule):
     def configure_optimizers(self):
         # create optimizer
         optimizer = AdamW(self.parameters(), lr=self.hparams.lr)
+        # optimizer = Adafactor(model.parameters(), scale_parameter=False, relative_step=False, warmup_init=False, lr=1e-3)
+
         # create learning rate scheduler
-        with open('debug.txt', 'w') as outfile:
-            print('In optmizer', file=outfile)
-            print(self.hparams.lr, file=outfile)
-            print(self.hparams.num_train_epochs, file=outfile)
-            print(self.hparams.warmup_steps, file=outfile)
+        # with open('debug.txt', 'w') as outfile:
+        #     print('In optmizer', file=outfile)
+        #     print(self.hparams.lr, file=outfile)
+        #     print(self.hparams.num_train_epochs, file=outfile)
+        #     print(self.hparams.warmup_steps, file=outfile)
 
         num_train_optimization_steps = self.hparams.num_train_epochs * len(self.training_dataloader)
         lr_scheduler = {'scheduler': get_linear_schedule_with_warmup(optimizer,
@@ -270,8 +313,8 @@ if __name__ == '__main__':
     train_story, train_answer, train_question = get_parallel_corpus(train_df, story_df)
     val_story, val_answer, val_question = get_parallel_corpus(val_df, val_story_df)
 
-    train_inps = construct_transformer_input(train_story, train_answer, args.prefix_choice)
-    val_inps = construct_transformer_input(val_story, val_answer, args.prefix_choice)
+    train_inps = construct_transformer_input_old_vary(train_story, train_answer, args.prefix_choice)
+    val_inps = construct_transformer_input_old_vary(val_story, val_answer, args.prefix_choice)
 
     # avg_tr_tk_len, max_tr_tk_len = get_token_len_stats(tokenizer, train_inps)
     # avg_val_tk_len, max_val_tk_len = get_token_len_stats(tokenizer, val_inps)

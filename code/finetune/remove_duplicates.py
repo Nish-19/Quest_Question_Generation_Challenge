@@ -1,9 +1,33 @@
+import string
+import re
 import os
 import pandas as pd
 
 test_path = './data/results/testset'
-testfile = 'contrastive_reft_flan_t5_large_nodup_selemaugment_4_0.60_200.csv'
+testfile = 'nucleus_reft_flan_t5_large_nodup_selemaugment_0.95_1.20_150.csv'
 test_df = pd.read_csv(os.path.join(test_path, testfile))
+
+# BLEURT functions
+def normalize(text):
+    """Lower text and remove punctuation, articles and extra whitespace."""
+
+    def remove_articles(text):
+        return re.sub(r"\b(a|an|the)\b", " ", text)
+
+    def white_space_fix(text):
+        return " ".join(text.split())
+
+    def remove_punc(text):
+        exclude = set(string.punctuation)
+        return "".join(ch for ch in text if ch not in exclude)
+
+    def lower(text):
+        return text.lower()
+
+    return white_space_fix(remove_articles(remove_punc(lower(text))))
+
+cleaned_questions = test_df['generated_question'].apply(normalize)
+test_df['generated_question'] = cleaned_questions
 
 # TODO: Remove duplicate questions
 min_len = 100000 # some high number

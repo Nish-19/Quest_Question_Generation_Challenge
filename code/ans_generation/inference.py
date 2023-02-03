@@ -73,7 +73,7 @@ def get_parallel_corpus(ip_df, story_df, is_codex=False):
 def construct_transformer_input(story, question, choice=1):
     inps = []
     if choice == 1:
-        prefix = 'Generate answer from story and question:'
+        prefix = 'Generate answer from question and context:'
         suffix = ''
     elif choice == 2:
         prefix = 'Generate answer:'
@@ -82,17 +82,17 @@ def construct_transformer_input(story, question, choice=1):
         prefix = ''
         suffix = ''
     elif choice == 4:
-        prefix = 'Generate answer from story and question:'
+        prefix = 'Generate answer from question and context:'
         suffix = '\nThe answer is:'
     for stry, ques in zip(story, question):
-        transformer_input = prefix + '\nThe story is ' + stry + '\nThe question is ' + ques + suffix
+        transformer_input = prefix + '\nQuestion:' + ques + '\nContext:' + stry + suffix
         inps.append(transformer_input)
     return inps
 
 # Tokenization
 def get_transformer_encoding(tokenizer, transformer_inputs, question):
     # tokenizer = T5Tokenizer.from_pretrained(model_name)
-    max_source_length, max_target_length = 512, 128
+    max_source_length, max_target_length = 1024, 128
 
     inp_encoding = tokenizer(transformer_inputs, padding='longest', 
                         max_length=max_source_length,
@@ -213,7 +213,7 @@ if __name__=='__main__':
         ques_path = os.path.join(RAW_DIR, "results/{}".format(args.eval_folder))
 
     val_file = os.path.join(ques_path, args.eval_filename)
-    val_df = pd.read_csv(val_file)[:32]
+    val_df = pd.read_csv(val_file)
 
     val_story, val_answer, val_question = get_parallel_corpus(val_df, story_df, is_codex=args.codex_use)
 

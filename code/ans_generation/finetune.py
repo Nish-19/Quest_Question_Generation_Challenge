@@ -65,7 +65,7 @@ def get_stats(story, answer, question):
 def construct_transformer_input(story, question, choice=1):
     inps = []
     if choice == 1:
-        prefix = 'Generate answer from question and story:'
+        prefix = 'Generate answer from question and context:'
         suffix = ''
     elif choice == 2:
         prefix = 'Generate answer:'
@@ -74,10 +74,10 @@ def construct_transformer_input(story, question, choice=1):
         prefix = ''
         suffix = ''
     elif choice == 4:
-        prefix = 'Generate answer from question and story:'
+        prefix = 'Generate answer from question and context:'
         suffix = '\nThe answer is:'
     for stry, ques in zip(story, question):
-        transformer_input = prefix + '\nThe question is ' + ques + '\nThe story is ' + stry + suffix
+        transformer_input = prefix + '\nQuestion:' + ques + '\nContext:' + stry + suffix
         inps.append(transformer_input)
     return inps
 

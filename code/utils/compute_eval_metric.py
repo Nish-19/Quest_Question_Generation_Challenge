@@ -28,6 +28,7 @@ import string
 import re
 import argparse
 from tqdm import tqdm
+import statistics
 
 from code.utils.create_dataset_split import load_df, RAW_DIR, save_csv
 import os
@@ -37,6 +38,7 @@ def add_params():
     parser = argparse.ArgumentParser()
     parser.add_argument('-EFD', "--eval_folder", type=str, default="train_val_split_csv", help="Folder containing evaluation file relative to data folder")
     parser.add_argument('-EFN', "--eval_filename", type=str, default="val.csv", help="Evaluation filename with timestamp and .csv extension")
+    parser.add_argument('-Fold', '--fold_decoding', type=int, default=0, help='1 for Average Decoding')
     parser.add_argument('-T', "--type", type=str, default="Q", help="Q-Question, A-Answer")
     parser.add_argument('-B', "--batch_size", type=int, default=64, help="Evaluation batch size for BLEURT model")
     params = parser.parse_args()
@@ -141,6 +143,8 @@ def report_pairidwise_preds(df_pred):
     print("Mean BLEURT grouped by question local vs summary:\n", reduced_df.groupby('local_or_sum')['bleurt_score'].agg(['mean', 'count']))
     print("Mean BLEURT grouped by question explicit vs implicit:\n", reduced_df.groupby('ex_or_im')['bleurt_score'].agg(['mean', 'count']))
 
+    return np.mean(grp_wise_max_bluert)
+
 
 def main():
     args = add_params()
@@ -150,37 +154,57 @@ def main():
     
     # Load question generations
     folder = os.path.join(RAW_DIR, "results/{}".format(args.eval_folder))
-    df_pred = load_df(args.eval_filename, folder)#, nrows=10)
+
+    df_list = []
+    if args.fold_decoding:
+        output_folder = os.path.join(folder, args.eval_filename)
+        print('Output folder', output_folder)
+        for filename in os.listdir(output_folder):
+            print(filename)
+            df_list.append(load_df(filename, output_folder))#, nrows=10)
+    else:
+        df_list.append(load_df(args.eval_filename, folder))#, nrows=10)
     
     # Non batching method
     #bleurt_list = grade_score(df_pred, bleurt)
     #print("BLEURT: ", np.mean([x["scores"][0] for x in bleurt_list]))
+    all_bleurt_scores = []
+    for ctr, df_pred in enumerate(df_list):
+        print('Evaluating Data {:d}'.format(ctr))
+        # Batching method
+        if args.type == 'Q':
+            bleurt_scores = grade_score_with_batching_question(df_pred, bleurt, args.batch_size)
+        elif args.type == 'A':
+            bleurt_scores = grade_score_with_batching_answer(df_pred, bleurt, args.batch_size)
+
+        # Groupwise preds
+        
+
+        #print(bleurt_scores)
+        # print("Mean BLEURT over all samples: ", np.mean(bleurt_scores))
+
+        # Get average BLEURT scores per question type
+        df_pred['bleurt_score'] = bleurt_scores
+        df_pred['bleurt_score'] = df_pred['bleurt_score'].astype(float)
+
+        bleurt_score = report_pairidwise_preds(df_pred)
+
+        # print("Mean BLEURT grouped by question attribute type:\n", df_pred.groupby('attribute1')['bleurt_score'].agg(['mean', 'count']))
+        # print("Mean BLEURT grouped by question local vs summary:\n", df_pred.groupby('local_or_sum')['bleurt_score'].agg(['mean', 'count']))
+        # print("Mean BLEURT grouped by question explicit vs implicit:\n", df_pred.groupby('ex_or_im')['bleurt_score'].agg(['mean', 'count']))
+
+        # Save file with BLEURT scores
+        if args.fold_decoding:
+            output_folder = os.path.join(folder, args.eval_filename)
+            save_csv(df_pred, "{:d}_bluert".format(ctr), output_folder)
+            all_bleurt_scores.append(bleurt_score)
+        else:
+            file_name, file_ext = os.path.splitext(args.eval_filename)
+            save_csv(df_pred, "{}_bluert".format(file_name), folder)
     
-    # Batching method
-    if args.type == 'Q':
-        bleurt_scores = grade_score_with_batching_question(df_pred, bleurt, args.batch_size)
-    elif args.type == 'A':
-        bleurt_scores = grade_score_with_batching_answer(df_pred, bleurt, args.batch_size)
-
-    # Groupwise preds
-    
-
-    #print(bleurt_scores)
-    # print("Mean BLEURT over all samples: ", np.mean(bleurt_scores))
-
-    # Get average BLEURT scores per question type
-    df_pred['bleurt_score'] = bleurt_scores
-    df_pred['bleurt_score'] = df_pred['bleurt_score'].astype(float)
-
-    report_pairidwise_preds(df_pred)
-
-    # print("Mean BLEURT grouped by question attribute type:\n", df_pred.groupby('attribute1')['bleurt_score'].agg(['mean', 'count']))
-    # print("Mean BLEURT grouped by question local vs summary:\n", df_pred.groupby('local_or_sum')['bleurt_score'].agg(['mean', 'count']))
-    # print("Mean BLEURT grouped by question explicit vs implicit:\n", df_pred.groupby('ex_or_im')['bleurt_score'].agg(['mean', 'count']))
-
-    # Save file with BLEURT scores
-    file_name, file_ext = os.path.splitext(args.eval_filename)
-    save_csv(df_pred, "{}_bluert".format(file_name), folder)
+    if args.fold_decoding:
+        print('BLEURT Scores over random seed decodings:', str(all_bleurt_scores))
+        print('The standard deviation of the bluert is: ', str(statistics.pstdev(all_bleurt_scores)))
 
 
 if __name__ == '__main__':

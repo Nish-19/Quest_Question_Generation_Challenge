@@ -62,22 +62,70 @@ def get_parallel_corpus(ip_df, story_df, filetype='train'):
 def construct_transformer_input(story, answer, choice=1):
     inps = []
     if choice == 1:
-        prefix = 'Generate question from story and answer: '
+        prefix = 'Generate question from answer and story: '
+        suffix = ''
     elif choice == 2:
         prefix = 'Generate question: '
-    else:
+        suffix = ''
+    elif choice == 3:
         prefix = ''
+        suffix = ''
+    elif choice == 4:
+        prefix = 'Generate question from answer and story: '
+        suffix = '\nThe question is:'
     for stry, ans in zip(story, answer):
-        transformer_input = prefix + ' The story is ' + stry + ' The answer is ' + ans 
+        transformer_input = prefix + '\nThe answer is ' + ans + '\nThe story is ' + stry + suffix
         inps.append(transformer_input)
     return inps
+
+# Constrcut transformer input 
+def construct_transformer_input_newer(story, answer, choice=1):
+    inps = []
+    if choice == 1:
+        prefix = 'Generate question from answer and context: '
+        suffix = ''
+    elif choice == 2:
+        prefix = 'Generate question: '
+        suffix = ''
+    elif choice == 3:
+        prefix = ''
+        suffix = ''
+    elif choice == 4:
+        prefix = 'Generate question from answer and context: '
+        suffix = '\nThe question is:'
+    for stry, ans in zip(story, answer):
+        transformer_input = prefix + '\nAnswer: ' + ans + '\nContext: ' + stry + suffix
+        inps.append(transformer_input)
+    return inps
+
+# Constrcut transformer input 
+def construct_transformer_input_old_vary(story, answer, choice=1):
+    inps = []
+    if choice == 1:
+        prefix = 'Generate question from context and answer: '
+        suffix = ''
+    elif choice == 2:
+        prefix = 'Generate question: '
+        suffix = ''
+    elif choice == 3:
+        prefix = ''
+        suffix = ''
+    elif choice == 4:
+        prefix = 'Generate question from context and answer: '
+        suffix = '\nThe question is:'
+    for stry, ans in zip(story, answer):
+        transformer_input = prefix + '\nContext: ' + stry + '\nAnswer: ' + ans + suffix
+        inps.append(transformer_input)
+    return inps
+
+
 
 # Tokenization
 def get_transformer_encoding(tokenizer, transformer_inputs, question):
     # tokenizer = T5Tokenizer.from_pretrained(model_name)
     max_source_length, max_target_length = 1024, 128
 
-    inp_encoding = tokenizer(transformer_inputs, padding='longest', # longest 
+    inp_encoding = tokenizer(transformer_inputs, padding='longest', 
                         max_length=max_source_length,
                         truncation=True,
                         return_tensors="pt"
@@ -226,8 +274,8 @@ if __name__=='__main__':
     val_story, val_answer, val_question = get_parallel_corpus(val_df, story_df, filetype=filetype)
 
     # %%
-    train_inps = construct_transformer_input(train_story, train_answer, args.prefix_choice)
-    val_inps = construct_transformer_input(val_story, val_answer, args.prefix_choice)
+    train_inps = construct_transformer_input_old_vary(train_story, train_answer, args.prefix_choice)
+    val_inps = construct_transformer_input_old_vary(val_story, val_answer, args.prefix_choice)
 
     if args.model_type == 'T':
         tokenizer = T5Tokenizer.from_pretrained(args.model_name)
