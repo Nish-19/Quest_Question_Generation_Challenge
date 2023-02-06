@@ -155,11 +155,11 @@ def save_submission(df_submission, args, run_id):
     pathlib.Path(folder).mkdir(parents=True, exist_ok=True)
     timestr = time.strftime("%Y%m%d-%H%M%S")
     if( args.eval_type == "local_val"):
-        filename = run_id + "_" + timestr + "local"
+        filename = run_id + "_" + timestr + "_local"
         save_csv(df_submission, filename, folder)
     else:
         df_submission = df_submission.rename(columns={"generated_question_original": "generated_question"})
-        filename = run_id + "_" + timestr + "leaderboard_debug"
+        filename = run_id + "_" + timestr + "_leaderboard_debug"
         save_csv(df_submission, filename, folder)
         # Save in leaderboard format
         filename = run_id + "_" + timestr + "leaderboard"
@@ -182,6 +182,25 @@ def compute_overall_bleurt_score(df_pred):
     print("Mean BLEURT over all samples: ", df_pred['bleurt_score'].mean())
 
 
+def pool_first_10_ranking(df):
+    # Keep first 10 questions generated for each pair id
+    df = df.groupby("pair_id").apply(lambda x: x.head(10))
+
+    return df
+
+
+def baseline_bleurt_first_10_questions(args, run_id):
+    # Load test set
+    dir_name = os.path.join(RAW_DIR, args.eval_folder)
+    df_test = load_df(args.eval_filename, dir_name)
+
+    # Get bleurt score without ranking = pick first 10 questions for each pair id
+    if( args.eval_type == "local_val"):
+        df_no_ranking = pool_first_10_ranking(df_test)
+        save_submission(df_no_ranking, args, run_id)
+        compute_overall_bleurt_score(df_no_ranking)
+
+
 def main():
     args = add_params()
     # Get saved models dir
@@ -200,6 +219,7 @@ def main():
 
     # Run score (bleurt) prediction model for evaluation
     predictions, df_test = predict_bleurt(args, device)
+    
     # Get top-10 generated questions according to bleurt score prediction for each pair id
     df_submission = pool(predictions, df_test)
     # Save top-10 generated questions for each pair id in submission format
@@ -208,6 +228,6 @@ def main():
     if( args.eval_type == "local_val"):
         compute_overall_bleurt_score(df_submission)
 
-
+    
 if __name__ == '__main__':
     main()
