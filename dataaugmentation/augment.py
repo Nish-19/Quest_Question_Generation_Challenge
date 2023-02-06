@@ -7,7 +7,8 @@ python3.9 -m code.dataaugmentation.augment \
     --start_row 0 \
     --end_row 1 \
     --question_attribute_before \
-    --question_attributes_desc
+    --question_attributes_desc \
+    --dataset "val.csv"
 """
 import os
 import argparse
@@ -31,6 +32,7 @@ def add_params():
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--model_name", type=str, default="code-davinci-002", help="GPT-3 off-the-shelf or finetuned model name")
+    parser.add_argument("--dataset", type=str, default="train.csv", help="Dataset to augment")
     parser.add_argument('--debug', action='store_true', help='Debug mode for augmenting on a small subset of 5 samples')
     # Incontext augmentation parameters
     parser.add_argument('--balance_attributes', action='store_true', help='Balance distribution of question attributes in in-context augmentation prompt')
@@ -88,12 +90,14 @@ def main():
 
     # Load stories
     story_map = load_stories()
-
-    # Load train data to augment
+    # Load dataset to augment
     folder = os.path.join(RAW_DIR, "folds/seed_21/train_val_split_csv")
+    df = load_df(args.dataset, folder)
+    df = clean_data(df)
+
+    # Create in-context prompt for augmentation
     df_train = load_df("train.csv", folder)
     df_train = clean_data(df_train)
-
     # Select story with QA examples to use as in-context examples for augmentation prompt
     if( args.balance_attributes ):
         assert args.num_stories == 10, "num_stories must be 10 when balancing question attributes"
@@ -109,7 +113,7 @@ def main():
     # Run Codex model for augmentation
     args.start_row = 0 if args.debug else args.start_row
     args.end_row = 5 if args.debug else args.end_row
-    df_augment = augment_data(df_train[args.start_row:args.end_row], df_incontext, story_map, args)
+    df_augment = augment_data(df[args.start_row:args.end_row], df_incontext, story_map, args)
 
     # Save evaluation responses
     folder = os.path.join(RAW_DIR, "augmentation")
@@ -117,8 +121,8 @@ def main():
     timestr = time.strftime("%Y%m%d-%H%M%S")
     model_name = args.model_name.replace(":", "_")
     filename = model_name + "_" + timestr + "_start_" + str(args.start_row) + "_end_" + str(args.end_row) 
-    columns_to_drop = ["key"] + [col for col in df_augment.columns if "count" in col]
-    df_augment = df_augment.drop(columns_to_drop, axis=1)
+    columns_to_drop = [col for col in df_augment.columns if "count" in col]
+    df_augment = df_augment.drop(columns=columns_to_drop)
     save_csv(df_augment, filename, folder)
 
     # Save parameters in a json file for later reference

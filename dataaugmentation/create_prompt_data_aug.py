@@ -37,6 +37,7 @@ def filter_df_balance_attributes(df_train, args):
     df_incontext = pd.DataFrame()
     for source_title, cor_section in zip(df_filter['source_title'], df_filter['cor_section']):
         df_story_sec = df_train[df_train['key'].isin([source_title + cor_section])].drop(['key'], axis=1)
+        df_train = df_train.drop(columns=["key"])
         # If the story with the same or diferent section is not already added to df_incontext, and it has at least 5 unique attributes
         if( ( source_title not in current_unique_stories ) and ( len(df_story_sec["attribute1"].unique()) >= 5 ) ):
             current_unique_stories.append(source_title)
@@ -58,26 +59,24 @@ def filter_df_balance_attributes(df_train, args):
                     break
         if( len(current_unique_stories) == args.num_stories ):
             break
-        
+
     return df_incontext
 
 
 def filter_df(df_train, args):
     # Group by source_title and cor_section, 
     df_group = df_train.groupby(['source_title', 'cor_section']).size().reset_index(name='count').sort_values(by=['count'], ascending=False)
-    
     # Filter groups which have QA example count >= args.num_qa_examples
     df_filter = df_group[df_group['count'] >= args.num_qa_examples]
     # Remove duplicate stories, and keep the first occurence (since we have sorted by count) with most QA examples
     df_filter = df_filter.drop_duplicates(subset=['source_title'])
     # Keep args.num_stories random stories
     df_filter = df_filter.sample(n=args.num_stories, random_state=SEED)
-
     # Filter df_train to only include samples matching story and section from df_filter
     df_train['key'] = df_train['source_title'] + df_train['cor_section']
-    df_train = df_train[df_train['key'].isin(df_filter['source_title'] + df_filter['cor_section'])].drop(['key'], axis=1)
+    df_train = df_train[df_train['key'].isin(df_filter['source_title'] + df_filter['cor_section'])]
+    df_train = df_train.drop(columns=["key"])
     assert len(df_train["source_title"].unique()) == args.num_stories
-
     # Randomly select args.num_qa_examples QA examples from each story
     df_incontext = df_train.groupby(['source_title']).apply(lambda x: x.sample(n=args.num_qa_examples, random_state=SEED)).reset_index(drop=True)
 
