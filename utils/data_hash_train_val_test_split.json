@@ -1,0 +1,27 @@
+{
+    "seed_21": {
+        "train": "ec5af8b5b9aed3d08485b54cfed85127389d33d6",
+        "val": "314d177af84f713eea1281f919f901954027d432",
+        "test": "74904f0b9da29ccd2bb2e2be92e815b9a29e741e"
+    },
+    "seed_0": {
+        "train": "e1065b3d5d286d597224156b00318b986549d719",
+        "val": "a09308685bd136a6b8d87ed3171c60e99a006e69",
+        "test": "e324c980d62f78ef945e84c99433ee8be287c4a6"
+    },
+    "seed_1": {
+        "train": "25aeff8df80a33572f487827d98a50862b91f0d0",
+        "val": "1d87405441707df8bebbe873a1db1f1c10d20aef",
+        "test": "dba9cd095ae8a9ab28e019fbc4aafc24b49d114a"
+    },
+    "seed_2": {
+        "train": "cd7fca5f2004f6ca7ee7943c704babbe527a493c",
+        "val": "231b65f1feadfa7423c305e1a089ca2687a973b8",
+        "test": "bcd9d7183f83629815712083e601db010d7bdb1d"
+    },
+    "seed_3": {
+        "train": "7942ba2d69c0f2efe38f17a99fb40ffb15b98b70",
+        "val": "3ad9445ee3426f4d4df740fd22537f85e5fc2b93",
+        "test": "7a898cde1e4b67520aef248ae1b88b4be0abfddf"
+    }
+}
