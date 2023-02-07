@@ -8,8 +8,8 @@ import hashlib
 
 SEED = 21
 np.random.seed(SEED)
-RAW_DIR = "./data/"
-DATA_HASH_PATH = "./utils/data_hash.json"
+RAW_DIR = "/home/zw16/Quest_Question_Generation_Challenge/data/"
+DATA_HASH_PATH = "/home/zw16/Quest_Question_Generation_Challenge/utils/data_hash.json"
 NUM_CROSS_VAL_FOLDS = 5
 # TRAIN_RATIO = 0.85 = 170/201 stories = 6005 / 6989 samples
 # TRAIN_RATIO = 0.9 = 180/201 stories = 6276 / 6989 samples
@@ -26,6 +26,34 @@ def load_df(filename, raw_dir, nrows=None):
     df = df.fillna("")
     
     return df
+
+
+def load_dfs(filename, raw_dir, nrows=None):
+    dfs = []
+    for idx in range(1,6):
+        f = os.path.join(raw_dir, filename, f'{idx}.csv')
+        df = pd.read_csv(f, nrows=nrows)
+        df = df.fillna("")
+        dfs.append(df)
+    dfs = pd.concat(dfs, axis=0)
+    # sort by pair_id, in place
+    dfs.sort_values(by=['pair_id'], inplace=True)
+
+    return dfs
+
+
+def load_dfs_v2(filename, raw_dir, nrows=None):
+    dfs = []
+    for idx in ['B', 'C', 'N']:
+        f = os.path.join(raw_dir, filename, f'{idx}.csv')
+        df = pd.read_csv(f, nrows=nrows)
+        df = df.fillna("")
+        dfs.append(df)
+    dfs = pd.concat(dfs, axis=0)
+    # sort by pair_id, in place
+    dfs.sort_values(by=['pair_id'], inplace=True)
+
+    return dfs
 
 
 def create_train_val_split(df, train_ratio=0.85):
