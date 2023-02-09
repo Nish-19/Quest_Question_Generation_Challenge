@@ -180,7 +180,7 @@ class FairyDataset(Dataset):
 
 # Dataset
 def get_dataloader(batch_size, dataset, datatype='train'):
-    if type == 'train':
+    if datatype == 'train':
         return DataLoader(dataset=dataset, shuffle=True, batch_size = batch_size)
     else:
         return DataLoader(dataset=dataset, batch_size = batch_size)

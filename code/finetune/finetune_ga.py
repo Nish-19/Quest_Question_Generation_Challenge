@@ -178,7 +178,7 @@ class FairyDataset(Dataset):
 
 # Dataset
 def get_dataloader(batch_size, dataset, datatype='train'):
-    if type == 'train':
+    if datatype == 'train':
         return DataLoader(dataset=dataset, shuffle=True, batch_size = batch_size)
     else:
         return DataLoader(dataset=dataset, batch_size = batch_size)
@@ -278,7 +278,7 @@ def add_params():
     parser.add_argument("-B", "--batch_size", type=int, default=8, help="Batch size for training the Transformer Model")
     parser.add_argument("-AGB", "--accumulate_gradient_batch", type=int, default=4, help="Number of batches to accumulate graident for")
     parser.add_argument("-L", "--learning_rate", type=float, default=3e-4, help="Learning Rate for training the Transformer Model")
-    parser.add_argument("-PC", "--prompt_choice", type=int, default=3, help="Prompt Choice - 1 Old, 2 - New, 3 - Old Vary (3 best)")
+    parser.add_argument("-PC", "--prompt_choice", type=int, default=1, help="Prompt Choice - 1 Old, 2 - New, 3 - Old Vary (3 best)")
     parser.add_argument("-E", "--num_epochs", type=int, default=5, help="Total Number of Epochs")
     parser.add_argument("-D", "--num_devices", type=int, default=1, help="Devices used for training")
     parser.add_argument('-LP', '--linear_probing', action=argparse.BooleanOptionalAction, help='For Linear Probing (Train only the lm head)')
