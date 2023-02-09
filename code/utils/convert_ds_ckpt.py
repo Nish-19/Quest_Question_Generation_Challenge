@@ -1,3 +1,9 @@
+'''
+A few caveats:
+- this only works with deepspeed stage 1 trained/fine-tuned model
+- this only works with T5ForConditionalGeneration model for now
+'''
+
 import os, argparse, torch
 from transformers import T5ForConditionalGeneration
 
