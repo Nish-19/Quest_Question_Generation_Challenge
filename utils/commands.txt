@@ -1,14 +1,22 @@
 (rtx8000) 
-srun --pty -p gpu-long --mem=32000 --partition=gypsum-rtx8000 --gres=gpu:1 bash
-srun --pty -p gpu-long --mem=32000 --constraint="linux-ubuntu20.04-skylake_avx512" --gres=gpu:1 --time=14-00:00:00 bash
+srun --pty -p gpu-long --partition=gypsum-rtx8000 --gres=gpu:2 bash
+srun --pty -p gpu-long --mem=100000 --partition=gypsum-rtx8000 --gres=gpu:2 bash
+srun --pty -p gpu-long --mem=32000 --constraint="linux-ubuntu20.04-skylake_avx512" --gres=gpu:1 bash
 (v100)
 srun --pty -p gpu-long --mem=32000 --constraint="v100" --gres=gpu:1 --time=14-00:00:00 bash
+(2080ti)
 srun --pty -p gpu-long --mem=32000 --partition=gypsum-2080ti --gres=gpu:1 bash
+(m40)
 srun --pty -p gpu-long --mem=32000 --partition=gypsum-m40 --gres=gpu:2 bash
+(titanx)
 srun --pty -p gpu-long --mem=32000 --partition=gypsum-titanx --gres=gpu:1 bash
+(1080ti)
+srun --pty -p gpu-long --mem=32000 --partition=gypsum-1080ti --gres=gpu:1 bash
 (a100 preempt)
+srun --pty -p gpu-preempt --mem=32000 --constraint="a100" --gres=gpu:1 bash
 srun --pty -p gpu-preempt --mem=32000 --constraint="a100" --gres=gpu:1 --time=14-00:00:00 bash
-(any gpu-long)
+srun --pty -p gpu-preempt --mem=100000 --constraint="a100" --gres=gpu:1 --time=14-00:00:00 bash
+(any gpu-long for 14 days)
 srun --pty -p gpu-long --mem=32000 --gres=gpu:1 --time=14-00:00:00 bash
 
 
@@ -523,7 +531,8 @@ python3.9 -m code.t5.train \
     --lm google/flan-t5-large \
     --cross_val_fold 21 \
     --neptune --cuda \
-    --debug --iters 2
+    --debug --iters 1 \
+    --batch_size 2 --amp
 
 
 
@@ -540,7 +549,7 @@ python -m code.t5.evaluate \
 
 (server)
 python -m code.t5.evaluate \
-    --model_folder "qg_challenge/QGCHAL-79/cross_val_fold_21/best_val_score/" \
+    --model_folder "qg_challenge/QGCHAL-flan-t5-large/cross_val_fold_21/best_val_score/" \
     --eval_type "local_val" \
     --eval_folder "folds/seed_21/train_val_split_csv" \
     --eval_filename "val.csv" \
@@ -627,7 +636,8 @@ python3.9 -m code.score_prediction.train \
 python3.9 -m code.score_prediction.train \
     --lm google/flan-t5-large \
     --iters 5 \
-    --neptune --cuda
+    --neptune --cuda \
+    --debug --iters 1
 
 (flan-t5-large with iters 10)
 python3.9 -m code.score_prediction.train \

@@ -4,11 +4,17 @@
 
 Run following command in virtual environment with tensorflow:
 
+python -m code.utils.compute_eval_metric \
+    --eval_folder results/folds/seed_21/train_val_split_csv \
+    --eval_filename run-misunderstood-deluge-136_decoding-C_seed-21_nsamples-20_time-20230210-014337_local.csv \
+    --batch_size 128
+
+
 Score model:
 
 python -m code.utils.compute_eval_metric \
-    --eval_folder results/score_prediction/score_model/train_val_test_split_csv \
-    --eval_filename QGCHAL-158_20230202-114840.csv \
+    --eval_folder results/folds/seed_21/train_val_split_csv \
+    --eval_filename run-sleek-aardvark-135_decoding-C_seed-21_nsamples-20_time-20230210-014202_local.csv \
     --batch_size 128 \
     --score_model
 
@@ -102,7 +108,7 @@ def add_params():
     parser = argparse.ArgumentParser()
     parser.add_argument("--eval_folder", type=str, default="train_val_split_csv", help="Folder containing evaluation file relative to data folder")
     parser.add_argument("--eval_filename", type=str, default="val.csv", help="Evaluation filename with timestamp and .csv extension")
-    parser.add_argument("--batch_size", type=int, default=64, help="Evaluation batch size for BLEURT model")
+    parser.add_argument("--batch_size", type=int, default=128, help="Evaluation batch size for BLEURT model")
     parser.add_argument('--score_model', action='store_true', help='Output format of score model')
     parser.add_argument('--debug', action='store_true', help='Debug mode evaluating on a small subset of 5 samples')
     params = parser.parse_args()

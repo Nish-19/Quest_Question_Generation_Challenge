@@ -5,17 +5,28 @@ Step 1: Parse each codex run:
 python -m code.dataaugmentation.post_process\
     --step 1\
     --attribute\
-    --filename "code-davinci-002_20230128-053905_start_0_end_6005_corrected.csv"\
-    --folder_name "with_question_attribute" \
-    --run 4
+    --filename "code-davinci-002_20230207-005232_start_0_end_984_corrected.csv"\
+    --folder_name "validation_set/with_question_attribute" \
+    --run 3
 
 Step 2: Aggregate all parsed codex runs:
 python -m code.dataaugmentation.post_process\
     --step 2\
     --attribute\
-    --folder_name "with_question_attribute" \
-    --max_runs 5
+    --folder_name "validation_set/with_question_attribute" \
+    --max_runs 2
 
+python -m code.dataaugmentation.post_process\
+    --step 2\
+    --attribute\
+    --folder_name "with_question_attribute" \
+    --max_runs 2
+
+python -m code.dataaugmentation.post_process\
+    --step 3
+
+max_runs 2 for smaller augmented dataset
+max_runs 4 for larger augmented dataset
 
 Without question attribute:
 Run post_process step 1 first then step 2
@@ -193,7 +204,7 @@ def main():
             assert args.num_qa_examples == 7, "num_stories must be 7 when balancing question attributes"
             df_incontext = filter_df_balance_attributes(df_train, args)
         else:
-            assert args.folder_name == "with_question_attribute", "folder_name must be with_question_attribute when not balancing question attributes"
+            assert "with_question_attribute" in args.folder_name, "folder_name must be with_question_attribute when not balancing question attributes"
             assert args.num_stories == 10, "num_stories must be 10 when not balancing question attributes"
             assert args.num_qa_examples == 8, "num_stories must be 8 when not balancing question attributes"
             df_incontext = filter_df(df_train, args)
@@ -227,8 +238,19 @@ def main():
         # Print distribution of attributes
         print(df_all["attribute1"].value_counts())
         folder = os.path.join(RAW_DIR, f"augmentation/{args.folder_name}/")
-        filename = f"all_augmented_{args.folder_name}_parsed"
+        filename = f"all_augmented_{args.folder_name.split('/')[-1]}_parsed"
+        print(filename, folder)
         save_csv(df_all.reset_index(drop=True), filename, folder)
+
+    elif(args.step == 3):
+        folder = os.path.join(RAW_DIR, f"augmentation/best_codex_aug_data")
+        train_filename = f"train_all_augmented_with_question_attribute_parsed.csv"
+        val_filename = f"val_all_augmented_with_question_attribute_parsed.csv"
+        df_train = load_df(train_filename, folder)
+        df_val = load_df(val_filename, folder)
+        df_all = pd.concat([df_train, df_val])
+        # Save combined train and val
+        save_csv(df_all.reset_index(drop=True), "combined_all_augmented_with_question_attribute_parsed", folder)
 
 
 if __name__ == '__main__':

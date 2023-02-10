@@ -33,7 +33,6 @@ def add_params():
     parser.add_argument("--eval_type", type=str, default="local_val", choices=["local_val", "leaderboard_public_test"], help="Evaluate local validation set or leaderboard public test set")
     parser.add_argument("--eval_folder", type=str, default="score_prediction/score_model/train_val_test_split_csv", help="Folder containing evaluation file relative to data folder")
     parser.add_argument("--eval_filename", type=str, default="test.csv", help="Evaluation filename")
-
     # Dataloader params
     parser.add_argument('--batch_size_eval', default=64, type=int, help='batch size')
     parser.add_argument('--workers', default=0, type=int, help='Number of data loader workers')

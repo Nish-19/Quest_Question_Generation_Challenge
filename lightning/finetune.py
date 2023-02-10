@@ -8,7 +8,7 @@ python -m code.lightning.finetune \
     -N flan-t5-xl \
     -TS DS \
     -D 1 \
-    -B 4 \
+    -B 2 \
     -ACC 8 \
     -PRE 32 \
     -CLIP 1 \
