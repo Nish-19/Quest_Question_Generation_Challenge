@@ -3,38 +3,37 @@
 2 batch size x 8 grad acc step = 16 = 0.8629 = swept-star-137 = epoch=0-step=375.ckpt
 3 batch size x 6 grad acc step = 18 = 0.8428 = misunderstood-deluge-136 = epoch=0-step=333.ckpt
 
+1024 seq len = 1 batch size x 18 grad acc step = 18 = deep-breeze-151 = epoch=0-step=333
+with Nischal's aug = 3 batch size x 6 grad acc step = 18 = with aug kind-paper-147 = epoch=0-step=688
 
+(leaderboard) 
+512 seq len finetune all = 3 batch size x 6 grad acc step = 18 = devout-jazz-153 = epoch=0-step=388
+
+(local val)
 python3 -m code.decoder.generate \
     -MN "google/flan-t5-xl" \
-    -N epoch=0-step=333.ckpt \
+    -N epoch=0-step=688.ckpt \
     --eval_type "local_val" \
     --decoding_strategies "C" \
     --seeds "21" \
     -NS 20 \
     --batch_size_eval 1 \
     --training_strategy "DS" \
-    -W "misunderstood-deluge-136"
+    -W "kind-paper-147"
 
+(LB)
 python3 -m code.decoder.generate \
-    -MN "google/flan-t5-large" \
-    -N epoch=0-step=188.ckpt \
-    --eval_type "local_val" \
-    --decoding_strategies "C-N" \
-    --seeds "21" \
-    -NS 20 \
-    --batch_size_eval 1 \
-    --debug
-
-python3 -m code.decoder.generate \
-    -MN "google/flan-t5-large" \
-    -N epoch=0-step=188.ckpt \
+    -MN "google/flan-t5-xl" \
+    -N epoch=0-step=388.ckpt \
     --eval_type "leaderboard_public_test" \
     --eval_folder "original" \
     --eval_filename "test.csv" \
     --decoding_strategies "C" \
     --seeds "21" \
-    -NS 2 \
-    --debug
+    -NS 20 \
+    --batch_size_eval 1 \
+    --training_strategy "DS" \
+    -W "devout-jazz-153"
 """
 import torch
 import torch.backends.cudnn as cudnn

@@ -1,4 +1,6 @@
 """
+srun --pty -p gpu-long --mem=32000 --partition=gypsum-2080ti --gres=gpu:1 bash
+
 (new) module load cuda/10.1.243 && source /home/nigel_umass_edu/env/bin/activate && cd /work/nigel_umass_edu/code/qg_challenge
 (old) module load cuda/10.1.243 && source /home/nigel_umass_edu/env/bin/activate && cd /home/nigel_umass_edu/qg_challenge
 
@@ -6,7 +8,7 @@ Run following command in virtual environment with tensorflow:
 
 python -m code.utils.compute_eval_metric \
     --eval_folder results/folds/seed_21/train_val_split_csv \
-    --eval_filename run-misunderstood-deluge-136_decoding-C_seed-21_nsamples-20_time-20230210-014337_local.csv \
+    --eval_filename run-kind-paper-147_decoding-C_seed-21_nsamples-20_time-20230210-190126_local.csv \
     --batch_size 128
 
 
@@ -14,7 +16,7 @@ Score model:
 
 python -m code.utils.compute_eval_metric \
     --eval_folder results/folds/seed_21/train_val_split_csv \
-    --eval_filename run-sleek-aardvark-135_decoding-C_seed-21_nsamples-20_time-20230210-014202_local.csv \
+    --eval_filename run-kind-paper-147_decoding-C_seed-21_nsamples-20_time-20230210-190126_local.csv \
     --batch_size 128 \
     --score_model
 

@@ -511,12 +511,6 @@ if __name__ == "__main__":
         type=str,
         help="path to the desired checkpoint folder, e.g., path/checkpoint-12")
     parser.add_argument(
-        "output_file",
-        type=str,
-        help=
-        "path to the pytorch fp32 state_dict output file (e.g. path/checkpoint-12/pytorch_model.bin)"
-    )
-    parser.add_argument(
         "output_dir",
         type=str,
         help=

@@ -55,7 +55,7 @@ def construct_transformer_input_old_vary(story, answer, choice=1):
 
 def get_transformer_encoding(tokenizer, transformer_inputs, question):
     # tokenizer = T5Tokenizer.from_pretrained(model_name)
-    max_source_length, max_target_length = 512, 64
+    max_source_length, max_target_length = 1024, 64
 
     inp_encoding = tokenizer(transformer_inputs, padding='longest', # longest 
                         max_length=max_source_length,

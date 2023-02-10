@@ -154,7 +154,7 @@ def get_token_len_stats(tokenizer, inputs):
 # Tokenization
 def get_transformer_encoding(tokenizer, transformer_inputs, question):
     # tokenizer = T5Tokenizer.from_pretrained(model_name)
-    max_source_length, max_target_length = 512, 64
+    max_source_length, max_target_length = 1024, 64
 
     inp_encoding = tokenizer(transformer_inputs, padding='longest', 
                         max_length=max_source_length,

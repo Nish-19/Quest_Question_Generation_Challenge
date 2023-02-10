@@ -748,7 +748,77 @@ python3.9 -m code.score_prediction.evaluate \
 -> Final submission model commands:
 
 
--> Finetune on local train: misunderstood-deluge-136
+-> Finetune on local train: misunderstood-deluge-136 (512 source len),  deep-breeze-151 (1024 source len)
+
+(len 512)
+python -m code.lightning.finetune \
+    -MT T \
+    -MN google/flan-t5-xl \
+    -N flan-t5-xl \
+    -TS DS \
+    -D 1 \
+    -B 3 \
+    -ACC 6 \
+    -PRE 32 \
+    -CLIP 1 \
+    -L 3e-4 \
+    -W \
+    -RT finetune_local \
+    -E 1
+
+(len 1024)
+python -m code.lightning.finetune \
+    -MT T \
+    -MN google/flan-t5-xl \
+    -N flan-t5-xl \
+    -TS DS \
+    -D 1 \
+    -B 1 \
+    -ACC 18 \
+    -PRE 32 \
+    -CLIP 1 \
+    -L 3e-4 \
+    -W \
+    -RT finetune_local \
+    -E 1
+
+
+-> Finetune on all data: local train + local val: devout-jazz-153 (512 source len), warm-tree-154 (1024 source len)
+
+(len 512)
+python -m code.lightning.finetune \
+    -MT T \
+    -MN google/flan-t5-xl \
+    -N flan-t5-xl \
+    -TS DS \
+    -D 1 \
+    -B 3 \
+    -ACC 6 \
+    -PRE 32 \
+    -CLIP 1 \
+    -L 3e-4 \
+    -W \
+    -RT finetune_all \
+    -E 1
+
+(len 1024)
+python -m code.lightning.finetune \
+    -MT T \
+    -MN google/flan-t5-xl \
+    -N flan-t5-xl \
+    -TS DS \
+    -D 1 \
+    -B 1 \
+    -ACC 18 \
+    -PRE 32 \
+    -CLIP 1 \
+    -L 3e-4 \
+    -W \
+    -RT finetune_all \
+    -E 1
+
+
+-> Finetune on local train plus Nischal's aug on local train: kind-paper-147 (512 source len)
 
 python -m code.lightning.finetune \
     -MT T \
@@ -762,27 +832,11 @@ python -m code.lightning.finetune \
     -CLIP 1 \
     -L 3e-4 \
     -W \
-    -RT finetune_local 
+    -RT finetune_local_with_aug \
+    -E 1
 
 
--> Finetune on all data: local train + local val: dark-sponge-145
-
-python -m code.lightning.finetune \
-    -MT T \
-    -MN google/flan-t5-xl \
-    -N flan-t5-xl \
-    -TS DS \
-    -D 1 \
-    -B 3 \
-    -ACC 6 \
-    -PRE 32 \
-    -CLIP 1 \
-    -L 3e-4 \
-    -W \
-    -RT finetune_all 
-
-
--> Finetune on local train plus Nischal's aug on local train: quiet-valley-143
+-> Finetune on all data: local train + local val, plus Nischal's aug on all data: ignore bad val fluent-microwave-148 (512 source len)
 
 python -m code.lightning.finetune \
     -MT T \
@@ -796,21 +850,5 @@ python -m code.lightning.finetune \
     -CLIP 1 \
     -L 3e-4 \
     -W \
-    -RT finetune_local_with_aug 
-
-
--> Finetune on all data: local train + local val, plus Nischal's aug on all data: eager-bush-144
-
-python -m code.lightning.finetune \
-    -MT T \
-    -MN google/flan-t5-xl \
-    -N flan-t5-xl \
-    -TS DS \
-    -D 1 \
-    -B 3 \
-    -ACC 6 \
-    -PRE 32 \
-    -CLIP 1 \
-    -L 3e-4 \
-    -W \
-    -RT finetune_all_with_aug 
+    -RT finetune_all_with_aug \
+    -E 1
