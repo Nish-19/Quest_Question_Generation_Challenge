@@ -33,16 +33,22 @@ def get_parallel_corpus(ip_df, story_df, filetype='train'):
     return story, answer, question
 
 
-def construct_transformer_input(story, answer, choice=1):
+def construct_transformer_input_old_vary(story, answer, choice=1):
     inps = []
     if choice == 1:
-        prefix = 'Generate question from story and answer: '
+        prefix = 'Generate question from context and answer: '
+        suffix = ''
     elif choice == 2:
         prefix = 'Generate question: '
-    else:
+        suffix = ''
+    elif choice == 3:
         prefix = ''
+        suffix = ''
+    elif choice == 4:
+        prefix = 'Generate question from context and answer: '
+        suffix = '\nThe question is:'
     for stry, ans in zip(story, answer):
-        transformer_input = prefix + ' The story is ' + stry + ' The answer is ' + ans 
+        transformer_input = prefix + '\nContext: ' + stry + '\nAnswer: ' + ans + suffix
         inps.append(transformer_input)
     return inps
 

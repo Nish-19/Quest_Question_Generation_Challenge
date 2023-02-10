@@ -740,3 +740,85 @@ python3.9 -m code.score_prediction.evaluate \
     --eval_type "leaderboard_public_test" \
     --eval_folder "score_prediction/score_model/train_val_test_split_csv" \
     --eval_filename "contrastive_reft_flan_t5_large_nodup_selemaugment_4_0.60_200_no_duplicate.csv"
+
+
+
+-----
+
+-> Final submission model commands:
+
+
+-> Finetune on local train:
+
+python -m code.lightning.finetune \
+    -MT T \
+    -MN google/flan-t5-xl \
+    -N flan-t5-xl \
+    -TS DS \
+    -D 1 \
+    -B 3 \
+    -ACC 6 \
+    -PRE 32 \
+    -CLIP 1 \
+    -L 3e-4 \
+    -W \
+    -RT finetune_local \
+    -E 1 \
+    -DG
+
+
+-> Finetune on all data: local train + local val:
+
+python -m code.lightning.finetune \
+    -MT T \
+    -MN google/flan-t5-xl \
+    -N flan-t5-xl \
+    -TS DS \
+    -D 1 \
+    -B 3 \
+    -ACC 6 \
+    -PRE 32 \
+    -CLIP 1 \
+    -L 3e-4 \
+    -W \
+    -RT finetune_all \
+    -E 1 \
+    -DG
+
+
+-> Finetune on local train plus Nischal's aug on local train:
+
+python -m code.lightning.finetune \
+    -MT T \
+    -MN google/flan-t5-xl \
+    -N flan-t5-xl \
+    -TS DS \
+    -D 1 \
+    -B 3 \
+    -ACC 6 \
+    -PRE 32 \
+    -CLIP 1 \
+    -L 3e-4 \
+    -W \
+    -RT finetune_local_with_aug \
+    -E 1 \
+    -DG
+
+
+-> Finetune on all data: local train + local val, plus Nischal's aug on all data
+
+python -m code.lightning.finetune \
+    -MT T \
+    -MN google/flan-t5-xl \
+    -N flan-t5-xl \
+    -TS DS \
+    -D 1 \
+    -B 3 \
+    -ACC 6 \
+    -PRE 32 \
+    -CLIP 1 \
+    -L 3e-4 \
+    -W \
+    -RT finetune_all_with_aug \
+    -E 1 \
+    -DG

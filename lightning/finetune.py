@@ -8,8 +8,8 @@ python -m code.lightning.finetune \
     -N flan-t5-xl \
     -TS DS \
     -D 1 \
-    -B 2 \
-    -ACC 8 \
+    -B 3 \
+    -ACC 6 \
     -PRE 32 \
     -CLIP 1 \
     -L 3e-4 \
@@ -286,12 +286,13 @@ class FinetuneTransformer(pl.LightningModule):
 
 def add_params():
     parser = argparse.ArgumentParser()
+    parser.add_argument('-RT', "--run_type", type=str, default="finetune_local", choices=["finetune_local", "finetune_all", "finetune_local_with_aug", "finetune_all_with_aug"], help="Train-val split type for run")
     parser.add_argument('-W', '--wandb', action=argparse.BooleanOptionalAction, help='For Wandb logging')
     #parser.add_argument('-NEP', '--neptune', action=argparse.BooleanOptionalAction, help='For Neptune logging')
     parser.add_argument('-EXT', '--external_data', action=argparse.BooleanOptionalAction, help='For Using External Data')
     parser.add_argument('-TFN', '--train_file_name', type=str, default="train.csv", help="Training File name")
     parser.add_argument('-TS', '--training_strategy', type=str, default="DP", help="DP for dataparalle and DS for deepspeed")
-    parser.add_argument("-B", "--batch_size", type=int, default=5, help="Batch size for training the Transformer Model")
+    parser.add_argument("-B", "--batch_size", type=int, default=3, help="Batch size for training the Transformer Model")
     parser.add_argument("-L", "--learning_rate", type=float, default=3e-4, help="Learning Rate for training the Transformer Model")
     parser.add_argument("-E", "--num_epochs", type=int, default=8, help="Total Number of Epochs")
     parser.add_argument("-D", "--num_devices", type=int, default=1, help="Devices used for training")
@@ -302,7 +303,7 @@ def add_params():
     parser.add_argument('-LC', '--load_checkpoint', action=argparse.BooleanOptionalAction, help='Load Checkpoint for re-finetuning')
     parser.add_argument("-CN", "--checkpoint_name", type=str, default="flan_t5_large_codex_0.00_augment", help="Variant of the trained Transformer Base Model")
     parser.add_argument("-P", "--prefix_choice", type=int, default=1, help="Choice of prefix used for the input construction - 1, 2, 3")
-    parser.add_argument("-ACC", "--accumulate_grad_batches", type=int, default=8, help="Num of batches to accumulate gradients for")
+    parser.add_argument("-ACC", "--accumulate_grad_batches", type=int, default=6, help="Num of batches to accumulate gradients for")
     parser.add_argument("-PRE", "--precision", type=int, default=32, help="Precision for training")
     parser.add_argument("-CLIP", "--gradient_clip_val", type=float, default=1.0, help="Gradient clipping value")
     parser.add_argument('-DG', '--debug', action=argparse.BooleanOptionalAction, help='For Debugging')
@@ -310,32 +311,46 @@ def add_params():
     return params
 
 
-# %%
-if __name__ == '__main__':
-    args = add_params()
-
-    if args.external_data:
-        story_file = './data/original/source_texts_external.csv'
-        train_file = './data/train_val_split_csv/train_external.csv'
-    else:
-        story_file = './data/original/source_texts.csv'
-        train_file = os.path.join('./data/folds/seed_21/train_val_split_csv/', args.train_file_name)
+def get_df(args):
+    # Load stories
+    story_file = './data/original/source_texts.csv'
     story_df = pd.read_csv(story_file)
-    # For validation only
-    val_story_file = './data/original/source_texts.csv'
-    val_story_df = pd.read_csv(val_story_file)
+    
+    # Load train-val 
+    if( args.run_type == "finetune_local" ):
+        train_file = './data/folds/seed_21/train_val_split_csv/train.csv'
+        val_file = './data/folds/seed_21/train_val_split_csv/val.csv'
+    elif( args.run_type == "finetune_all" ):
+        train_file = './data/original/train.csv'
+        # Dummy val file since train already contains val
+        val_file = './data/folds/seed_21/train_val_split_csv/val.csv'
+    elif( args.run_type == "finetune_local_with_aug" ):
+        train_file = './data/folds/seed_21/train_val_split_csv/Sel_Exact_Match_Augment_Train_no_duplicates.csv'
+        val_file = './data/folds/seed_21/train_val_split_csv/val.csv'
+    elif( args.run_type == "finetune_all_with_aug" ):
+        train_file = './data/original/Sel_Exact_Match_Augment_Full_Train_Full_Answer_no_duplicates.csv'
+        # Dummy val file since train already contains val
+        val_file = './data/folds/seed_21/train_val_split_csv/val.csv'
 
-    # Train-Val split
     train_df = pd.read_csv(train_file)
-    val_file = './data/folds/seed_21/train_val_split_csv/val.csv'
     val_df = pd.read_csv(val_file)
 
     if( args.debug ):
         train_df = train_df[:32]
         val_df = val_df[:32]
 
+    return train_df, val_df, story_df
+
+
+# %%
+if __name__ == '__main__':
+    args = add_params()
+
+    # Load data
+    train_df, val_df, story_df = get_df(args)
+
     train_story, train_answer, train_question = get_parallel_corpus(train_df, story_df)
-    val_story, val_answer, val_question = get_parallel_corpus(val_df, val_story_df)
+    val_story, val_answer, val_question = get_parallel_corpus(val_df, story_df)
 
     train_inps = construct_transformer_input_old_vary(train_story, train_answer, args.prefix_choice)
     val_inps = construct_transformer_input_old_vary(val_story, val_answer, args.prefix_choice)

@@ -50,7 +50,7 @@ from transformers import T5Tokenizer, T5ForConditionalGeneration
 
 from code.decoder.t5_finetune import FinetuneT5
 from code.decoder.rank import rank
-from code.decoder.utils import get_parallel_corpus, construct_transformer_input, get_transformer_encoding, FairyDataset, get_dataloader
+from code.decoder.utils import get_parallel_corpus, construct_transformer_input_old_vary, get_transformer_encoding, FairyDataset, get_dataloader
 from code.utils.create_dataset_split import load_df, RAW_DIR, save_csv
 from code.t5.evaluate import save_params
 
@@ -116,7 +116,7 @@ def load_data(args, tokenizer):
     val_df = load_df(val_filename, folder, nrows)
     # Prepare dataloader
     val_story, val_answer, val_question = get_parallel_corpus(val_df, story_df, filetype=filetype)
-    val_inps = construct_transformer_input(val_story, val_answer, args.prefix_choice)
+    val_inps = construct_transformer_input_old_vary(val_story, val_answer, args.prefix_choice)
     val_input_ids, val_attention_mask, val_labels = get_transformer_encoding(tokenizer, val_inps, val_question)
     val_dataset = FairyDataset(val_input_ids, val_attention_mask, val_labels)
     val_dataloader = get_dataloader(args.batch_size_eval, val_dataset, datatype='val')
