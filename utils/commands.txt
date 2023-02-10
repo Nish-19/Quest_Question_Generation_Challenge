@@ -748,7 +748,7 @@ python3.9 -m code.score_prediction.evaluate \
 -> Final submission model commands:
 
 
--> Finetune on local train:
+-> Finetune on local train: misunderstood-deluge-136
 
 python -m code.lightning.finetune \
     -MT T \
@@ -762,12 +762,10 @@ python -m code.lightning.finetune \
     -CLIP 1 \
     -L 3e-4 \
     -W \
-    -RT finetune_local \
-    -E 1 \
-    -DG
+    -RT finetune_local 
 
 
--> Finetune on all data: local train + local val:
+-> Finetune on all data: local train + local val: dark-sponge-145
 
 python -m code.lightning.finetune \
     -MT T \
@@ -781,12 +779,10 @@ python -m code.lightning.finetune \
     -CLIP 1 \
     -L 3e-4 \
     -W \
-    -RT finetune_all \
-    -E 1 \
-    -DG
+    -RT finetune_all 
 
 
--> Finetune on local train plus Nischal's aug on local train:
+-> Finetune on local train plus Nischal's aug on local train: quiet-valley-143
 
 python -m code.lightning.finetune \
     -MT T \
@@ -800,12 +796,10 @@ python -m code.lightning.finetune \
     -CLIP 1 \
     -L 3e-4 \
     -W \
-    -RT finetune_local_with_aug \
-    -E 1 \
-    -DG
+    -RT finetune_local_with_aug 
 
 
--> Finetune on all data: local train + local val, plus Nischal's aug on all data
+-> Finetune on all data: local train + local val, plus Nischal's aug on all data: eager-bush-144
 
 python -m code.lightning.finetune \
     -MT T \
@@ -819,6 +813,4 @@ python -m code.lightning.finetune \
     -CLIP 1 \
     -L 3e-4 \
     -W \
-    -RT finetune_all_with_aug \
-    -E 1 \
-    -DG
+    -RT finetune_all_with_aug 

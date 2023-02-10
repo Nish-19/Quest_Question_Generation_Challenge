@@ -6,14 +6,14 @@
 
 python3 -m code.decoder.generate \
     -MN "google/flan-t5-xl" \
-    -N epoch=0-step=375.ckpt \
+    -N epoch=0-step=333.ckpt \
     --eval_type "local_val" \
     --decoding_strategies "C" \
     --seeds "21" \
     -NS 20 \
     --batch_size_eval 1 \
     --training_strategy "DS" \
-    -W "swept-star-137"
+    -W "misunderstood-deluge-136"
 
 python3 -m code.decoder.generate \
     -MN "google/flan-t5-large" \
