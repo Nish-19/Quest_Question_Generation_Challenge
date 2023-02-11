@@ -1,4 +1,4 @@
-# The Quest for Quality Questions
+# Team Andrew: The Quest for Quality Questions
 
 ## Hardware
 - CPU specs: Intel Xeon Gold CPUs
@@ -23,7 +23,7 @@ Run the train command (step 1) in `entry_points.md`. This saves a deepspeed chec
 
 
 ## How to make predictions on a new test set
-Run the predict command (step 1) in `entry_points.md`.
+Run the predict command (step 3) in `entry_points.md`.
 
 
 ## Important side effects of your code
