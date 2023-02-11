@@ -1,0 +1,8 @@
+{
+    "RAW_DATA_DIR": "data",
+    "CLEAN_DATA_DIR": "clean_data",
+    "TRAIN_DATA_CLEAN_PATH": "clean_data/train.csv",
+    "TEST_DATA_CLEAN_PATH": "clean_data/test.csv",
+    "MODEL_DIR": "model",
+    "SUBMISSION_DIR": "submission"
+}
