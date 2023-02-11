@@ -1,0 +1,8 @@
+.
+./code
+./code/__pycache__
+./data
+./model_checkpoint
+./model_checkpoint/devout-jazz
+./model_checkpoint/devout-jazz/last.ckpt/huggingface_model
+./output

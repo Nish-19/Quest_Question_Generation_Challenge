@@ -4,8 +4,7 @@ python -m code.train
 ```
 
 
-## Step 2: Prepare model checkpoint
-From inside the MODEL_DIR (found in SETTINGS.json), run:
+## Step 2: Convert model checkpoint to HuggingFace format
 ```
 python -m code.zero_to_fp32_huggingface \
     --checkpoint_dir model_checkpoint/devout-jazz/last.ckpt/ \

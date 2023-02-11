@@ -1,8 +1,5 @@
 {
     "RAW_DATA_DIR": "./data",
-    "CLEAN_DATA_DIR": "./data_clean",
-    "TRAIN_DATA_CLEAN_PATH": "./data_clean/train.csv",
-    "TEST_DATA_CLEAN_PATH": "./data_clean/test.csv",
     "MODEL_DIR": "./model_checkpoint",
     "SUBMISSION_DIR": "./output"
 }
