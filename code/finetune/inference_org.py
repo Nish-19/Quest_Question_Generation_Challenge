@@ -216,6 +216,7 @@ def add_params():
     parser.add_argument('-Fold', '--fold_decoding', action=argparse.BooleanOptionalAction, help='Average Decoding')
     parser.add_argument('-FN', '--fold_number', type=int, default=0, help='Fold Number of validation set')
     parser.add_argument("-F", "--eval_folder", type=str, default="FairytaleQA", help="Evaluation Folder where output is saved (testset for testing on test set)")
+    parser.add_argument("-CF", "--checkpoint_folder", type=str, default="Checkpoints_org", help="Folder where the checkpoint is stored")
     parser.add_argument("-B", "--batch_size", type=int, default=8, help="Batch size for passing through the Transformer Model")
     parser.add_argument("-MT", "--model_type", type=str, default="t", help="T for T5 and B for BART")
     parser.add_argument("-MN", "--model_name", default="t5-small", help="Variant of the Transformer model for finetuning")
@@ -274,7 +275,7 @@ if __name__=='__main__':
     # %%
     # Load the Generative Head 
     # search for ckpt file
-    search_dir = os.path.join('./code/finetune/Checkpoints_new', args.run_name)
+    search_dir = os.path.join('./code/finetune', args.checkpoint_folder, args.run_name)
     for file in os.listdir(search_dir):
         name, ext = os.path.splitext(file)
         if ext == '.ckpt':
