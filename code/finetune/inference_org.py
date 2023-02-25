@@ -306,13 +306,26 @@ if __name__=='__main__':
     val_preds = get_preds(tokenizer, val_outputs)
     print('Done Decoding!')
 
-    preds_df = pd.DataFrame()
-    preds_df['question'] = test_question
-    preds_df['generated_question'] = val_preds
+    val_df = pd.DataFrame(test_data)
+
+    # NOTE: Saving val_preds
+    if args.decoding_strategy == 'N':
+        times = [args.num_of_samples for _ in range(len(val_df))]
+        new_val_df = val_df.loc[val_df.index.repeat(times)].reset_index(drop=True)
+        save_csv_name = 'nucleus_{:s}_{:.2f}_{:.2f}_{:d}'.format(args.run_name, args.p_sampling, args.temperature, args.num_of_samples)
+    elif args.decoding_strategy == 'C':
+        times = [args.num_of_samples for _ in range(len(val_df))]
+        new_val_df = val_df.loc[val_df.index.repeat(times)].reset_index(drop=True)
+        save_csv_name = 'contrastive_{:s}_{:d}_{:.2f}_{:d}'.format(args.run_name, args.top_K, args.alpha, args.num_of_samples)
+    else:
+        new_val_df = val_df
+        save_csv_name = args.run_name
+
+    # add generated question
+    new_val_df['generated_question'] = val_preds
 
     output_path = os.path.join(RAW_DIR, "results_org")
-    save_csv_name =  args.run_name
-    save_csv(preds_df, save_csv_name, output_path)
+    save_csv(new_val_df, save_csv_name, output_path)
 
     # for ctr, seed in enumerate(seed_vals):
     #     # Set seed

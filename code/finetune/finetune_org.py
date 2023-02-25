@@ -58,7 +58,7 @@ def get_stats(story, answer, question):
 def construct_transformer_input(story, answer, choice=1):
     inps = []
     if choice == 1:
-        prefix = 'Generate question from answer and story: '
+        prefix = 'Generate question from story and answer: '
         suffix = ''
     elif choice == 2:
         prefix = 'Generate question: '
@@ -67,10 +67,10 @@ def construct_transformer_input(story, answer, choice=1):
         prefix = ''
         suffix = ''
     elif choice == 4:
-        prefix = 'Generate question from answer and story: '
+        prefix = 'Generate question from story and answer: '
         suffix = '\nThe question is:'
     for stry, ans in zip(story, answer):
-        transformer_input = prefix + '\nThe answer is ' + ans + '\nThe story is ' + stry + suffix
+        transformer_input = prefix + '\nThe story is ' + stry + '\nThe answer is ' + ans + suffix
         inps.append(transformer_input)
     return inps
 
@@ -78,7 +78,7 @@ def construct_transformer_input(story, answer, choice=1):
 def construct_transformer_input_bart(story, answer):
     inps = []
     for stry, ans in zip(story, answer):
-        transformer_input = '\nThe answer is ' + ans + '\nThe story is ' + stry
+        transformer_input = '\nThe story is ' + stry + '\nThe answer is ' + ans
         inps.append(transformer_input)
     return inps
 
@@ -312,8 +312,8 @@ if __name__ == '__main__':
     val_story, val_answer, val_question = get_parallel_corpus(val_data)
 
     if args.model_type == 'T':
-        train_inps = construct_transformer_input(train_story, train_answer, args.prefix_choice)
-        val_inps = construct_transformer_input(val_story, val_answer, args.prefix_choice)
+        train_inps = construct_transformer_input_old_vary(train_story, train_answer, args.prefix_choice)
+        val_inps = construct_transformer_input_old_vary(val_story, val_answer, args.prefix_choice)
     elif args.model_type == 'B':
         train_inps = construct_transformer_input_bart(train_story, train_answer)
         val_inps = construct_transformer_input_bart(val_story, val_answer)
@@ -363,7 +363,7 @@ if __name__ == '__main__':
 
     # NOTE: Load checkpoint
     if args.load_checkpoint:
-        search_dir = os.path.join('./code/finetune/Checkpoints_org', args.checkpoint_name)
+        search_dir = os.path.join('./code/finetune/Checkpoints_new', args.checkpoint_name)
         for file in os.listdir(search_dir):
             ckpt_file = os.path.join(search_dir, file)
         print('ckpt_file', ckpt_file)
