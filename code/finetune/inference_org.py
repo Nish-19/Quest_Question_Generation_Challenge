@@ -215,6 +215,7 @@ def add_params():
     parser.add_argument('-AVG', '--average_decoding', action=argparse.BooleanOptionalAction, help='Average Decoding')
     parser.add_argument('-Fold', '--fold_decoding', action=argparse.BooleanOptionalAction, help='Average Decoding')
     parser.add_argument('-FN', '--fold_number', type=int, default=0, help='Fold Number of validation set')
+    parser.add_argument("-EFN", "--eval_filename", type=str, default="test.json", help="Evaluation filename")
     parser.add_argument("-F", "--eval_folder", type=str, default="FairytaleQA", help="Evaluation Folder where output is saved (testset for testing on test set)")
     parser.add_argument("-CF", "--checkpoint_folder", type=str, default="Checkpoints_org", help="Folder where the checkpoint is stored")
     parser.add_argument("-B", "--batch_size", type=int, default=8, help="Batch size for passing through the Transformer Model")
@@ -239,7 +240,7 @@ if __name__=='__main__':
 
     args = add_params()
 
-    test_file = os.path.join('./data', args.eval_folder, 'test.json')
+    test_file = os.path.join('./data', args.eval_folder, args.eval_filename)
     test_data = []
 
     with open(test_file, 'r') as infile:
