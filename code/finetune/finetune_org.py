@@ -294,7 +294,7 @@ def add_params():
 if __name__ == '__main__':
     args = add_params()
 
-    train_file = './data/FairytaleQA/train.json'
+    train_file = os.path.join('./data/FairytaleQA', args.train_file_name)
     train_data = []
 
     with open(train_file, 'r') as infile:
