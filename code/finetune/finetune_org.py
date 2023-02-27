@@ -271,7 +271,7 @@ def add_params():
     parser = argparse.ArgumentParser()
     parser.add_argument('-W', '--wandb', action=argparse.BooleanOptionalAction, help='For Wandb logging')
     parser.add_argument('-EXT', '--external_data', action=argparse.BooleanOptionalAction, help='For Using External Data')
-    parser.add_argument('-TFN', '--train_file_name', type=str, default="train.csv", help="Training File name")
+    parser.add_argument('-TFN', '--train_file_name', type=str, default="train.json", help="Training File name")
     parser.add_argument('-TS', '--training_strategy', type=str, default="DP", help="DP for dataparalle and DS for deepspeed")
     parser.add_argument("-B", "--batch_size", type=int, default=8, help="Batch size for training the Transformer Model")
     parser.add_argument("-AGB", "--accumulate_gradient_batch", type=int, default=4, help="Number of batches to accumulate graident for")
