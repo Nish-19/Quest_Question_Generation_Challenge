@@ -84,6 +84,7 @@ def run_model(prompt, args, api_keys):
 
 def add_params():
     parser = argparse.ArgumentParser()
+    parser.add_argument('-SD', '--selective_augmentation', action=argparse.BooleanOptionalAction, help='Augment all attribute except action and causal')
     parser.add_argument("-NK", "--num_keys", type=int, default=6, help="Number of API keys to use")
     parser.add_argument("-FN", "--fold_number", type=int, default=1, help="Fold Decoding")
     parser.add_argument("-MN", "--model_name", type=str, default="code-davinci-002", help="GPT-3 off-the-shelf or finetuned model name")
@@ -110,9 +111,7 @@ def main():
         api_keys = api_keys[:len(api_keys)//2]
     else:
         api_keys = api_keys[len(api_keys)//2:]
-    # NOTE: Read QG prompt
-    with open('prompt_dir/aq_prompt.txt', 'r') as infile:
-        main_prompt = infile.read()
+
     # NOTE: read test data
     print('Loading Fold {:d}'.format(args.fold_number))
     test_file_path = '../data/FairytaleQA_story_folds/{:d}/test.json'.format(args.fold_number)
@@ -124,27 +123,59 @@ def main():
         test_df = pd.DataFrame(test_data)[:10]
     else:
         test_df = pd.DataFrame(test_data)
+    
+    # attribute check
+    allow_attr = list(test_df['attribute'].unique())
+    if args.selective_augmentation:
+        try:
+            allow_attr.remove('action')
+            allow_attr.remove('causal relationship')
+        except ValueError:
+            pass
 
+    # NOTE: Read QG prompt (attribute-wise)
+    ini_prompts = {}
+    if not args.selective_augmentation:
+        with open('prompt_dir/aq_prompt.txt', 'r') as infile:
+            main_prompt = infile.read()
+        for attr in allow_attr:
+            ini_prompts[attr] = main_prompt
+    else:
+        prompt_dir = 'prompt_dir/aq_prompt'
+        for attr in allow_attr:
+            with open(os.path.join(prompt_dir, '{:s}.txt'.format(attr)), 'r') as infile:
+                attr_prompt = infile.read()
+            ini_prompts[attr] = attr_prompt
+            
     # get input prompts
     ip_prompts = []
     for i in range(len(test_df)):
-        prompt = construct_input_prompt(test_df.loc[i, 'content'], test_df.loc[i, 'answer'], test_df.loc[i, 'attribute'], test_df.loc[i, 'question'])
-        ip_prompts.append(main_prompt + prompt)
+        if test_df.loc[i, 'attribute'] in allow_attr:
+            prompt = construct_input_prompt(test_df.loc[i, 'content'], test_df.loc[i, 'answer'], test_df.loc[i, 'attribute'], test_df.loc[i, 'question'])
+            ip_prompts.append(ini_prompts[test_df.loc[i, 'attribute']] + prompt)
+        else:
+            ip_prompts.append('<SKIP>')
     
     # generate response for each prompt 
     all_response = []
     for i, prompt in enumerate(tqdm(ip_prompts)):
         print('Prompt {:d}'.format(i))
-        response = run_model(prompt, args, api_keys)
+        if prompt != '<SKIP>':
+            response = run_model(prompt, args, api_keys)
+        else:
+            response = '<SKIP>'
         all_response.append(response)
 
     # NOTE: Collect responses
     break_responses = []
     for response in all_response:
         collect_responses = []
-        for i in range(args.num_samples):
-            response_i = response['choices'][i]['text'].strip()
-            collect_responses.append(response_i)
+        if response == '<SKIP>':
+            collect_responses = ['<SKIP>' for _ in range(args.num_samples)]
+        else:
+            for i in range(args.num_samples):
+                response_i = response['choices'][i]['text'].strip()
+                collect_responses.append(response_i)
         break_responses.append(collect_responses)
         # print(response['choices']['text'])
     
@@ -156,6 +187,11 @@ def main():
     output_dir = 'output'
     if not os.path.exists(output_dir):
         os.mkdir(output_dir)
+    if args.selective_augmentation:
+        sub_dir = 'sel_aug'
+        output_dir = os.path.join(output_dir, sub_dir)
+        if not os.path.exists(output_dir):
+            os.mkdir(output_dir)
     save_path = os.path.join(output_dir, 'augment_fold_{:d}.csv'.format(args.fold_number))
     test_df.to_csv(save_path, index=False)
 
