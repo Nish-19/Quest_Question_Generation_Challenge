@@ -2,6 +2,7 @@
 python get_answer.py -NK 6 -MN code-davinci-002 -D -MT 32 -T 0 -P 1 -FN 1
 '''
 import os
+import sys
 import argparse
 import time
 from tqdm import tqdm
@@ -15,12 +16,11 @@ from openai.error import RateLimitError, Timeout, APIError, ServiceUnavailableEr
 # set api keys
 def set_api_keys():
     os.environ['OPENAI_API_KEY_1'] = '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'
-    os.environ['OPENAI_API_KEY_2'] = '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'
-    os.environ['OPENAI_API_KEY_3'] = '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'
-    os.environ['OPENAI_API_KEY_4'] = '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'
-    os.environ['OPENAI_API_KEY_5'] = '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'
-    os.environ['OPENAI_API_KEY_6'] = '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'
-
+    os.environ['OPENAI_API_KEY_2'] = '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'
+    os.environ['OPENAI_API_KEY_3'] = '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'
+    os.environ['OPENAI_API_KEY_4'] = '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'
+    os.environ['OPENAI_API_KEY_5'] = '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'
+    os.environ['OPENAI_API_KEY_6'] = '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'
 
 # Collect api keys
 def get_api_keys(num_keys):
@@ -82,6 +82,8 @@ def run_model(prompt, args, api_keys):
 
 def add_params():
     parser = argparse.ArgumentParser()
+    parser.add_argument('-SD', '--selective_augmentation', action=argparse.BooleanOptionalAction, help='Augment all attribute except action and causal')
+    parser.add_argument("-NR", "--num_responses", type=int, default=2, help="Number of generated questions for whom answers need to be generated")
     parser.add_argument("-NK", "--num_keys", type=int, default=6, help="Number of API keys to use")
     parser.add_argument("-FN", "--fold_number", type=int, default=1, help="Fold Decoding")
     parser.add_argument("-MN", "--model_name", type=str, default="code-davinci-002", help="GPT-3 off-the-shelf or finetuned model name")
@@ -108,9 +110,6 @@ def main():
         api_keys = api_keys[:len(api_keys)//2]
     else:
         api_keys = api_keys[len(api_keys)//2:]
-    # NOTE: Read QG prompt
-    with open('prompt_dir/prompt.txt', 'r') as infile:
-        main_prompt = infile.read()
     # NOTE: read test data
     print('Loading Fold {:d}'.format(args.fold_number))
     test_file_path = 'clean_aug/augment_fold_{:d}.csv'.format(args.fold_number)
@@ -118,46 +117,95 @@ def main():
         test_df = pd.read_csv(test_file_path)[:5]
     else:
         test_df = pd.read_csv(test_file_path)
+    
+    # attribute check
+    allow_attr = list(test_df['attribute'].unique())
+    if args.selective_augmentation:
+        try:
+            allow_attr.remove('action')
+        except ValueError:
+            pass
+        try:
+            allow_attr.remove('causal relationship')
+        except ValueError:
+            pass
+    
+    # NOTE: Read QG Prompt (attribute-wise)
+    ini_prompts = {}
+    if not args.selective_augmentation:
+        with open('prompt_dir/qa_prompt.txt', 'r') as infile:
+            main_prompt = infile.read()
+        for attr in allow_attr:
+            ini_prompts[attr] = main_prompt
+    else:
+        prompt_dir = 'prompt_dir/qa_prompt'
+        for attr in allow_attr:
+            try:
+                with open(os.path.join(prompt_dir, '{:s}.txt'.format(attr)), 'r') as infile:
+                    attr_prompt = infile.read()
+                ini_prompts[attr] = attr_prompt
+            except FileNotFoundError: # ignore file if not found
+                pass
 
     # get input prompts
-    ip_prompts_org, ip_prompts_r1, ip_prompts_r2 = [], [], []
+    ip_prompts_org, ip_prompt_responses = [], []
     for i in range(len(test_df)):
-        prompt_org_ques = construct_input_prompt(test_df.loc[i, 'content'], test_df.loc[i, 'question'])
-        prompt_res_1 = construct_input_prompt(test_df.loc[i, 'content'], test_df.loc[i, 'Response_1'])
-        prompt_res_2 = construct_input_prompt(test_df.loc[i, 'content'], test_df.loc[i, 'Response_2'])
-        ip_prompts_org.append(main_prompt + prompt_org_ques)
-        ip_prompts_r1.append(main_prompt + prompt_res_1)
-        ip_prompts_r2.append(main_prompt + prompt_res_2)
-    
-    # generate response for each prompt 
-    all_org, all_r1, all_r2 = [], [], []
+        if test_df.loc[i, 'attribute'] in allow_attr:
+            prompt_org_ques = construct_input_prompt(test_df.loc[i, 'content'], test_df.loc[i, 'question'])
+            ip_prompts_org.append(ini_prompts[test_df.loc[i, 'attribute']] + prompt_org_ques)
+            prompt_response = []
+            for j in range(args.num_responses):
+                prompt_res_j = construct_input_prompt(test_df.loc[i, 'content'], test_df.loc[i, 'Response_{:d}'.format(j+1)])
+                prompt_response.append(ini_prompts[test_df.loc[i, 'attribute']] + prompt_res_j)
+            ip_prompt_responses.append(prompt_response)
+        else:
+            ip_prompts_org.append('<SKIP>')
+            ip_prompt_responses.append(['<SKIP>' for _ in range(args.num_responses)])
+                    
+    # TODO: (Getting index error) generate response for each prompt  
+    all_org, all_responses = [], []
     for i, prompt in enumerate(tqdm(ip_prompts_org)):
-        print('Prompt {:d} Original Question'.format(i))
-        ans_org = run_model(ip_prompts_org[i], args, api_keys)
-        print('Prompt {:d} Response 1'.format(i))
-        ans_r1 = run_model(ip_prompts_r1[i], args, api_keys)
-        print('Prompt {:d} Response 2'.format(i))
-        ans_r2 = run_model(ip_prompts_r2[i], args, api_keys)
-        all_org.append(ans_org)
-        all_r1.append(ans_r1)
-        all_r2.append(ans_r2)
+        if prompt == '<SKIP>':
+            all_org.append('<SKIP>')
+            all_responses.append(ip_prompt_responses[i]) # this is all skip
+        else:
+            print('Prompt {:d} Original Question'.format(i))
+            ans_org = run_model(ip_prompts_org[i], args, api_keys)
+            all_ans = []
+            for j in range(args.num_responses):
+                print('Prompt {:d} Response {:d}'.format(i, j))
+                ans_rj = run_model(ip_prompt_responses[i][j], args, api_keys)
+                all_ans.append(ans_rj)
+            all_org.append(ans_org)
+            all_responses.append(all_ans)
 
     # NOTE: Collect responses
-    org_ans, r1_ans, r2_ans = [], [], []
+    org_ans, clean_response_ans = [], []
     for i in range(len(all_org)):
-        org_ans.append(all_org[i]['choices'][0]['text'].strip())
-        r1_ans.append(all_r1[i]['choices'][0]['text'].strip())
-        r2_ans.append(all_r2[i]['choices'][0]['text'].strip())
-        # print(response['choices']['text'])
+        if all_org[i] == '<SKIP>':
+            org_ans.append('<SKIP>')
+            clean_response_ans.append(all_responses[i])
+        else:
+            org_ans.append(all_org[i]['choices'][0]['text'].strip())
+            response_ans = []
+            for j in range(args.num_responses):
+                response_ans.append(all_responses[i][j]['choices'][0]['text'].strip())
+            clean_response_ans.append(response_ans)
+    
+    clean_response_ans_arr = np.array(clean_response_ans)
     
     # Dump responses 
     test_df['Org Answer'] = org_ans
-    test_df['R1 Answer'] = r1_ans
-    test_df['R2 Answer'] = r2_ans
+    for j in range(args.num_responses):
+        test_df['R{:d} Answer'.format(j+1)] = clean_response_ans_arr[:, j]
     
     output_dir = 'answer'
     if not os.path.exists(output_dir):
         os.mkdir(output_dir)
+    if args.selective_augmentation:
+        output_dir = os.path.join('answer', 'sel_aug')
+        if not os.path.exists(output_dir):
+            os.mkdir(output_dir)
     save_path = os.path.join(output_dir, 'augment_fold_{:d}.csv'.format(args.fold_number))
     test_df.to_csv(save_path, index=False)
 
