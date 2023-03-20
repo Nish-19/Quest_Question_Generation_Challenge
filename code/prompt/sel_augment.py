@@ -1,4 +1,5 @@
 import os 
+import random
 import sys
 import json 
 import pandas as pd 
@@ -29,12 +30,14 @@ def display_attr_stat(train_df, aug_df, to_add=False):
 def add_params():
     parser = argparse.ArgumentParser()
     parser.add_argument('-SD', '--selective_augmentation', action=argparse.BooleanOptionalAction, help='Augment all attribute except action and causal')
+    parser.add_argument('-RB', '--remove_balance', action=argparse.BooleanOptionalAction, help='Remove extra action and causal attributes from the actual training data')
     params = parser.parse_args()
     return params
 
 def main():
     # argparse 
     args = add_params()
+    random.seed(37)
 
     # NOTE: Aug df
     filter_dir = 'filter'
@@ -49,6 +52,8 @@ def main():
     with open(data_path, 'r') as infile:
         for line in infile:
             train_data.append(json.loads(line))
+    # shuffle train data
+    random.shuffle(train_data)
     train_df = pd.DataFrame(train_data)
 
     # Display stats 
@@ -125,9 +130,20 @@ def main():
             org_data.append(aug_dict)
             allow_aug[row['attribute']] -= 1
     
+    remove_instances = {'action':attr_df['Train Count'][attr_df['Attr Name'] == 'action'].values[0] - least_count, 'causal relationship':attr_df['Train Count'][attr_df['Attr Name'] == 'causal relationship'].values[0] - least_count}
+    if args.remove_balance:
+        for data in org_data:
+            if data['attribute'] == 'action' or data['attribute'] == 'causal relationship':
+                if remove_instances[data['attribute']] > 0:
+                    org_data.remove(data)
+                    remove_instances[data['attribute']] -= 1
+        suffix = 'rb'
+    else:
+        suffix = ''
+
     # Store the augmented data
     store_dir = '../data/FairytaleQA'
-    store_filename = 'prompt_aug_control_count.json'
+    store_filename = 'prompt_aug_control_count_{:s}.json'.format(suffix)
     with open(os.path.join(store_dir, store_filename), 'w') as f:
         for d in org_data:
             json.dump(d, f)
@@ -136,6 +152,7 @@ def main():
     # Verify attribute distribution
     print("After Augmentation")
     attr_df = display_attr_stat(train_df, pd.DataFrame(org_data), to_add=False)
+
 
 
 
