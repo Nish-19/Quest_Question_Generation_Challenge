@@ -33,10 +33,13 @@ def get_api_keys(num_keys):
 
 
 # construct input prompt 
-def construct_input_prompt(context, question):
+def construct_input_prompt(context, question, attribute, ex_or_im=None):
     prompt = '<Example 8>\n'
     prompt += '<Context> {:s}\n'.format(context)
     prompt +=  '<Question> {:s}\n'.format(question)
+    prompt += '<Attribute> {:s}\n'.format(attribute)
+    if ex_or_im is not None:
+        prompt += '<Ex_or_Im> {:s}\n'.format(ex_or_im)
     return prompt
 
 
@@ -83,6 +86,7 @@ def run_model(prompt, args, api_keys):
 def add_params():
     parser = argparse.ArgumentParser()
     parser.add_argument('-SD', '--selective_augmentation', action=argparse.BooleanOptionalAction, help='Augment all attribute except action and causal')
+    parser.add_argument('-EXIM', '--exim', action=argparse.BooleanOptionalAction, help='Augment by considering explicit and implicit tags')
     parser.add_argument("-NR", "--num_responses", type=int, default=2, help="Number of generated questions for whom answers need to be generated")
     parser.add_argument("-NK", "--num_keys", type=int, default=6, help="Number of API keys to use")
     parser.add_argument("-FN", "--fold_number", type=int, default=1, help="Fold Decoding")
@@ -132,12 +136,7 @@ def main():
     
     # NOTE: Read QG Prompt (attribute-wise)
     ini_prompts = {}
-    if not args.selective_augmentation:
-        with open('prompt_dir/qa_prompt.txt', 'r') as infile:
-            main_prompt = infile.read()
-        for attr in allow_attr:
-            ini_prompts[attr] = main_prompt
-    else:
+    if args.selective_augmentation:
         prompt_dir = 'prompt_dir/qa_prompt'
         for attr in allow_attr:
             try:
@@ -146,17 +145,39 @@ def main():
                 ini_prompts[attr] = attr_prompt
             except FileNotFoundError: # ignore file if not found
                 pass
+    elif args.exim:
+        prompt_dir = 'prompt_dir/qa_prompt_exim'
+        exim = ['explicit', 'implicit']
+        for attr in allow_attr:
+            for choice in exim:
+                with open(os.path.join(prompt_dir, '{:s}_{:s}.txt'.format(attr, choice)), 'r') as infile:
+                    attr_exim_prompt = infile.read()
+                ini_prompts['{:s}_{:s}'.format(attr, choice)] = attr_exim_prompt
+    else:
+        with open('prompt_dir/qa_prompt.txt', 'r') as infile:
+            main_prompt = infile.read()
+        for attr in allow_attr:
+            ini_prompts[attr] = main_prompt
+
 
     # get input prompts
     ip_prompts_org, ip_prompt_responses = [], []
     for i in range(len(test_df)):
         if test_df.loc[i, 'attribute'] in allow_attr:
-            prompt_org_ques = construct_input_prompt(test_df.loc[i, 'content'], test_df.loc[i, 'question'])
-            ip_prompts_org.append(ini_prompts[test_df.loc[i, 'attribute']] + prompt_org_ques)
+            if args.exim:
+                prompt_org_ques = construct_input_prompt(test_df.loc[i, 'content'], test_df.loc[i, 'question'], test_df.loc[i, 'attribute'], test_df.loc[i, 'ex_or_im'])
+                ip_prompts_org.append(ini_prompts['{:s}_{:s}'.format(test_df.loc[i, 'attribute'], test_df.loc[i, 'ex_or_im'])] + prompt_org_ques)
+            else:
+                prompt_org_ques = construct_input_prompt(test_df.loc[i, 'content'], test_df.loc[i, 'question'], test_df.loc[i, 'attribute'])
+                ip_prompts_org.append(ini_prompts[test_df.loc[i, 'attribute']] + prompt_org_ques)
             prompt_response = []
             for j in range(args.num_responses):
-                prompt_res_j = construct_input_prompt(test_df.loc[i, 'content'], test_df.loc[i, 'Response_{:d}'.format(j+1)])
-                prompt_response.append(ini_prompts[test_df.loc[i, 'attribute']] + prompt_res_j)
+                if args.exim:
+                    prompt_res_j = construct_input_prompt(test_df.loc[i, 'content'], test_df.loc[i, 'Response_{:d}'.format(j+1)], test_df.loc[i, 'attribute'], test_df.loc[i, 'ex_or_im'])
+                    prompt_response.append(ini_prompts['{:s}_{:s}'.format(test_df.loc[i, 'attribute'], test_df.loc[i, 'ex_or_im'])] + prompt_res_j)
+                else:
+                    prompt_res_j = construct_input_prompt(test_df.loc[i, 'content'], test_df.loc[i, 'Response_{:d}'.format(j+1)])
+                    prompt_response.append(ini_prompts[test_df.loc[i, 'attribute']] + prompt_res_j)
             ip_prompt_responses.append(prompt_response)
         else:
             ip_prompts_org.append('<SKIP>')
@@ -204,6 +225,10 @@ def main():
         os.mkdir(output_dir)
     if args.selective_augmentation:
         output_dir = os.path.join('answer', 'sel_aug')
+        if not os.path.exists(output_dir):
+            os.mkdir(output_dir)
+    if args.exim:
+        output_dir = os.path.join('answer', 'ex_im')
         if not os.path.exists(output_dir):
             os.mkdir(output_dir)
     save_path = os.path.join(output_dir, 'augment_fold_{:d}.csv'.format(args.fold_number))

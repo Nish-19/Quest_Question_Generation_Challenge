@@ -17,9 +17,9 @@ def set_api_keys():
     os.environ['OPENAI_API_KEY_1'] = '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'
     os.environ['OPENAI_API_KEY_2'] = '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'
     os.environ['OPENAI_API_KEY_3'] = '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'
-    os.environ['OPENAI_API_KEY_4'] = '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'
-    os.environ['OPENAI_API_KEY_5'] = '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'
-    os.environ['OPENAI_API_KEY_6'] = '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'
+    os.environ['OPENAI_API_KEY_4'] = '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'
+    os.environ['OPENAI_API_KEY_5'] = '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'
+    os.environ['OPENAI_API_KEY_6'] = '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'
 
 
 # Collect api keys
@@ -33,10 +33,12 @@ def get_api_keys(num_keys):
 
 
 # construct input prompt 
-def construct_input_prompt(context, answer, attribute, question):
+def construct_input_prompt(context, answer, attribute, question, ex_im=None):
     prompt = '<Context> {:s}\n'.format(context)
     prompt +=  '<Answer> {:s}\n'.format(answer)
     prompt +=  '<Attribute> {:s}\n'.format(attribute)
+    if ex_im is not None:
+        prompt +=  '<Ex_or_Im> {:s}\n'.format(ex_im)
     prompt +=  '<Question> {:s}\n'.format(question)
     prompt +=  'Another question with the same answer is: '
     return prompt
@@ -85,6 +87,7 @@ def run_model(prompt, args, api_keys):
 def add_params():
     parser = argparse.ArgumentParser()
     parser.add_argument('-SD', '--selective_augmentation', action=argparse.BooleanOptionalAction, help='Augment all attribute except action and causal')
+    parser.add_argument('-EXIM', '--exim', action=argparse.BooleanOptionalAction, help='Augment by considering explicit and implicit tags')
     parser.add_argument("-NK", "--num_keys", type=int, default=6, help="Number of API keys to use")
     parser.add_argument("-FN", "--fold_number", type=int, default=1, help="Fold Decoding")
     parser.add_argument("-MN", "--model_name", type=str, default="code-davinci-002", help="GPT-3 off-the-shelf or finetuned model name")
@@ -107,7 +110,7 @@ def main():
     set_api_keys()
     # get api keys
     api_keys = get_api_keys(args.num_keys)
-    if args.fold_number % 2 == 0:
+    if args.fold_number % 2 != 0:
         api_keys = api_keys[:len(api_keys)//2]
     else:
         api_keys = api_keys[len(api_keys)//2:]
@@ -129,30 +132,46 @@ def main():
     if args.selective_augmentation:
         try:
             allow_attr.remove('action')
+        except ValueError:
+            pass
+        try:
             allow_attr.remove('causal relationship')
         except ValueError:
             pass
 
     # NOTE: Read QG prompt (attribute-wise)
-    ini_prompts = {}
-    if not args.selective_augmentation:
-        with open('prompt_dir/aq_prompt.txt', 'r') as infile:
-            main_prompt = infile.read()
-        for attr in allow_attr:
-            ini_prompts[attr] = main_prompt
-    else:
+    ini_prompts = {}    
+    if args.selective_augmentation:
         prompt_dir = 'prompt_dir/aq_prompt'
         for attr in allow_attr:
             with open(os.path.join(prompt_dir, '{:s}.txt'.format(attr)), 'r') as infile:
                 attr_prompt = infile.read()
             ini_prompts[attr] = attr_prompt
-            
+    elif args.exim:
+        prompt_dir = 'prompt_dir/aq_prompt_exim'
+        exim = ['explicit', 'implicit']
+        for attr in allow_attr:
+            for choice in exim:
+                with open(os.path.join(prompt_dir, '{:s}_{:s}.txt'.format(attr, choice)), 'r') as infile:
+                    attr_exim_prompt = infile.read()
+                ini_prompts['{:s}_{:s}'.format(attr, choice)] = attr_exim_prompt
+    else:
+        if not args.selective_augmentation and not args.exim:
+            with open('prompt_dir/aq_prompt.txt', 'r') as infile:
+                main_prompt = infile.read()
+            for attr in allow_attr:
+                ini_prompts[attr] = main_prompt
+
     # get input prompts
     ip_prompts = []
     for i in range(len(test_df)):
         if test_df.loc[i, 'attribute'] in allow_attr:
-            prompt = construct_input_prompt(test_df.loc[i, 'content'], test_df.loc[i, 'answer'], test_df.loc[i, 'attribute'], test_df.loc[i, 'question'])
-            ip_prompts.append(ini_prompts[test_df.loc[i, 'attribute']] + prompt)
+            if args.exim:
+                prompt = construct_input_prompt(test_df.loc[i, 'content'], test_df.loc[i, 'answer'], test_df.loc[i, 'attribute'], test_df.loc[i, 'question'], test_df.loc[i, 'ex_or_im'])
+                ip_prompts.append(ini_prompts['{:s}_{:s}'.format(test_df.loc[i, 'attribute'], test_df.loc[i, 'ex_or_im'])] + prompt)
+            else:
+                prompt = construct_input_prompt(test_df.loc[i, 'content'], test_df.loc[i, 'answer'], test_df.loc[i, 'attribute'], test_df.loc[i, 'question'])
+                ip_prompts.append(ini_prompts['{:s}'.format(test_df.loc[i, 'attribute'])] + prompt)
         else:
             ip_prompts.append('<SKIP>')
     
@@ -189,6 +208,11 @@ def main():
         os.mkdir(output_dir)
     if args.selective_augmentation:
         sub_dir = 'sel_aug'
+        output_dir = os.path.join(output_dir, sub_dir)
+        if not os.path.exists(output_dir):
+            os.mkdir(output_dir)
+    if args.exim:
+        sub_dir = 'ex_im'
         output_dir = os.path.join(output_dir, sub_dir)
         if not os.path.exists(output_dir):
             os.mkdir(output_dir)
