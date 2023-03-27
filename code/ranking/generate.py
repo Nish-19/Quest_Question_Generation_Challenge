@@ -163,7 +163,7 @@ def main():
             if args.debug and i > 5:
                 break # choose only 5 in the case of debug
             json_dict = json.loads(line)
-            json_dict['pair_id'] = i+1
+            json_dict['pairID'] = i+1
             test_data.append(json_dict)
     test_df = pd.DataFrame(test_data)
     

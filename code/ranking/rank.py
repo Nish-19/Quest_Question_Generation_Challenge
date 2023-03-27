@@ -26,7 +26,7 @@ def remove_duplicates(df, name):
     # Remove duplicates
     print(f"No of {name} samples before removing duplicates: {len(df)}")
     # Use generated_question_normalized and not generated_question_original to remove duplicates since the former is used for bleurt score
-    df = df.drop_duplicates(subset=["pair_id", "generated_question_normalized"])
+    df = df.drop_duplicates(subset=["pairID", "generated_question_normalized"])
     print(f"No of {name} samples after removing duplicates: {len(df)}")
 
     return df
@@ -51,7 +51,7 @@ def rank(df_test):
 
     # Keep top 10 questions generated according to score predictions for each pair id
     # ascending=True since we want to keep the lowest perplexity scores
-    df_submission = df_test.groupby("pair_id").apply(lambda x: x.sort_values("score", ascending=True).head(10))
+    df_submission = df_test.groupby("pairID").apply(lambda x: x.sort_values("score", ascending=True).head(10))
     print(f"No of test samples after ranking: {len(df_submission)}")
 
     return df_submission, df_test
