@@ -1,9 +1,21 @@
 # %%
 '''
-python -m code.finetune.finetune \
+Original code author: Nischal
+
+python -m code.lightning.finetune \
     -MT T \
-    -MN t5-small \
-    -N t5_small
+    -MN google/flan-t5-xl \
+    -N flan-t5-xl \
+    -TS DS \
+    -D 1 \
+    -B 4 \
+    -ACC 8 \
+    -PRE 32 \
+    -CLIP 1 \
+    -L 3e-4 \
+    -W \
+    -E 1 \
+    -DG
 '''
 
 # %%
@@ -18,17 +30,19 @@ import torch
 from torch.utils.data import Dataset, TensorDataset, DataLoader
 from transformers import T5Tokenizer, T5ForConditionalGeneration
 from transformers import BartTokenizer, BartForConditionalGeneration
-from transformers import AdamW, get_linear_schedule_with_warmup
+from transformers import get_linear_schedule_with_warmup
+from torch.optim import AdamW
 from transformers.optimization import Adafactor
 import pytorch_lightning as pl
-from pytorch_lightning import Trainer
+from pytorch_lightning import Trainer, seed_everything
 from pytorch_lightning.strategies.ddp import DDPStrategy
 from pytorch_lightning.strategies import DeepSpeedStrategy
-from pytorch_lightning.loggers import WandbLogger, CSVLogger
+from pytorch_lightning.loggers import WandbLogger, CSVLogger, NeptuneLogger
 from pytorch_lightning.callbacks import EarlyStopping, LearningRateMonitor, ModelCheckpoint
+from deepspeed.ops.adam import DeepSpeedCPUAdam
 
 os.environ['WANDB_NOTEBOOK_NAME'] = 'FinetuneTransformer'
-
+seed_everything(21, workers=True)
 
 # %%
 def clean_str(text):
@@ -140,7 +154,7 @@ def get_token_len_stats(tokenizer, inputs):
 # Tokenization
 def get_transformer_encoding(tokenizer, transformer_inputs, question):
     # tokenizer = T5Tokenizer.from_pretrained(model_name)
-    max_source_length, max_target_length = 1024, 128
+    max_source_length, max_target_length = 512, 64
 
     inp_encoding = tokenizer(transformer_inputs, padding='longest', 
                         max_length=max_source_length,
@@ -241,8 +255,9 @@ class FinetuneTransformer(pl.LightningModule):
     
     def configure_optimizers(self):
         # create optimizer
-        optimizer = AdamW(self.parameters(), lr=self.hparams.lr)
-        # optimizer = Adafactor(model.parameters(), scale_parameter=False, relative_step=False, warmup_init=False, lr=1e-3)
+        #optimizer = AdamW(self.parameters(), lr=self.hparams.lr)
+        optimizer = DeepSpeedCPUAdam(self.parameters(), lr=self.hparams.lr)
+        #optimizer = Adafactor(model.parameters(), scale_parameter=False, relative_step=False, warmup_init=False, lr=1e-3)
 
         # create learning rate scheduler
         # with open('debug.txt', 'w') as outfile:
@@ -272,13 +287,13 @@ class FinetuneTransformer(pl.LightningModule):
 def add_params():
     parser = argparse.ArgumentParser()
     parser.add_argument('-W', '--wandb', action=argparse.BooleanOptionalAction, help='For Wandb logging')
+    #parser.add_argument('-NEP', '--neptune', action=argparse.BooleanOptionalAction, help='For Neptune logging')
     parser.add_argument('-EXT', '--external_data', action=argparse.BooleanOptionalAction, help='For Using External Data')
     parser.add_argument('-TFN', '--train_file_name', type=str, default="train.csv", help="Training File name")
     parser.add_argument('-TS', '--training_strategy', type=str, default="DP", help="DP for dataparalle and DS for deepspeed")
-    parser.add_argument("-B", "--batch_size", type=int, default=8, help="Batch size for training the Transformer Model")
+    parser.add_argument("-B", "--batch_size", type=int, default=5, help="Batch size for training the Transformer Model")
     parser.add_argument("-L", "--learning_rate", type=float, default=3e-4, help="Learning Rate for training the Transformer Model")
-    parser.add_argument("-PC", "--prompt_choice", type=int, default=3, help="Prompt Choice - 1 Old, 2 - New, 3 - Old Vary (3 best)")
-    parser.add_argument("-E", "--num_epochs", type=int, default=5, help="Total Number of Epochs")
+    parser.add_argument("-E", "--num_epochs", type=int, default=8, help="Total Number of Epochs")
     parser.add_argument("-D", "--num_devices", type=int, default=1, help="Devices used for training")
     parser.add_argument('-LP', '--linear_probing', action=argparse.BooleanOptionalAction, help='For Linear Probing (Train only the lm head)')
     parser.add_argument("-MT", "--model_type", type=str, default="t", help="T for T5 and B for BART")
@@ -287,6 +302,10 @@ def add_params():
     parser.add_argument('-LC', '--load_checkpoint', action=argparse.BooleanOptionalAction, help='Load Checkpoint for re-finetuning')
     parser.add_argument("-CN", "--checkpoint_name", type=str, default="flan_t5_large_codex_0.00_augment", help="Variant of the trained Transformer Base Model")
     parser.add_argument("-P", "--prefix_choice", type=int, default=1, help="Choice of prefix used for the input construction - 1, 2, 3")
+    parser.add_argument("-ACC", "--accumulate_grad_batches", type=int, default=8, help="Num of batches to accumulate gradients for")
+    parser.add_argument("-PRE", "--precision", type=int, default=32, help="Precision for training")
+    parser.add_argument("-CLIP", "--gradient_clip_val", type=float, default=1.0, help="Gradient clipping value")
+    parser.add_argument('-DG', '--debug', action=argparse.BooleanOptionalAction, help='For Debugging')
     params = parser.parse_args()
     return params
 
@@ -311,17 +330,15 @@ if __name__ == '__main__':
     val_file = './data/train_val_split_csv/val.csv'
     val_df = pd.read_csv(val_file)
 
+    if( args.debug ):
+        train_df = train_df[:32]
+        val_df = val_df[:32]
+
     train_story, train_answer, train_question = get_parallel_corpus(train_df, story_df)
     val_story, val_answer, val_question = get_parallel_corpus(val_df, val_story_df)
-    if args.prompt_choice == 3:
-        train_inps = construct_transformer_input_old_vary(train_story, train_answer, args.prefix_choice)
-        val_inps = construct_transformer_input_old_vary(val_story, val_answer, args.prefix_choice)
-    elif args.prompt_choice == 2:
-        train_inps = construct_transformer_input_newer(train_story, train_answer, args.prefix_choice)
-        val_inps = construct_transformer_input_newer(val_story, val_answer, args.prefix_choice)
-    elif args.prompt_choice == 1:
-        train_inps = construct_transformer_input(train_story, train_answer, args.prefix_choice)
-        val_inps = construct_transformer_input(val_story, val_answer, args.prefix_choice)
+
+    train_inps = construct_transformer_input(train_story, train_answer, args.prefix_choice)
+    val_inps = construct_transformer_input(val_story, val_answer, args.prefix_choice)
 
     # avg_tr_tk_len, max_tr_tk_len = get_token_len_stats(tokenizer, train_inps)
     # avg_val_tk_len, max_val_tk_len = get_token_len_stats(tokenizer, val_inps)
@@ -388,7 +405,6 @@ if __name__ == '__main__':
     else:
         logger = CSVLogger("run_results", name=save_name)
 
-
     early_stop_callback = EarlyStopping(
         monitor='validation_loss',
         patience=3,
@@ -399,23 +415,32 @@ if __name__ == '__main__':
 
     lr_monitor = LearningRateMonitor(logging_interval='step')
     
-    save_directory = os.path.join('./code/finetune/Checkpoints_new', save_name)
+    if( args.wandb ):
+        save_directory = os.path.join('../../qg_challenge/finetune/checkpoints_new', wandb.run.name, save_name)
+    else:
+        save_directory = os.path.join('../../qg_challenge/finetune/checkpoints_new', save_name)
     save_checkpoint =  ModelCheckpoint(dirpath=save_directory, monitor='validation_loss', save_top_k=1)
 
     if args.training_strategy == 'DP':
         strategy = DDPStrategy(find_unused_parameters=False)
     elif args.training_strategy == 'DS':
-        strategy = DeepSpeedStrategy(stage=3,
+        strategy = DeepSpeedStrategy(stage = 2,
                                     offload_optimizer=True,
-                                    offload_parameters=True)
+                                    allgather_bucket_size=5e8,
+                                    reduce_bucket_size=5e8
+                                    )
 
 
     trainer = Trainer(accelerator='gpu', devices=args.num_devices, 
                     default_root_dir=save_directory, 
-                    logger=logger, 
+                    logger=logger,
                     max_epochs=max_epochs,
                     callbacks=[early_stop_callback, lr_monitor, save_checkpoint],
-                    strategy = strategy)
+                    deterministic=True,
+                    strategy = strategy,
+                    accumulate_grad_batches=args.accumulate_grad_batches,
+                    gradient_clip_val=args.gradient_clip_val,
+                    precision=args.precision)
 
     trainer.fit(model)
 

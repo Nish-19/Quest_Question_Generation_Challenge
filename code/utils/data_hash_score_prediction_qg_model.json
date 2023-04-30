@@ -1,0 +1,22 @@
+{
+    "fold_0": {
+        "train": "ddc77e225c7276227cafac8e3e6fd164e8dd3812",
+        "val": "c877dbcc954cae98f162c1f12eedf478a0ce991b"
+    },
+    "fold_1": {
+        "train": "f1f0dfae39755d59e823ad2d3da54fef460d64f4",
+        "val": "a327441ddd558eb5ca5f894278e497a81b51b42f"
+    },
+    "fold_2": {
+        "train": "2970aba2f18d7a4728dd3ac4dc2c19fa239a862e",
+        "val": "87337851eac2ffcf5d26a64a0dba925286465a98"
+    },
+    "fold_3": {
+        "train": "166f0894347b1779d366b3c23ba66eddd93a1e68",
+        "val": "9c46fea4aa740794b91194a02840c1767ab5328a"
+    },
+    "fold_4": {
+        "train": "6274a61446ad87d6167e7b910ca81e3b211a56b1",
+        "val": "0aaf61a0910a83675804d9f6545c61aedc9a919e"
+    }
+}

@@ -1,45 +1,55 @@
-## Splitting Data
-
-To create a local train-val split from the public train file run this command from `code`:
-```
-python -m code.utils.create_dataset_split
-```
-
-The hash of your data splits will be compared against the original stored in `utils/data_hash.json`
-
 ## Finetuning
 
 To finetune an encoder-decoder model (T5/BART):
 
 ```
-python -m code.finetune.finetune \
-    -MT T \
-    -MN t5-small \
-    -N t5_small
+python -m code.finetune.finetune_org \
+    -W -MT T -MN google/flan-t5-large \
+    -N flan_t5_large
 ```
 
 The code accepts a list of arguments which are defined in the ```add_params``` function. 
 
-The trained model checkpoint gets saved in the ```Checkpoints``` folder. 
+The trained model checkpoint gets saved in the ```Checkpoints_org``` folder. 
 
 ## Inference/Generation
 
 To get the inference/ generation using a pre-trained model: 
 
 ```
-python -m code.finetune.inference -N t5_small -M t5-small
+python -m code.finetune.inference_org \
+    -MT T -MN google/flan-t5-large \
+    -N flan_t5_large -DS N \
+    -PS 0.9 -NS 10
 ```
 
-The csv file containing the generations are saved in ```results/train_val_split_csv```
+The csv file containing the generations are saved in ```results_org```
 
-## BLEURT Scores
+## Finetuning Distribution Ranking-Based Model 
+```
+python -m code.ranking_kl.bert_rank \
+    -W -Attr -ExIm -MN YituTech/conv-bert-base \
+    -SN convbert_org_10_0.001_0.01 \
+    -alpha1 0.001 -alpha2 0.01 \
+```
 
-To compute the BLEURT Scores
+## Predictions from Distribution Ranking-Based Model
+```
+python -m code.ranking_kl.bert_rank_inference \
+    -Attr -ExIm -MN YituTech/conv-bert-base \
+    -SN convbert_org_10_0.001_0.01 \
+```
+
+The csv file containing the generations are saved in ```results_rank_kl```
+
+
+## ROUGE Scores
+
+To compute the ROUGE Scores
 
 ```
-python -m code.utils.compute_eval_metric \
-    --eval_folder train_val_split_csv \
-    --eval_filename text-curie-001_20221103-030617.csv \
-    --batch_size 64
+python -m code.utils.compute_rouge_score \
+    --eval_folder results_org \
+    --eval_filename flan_t5_large_org.csv
 ```
 

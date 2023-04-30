@@ -276,8 +276,9 @@ def add_params():
     parser.add_argument('-TFN', '--train_file_name', type=str, default="train.csv", help="Training File name")
     parser.add_argument('-TS', '--training_strategy', type=str, default="DP", help="DP for dataparalle and DS for deepspeed")
     parser.add_argument("-B", "--batch_size", type=int, default=8, help="Batch size for training the Transformer Model")
+    parser.add_argument("-AGB", "--accumulate_gradient_batch", type=int, default=4, help="Number of batches to accumulate graident for")
     parser.add_argument("-L", "--learning_rate", type=float, default=3e-4, help="Learning Rate for training the Transformer Model")
-    parser.add_argument("-PC", "--prompt_choice", type=int, default=3, help="Prompt Choice - 1 Old, 2 - New, 3 - Old Vary (3 best)")
+    parser.add_argument("-PC", "--prompt_choice", type=int, default=1, help="Prompt Choice - 1 Old, 2 - New, 3 - Old Vary (3 best)")
     parser.add_argument("-E", "--num_epochs", type=int, default=5, help="Total Number of Epochs")
     parser.add_argument("-D", "--num_devices", type=int, default=1, help="Devices used for training")
     parser.add_argument('-LP', '--linear_probing', action=argparse.BooleanOptionalAction, help='For Linear Probing (Train only the lm head)')
@@ -313,6 +314,7 @@ if __name__ == '__main__':
 
     train_story, train_answer, train_question = get_parallel_corpus(train_df, story_df)
     val_story, val_answer, val_question = get_parallel_corpus(val_df, val_story_df)
+
     if args.prompt_choice == 3:
         train_inps = construct_transformer_input_old_vary(train_story, train_answer, args.prefix_choice)
         val_inps = construct_transformer_input_old_vary(val_story, val_answer, args.prefix_choice)
@@ -415,7 +417,7 @@ if __name__ == '__main__':
                     logger=logger, 
                     max_epochs=max_epochs,
                     callbacks=[early_stop_callback, lr_monitor, save_checkpoint],
-                    strategy = strategy)
+                    strategy = strategy, accumulate_grad_batches = args.accumulate_gradient_batch)
 
     trainer.fit(model)
 

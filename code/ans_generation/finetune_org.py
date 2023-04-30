@@ -7,6 +7,7 @@ python -m code.finetune.finetune \
 '''
 
 # %%
+import json
 import sys
 import re
 import wandb, os
@@ -38,26 +39,14 @@ def clean_str(text):
     return text.strip()
 
 
-# load dataset
-def get_parallel_corpus(ip_df, story_df):
+def get_parallel_corpus(json_data, filetype='train'):
     # hash stories and sections
-    story_sec_hash = defaultdict(dict)
-    for i, row in story_df.iterrows():
-        story_sec_hash[row['source_title']][row['cor_section']] = clean_str(row['text'])
-    
     story, answer, question = [], [], []
-    for i, row in ip_df.iterrows():
-        try:
-            sec_nums = row['cor_section'].split(',')
-        except AttributeError:
-            sec_nums = [row['cor_section']]
-        story_str = ''
-        for sec_num in sec_nums:
-            story_str += story_sec_hash[row['source_title']][int(sec_num)]
-        story.append(story_str)
-        answer.append(clean_str(row['answer']))
-        question.append(clean_str(row['question']))
-    
+    for data in json_data:
+        story.append(data['content'])
+        answer.append(data['answer'])
+        question.append(data['question'])
+        
     return story, answer, question
 
 def get_stats(story, answer, question):
@@ -65,63 +54,72 @@ def get_stats(story, answer, question):
     print('Average answer length:', statistics.mean([len(ans) for ans in answer]))
     print('Average question length:', statistics.mean([len(quest) for quest in question]))
 
+# # Construct transformer input 
+# def construct_transformer_input(story, answer, choice=1):
+#     inps = []
+#     if choice == 1:
+#         prefix = 'Generate answer from question and story: '
+#         suffix = ''
+#     elif choice == 2:
+#         prefix = 'Generate question: '
+#         suffix = ''
+#     elif choice == 3:
+#         prefix = ''
+#         suffix = ''
+#     elif choice == 4:
+#         prefix = 'Generate question from answer and story: '
+#         suffix = '\nThe question is:'
+#     for stry, ans in zip(story, answer):
+#         transformer_input = prefix + '\nThe answer is ' + ans + '\nThe story is ' + stry + suffix
+#         inps.append(transformer_input)
+#     return inps
+
 # Constrcut transformer input 
-def construct_transformer_input(story, answer, choice=1):
+def construct_transformer_input_bart(story, question):
     inps = []
-    if choice == 1:
-        prefix = 'Generate question from answer and story: '
-        suffix = ''
-    elif choice == 2:
-        prefix = 'Generate question: '
-        suffix = ''
-    elif choice == 3:
-        prefix = ''
-        suffix = ''
-    elif choice == 4:
-        prefix = 'Generate question from answer and story: '
-        suffix = '\nThe question is:'
-    for stry, ans in zip(story, answer):
-        transformer_input = prefix + '\nThe answer is ' + ans + '\nThe story is ' + stry + suffix
+    for stry, ques in zip(story, question):
+        transformer_input = '\nThe story is ' + stry + '\nThe question is ' + ques
         inps.append(transformer_input)
     return inps
 
-# Constrcut transformer input 
-def construct_transformer_input_newer(story, answer, choice=1):
-    inps = []
-    if choice == 1:
-        prefix = 'Generate question from answer and context: '
-        suffix = ''
-    elif choice == 2:
-        prefix = 'Generate question: '
-        suffix = ''
-    elif choice == 3:
-        prefix = ''
-        suffix = ''
-    elif choice == 4:
-        prefix = 'Generate question from answer and context: '
-        suffix = '\nThe question is:'
-    for stry, ans in zip(story, answer):
-        transformer_input = prefix + '\nAnswer: ' + ans + '\nContext: ' + stry + suffix
-        inps.append(transformer_input)
-    return inps
+
+# # Constrcut transformer input 
+# def construct_transformer_input_newer(story, answer, choice=1):
+#     inps = []
+#     if choice == 1:
+#         prefix = 'Generate question from answer and context: '
+#         suffix = ''
+#     elif choice == 2:
+#         prefix = 'Generate question: '
+#         suffix = ''
+#     elif choice == 3:
+#         prefix = ''
+#         suffix = ''
+#     elif choice == 4:
+#         prefix = 'Generate question from answer and context: '
+#         suffix = '\nThe question is:'
+#     for stry, ans in zip(story, answer):
+#         transformer_input = prefix + '\nAnswer: ' + ans + '\nContext: ' + stry + suffix
+#         inps.append(transformer_input)
+#     return inps
 
 # Constrcut transformer input 
-def construct_transformer_input_old_vary(story, answer, choice=1):
+def construct_transformer_input_old_vary(story, question, choice=1):
     inps = []
     if choice == 1:
-        prefix = 'Generate question from context and answer: '
+        prefix = 'Generate answer from context and question: '
         suffix = ''
     elif choice == 2:
-        prefix = 'Generate question: '
+        prefix = 'Generate answer: '
         suffix = ''
     elif choice == 3:
         prefix = ''
         suffix = ''
     elif choice == 4:
-        prefix = 'Generate question from context and answer: '
+        prefix = 'Generate answer from context and question: '
         suffix = '\nThe question is:'
-    for stry, ans in zip(story, answer):
-        transformer_input = prefix + '\nContext: ' + stry + '\nAnswer: ' + ans + suffix
+    for stry, ques in zip(story, question):
+        transformer_input = prefix + '\nContext: ' + stry + '\nQuestion: ' + ques + suffix
         inps.append(transformer_input)
     return inps
 
@@ -140,7 +138,7 @@ def get_token_len_stats(tokenizer, inputs):
 # Tokenization
 def get_transformer_encoding(tokenizer, transformer_inputs, question):
     # tokenizer = T5Tokenizer.from_pretrained(model_name)
-    max_source_length, max_target_length = 1024, 128
+    max_source_length, max_target_length = 512, 128
 
     inp_encoding = tokenizer(transformer_inputs, padding='longest', 
                         max_length=max_source_length,
@@ -193,7 +191,7 @@ class FinetuneTransformer(pl.LightningModule):
             self.model = BartForConditionalGeneration.from_pretrained(model_name)
         else:
             print('Unkown Model Type - T or B options only')
-        # Check Linear Probing
+        # Check Linear Probing (for T5 only)
         if lp:
             for name, param in self.model.named_parameters():
                 if 'DenseReluDense' in name or 'layer_norm' in name:
@@ -273,15 +271,18 @@ def add_params():
     parser = argparse.ArgumentParser()
     parser.add_argument('-W', '--wandb', action=argparse.BooleanOptionalAction, help='For Wandb logging')
     parser.add_argument('-EXT', '--external_data', action=argparse.BooleanOptionalAction, help='For Using External Data')
-    parser.add_argument('-TFN', '--train_file_name', type=str, default="train.csv", help="Training File name")
+    parser.add_argument('-Fold', '--fold_learning', action=argparse.BooleanOptionalAction, help='Fold Learning')
+    parser.add_argument('-FN', '--fold_number', type=int, default=1, help='Fold Number of train set')
+    parser.add_argument('-TFN', '--train_file_name', type=str, default="train.json", help="Training File name")
     parser.add_argument('-TS', '--training_strategy', type=str, default="DP", help="DP for dataparalle and DS for deepspeed")
     parser.add_argument("-B", "--batch_size", type=int, default=8, help="Batch size for training the Transformer Model")
+    parser.add_argument("-AGB", "--accumulate_gradient_batch", type=int, default=4, help="Number of batches to accumulate graident for")
     parser.add_argument("-L", "--learning_rate", type=float, default=3e-4, help="Learning Rate for training the Transformer Model")
     parser.add_argument("-PC", "--prompt_choice", type=int, default=3, help="Prompt Choice - 1 Old, 2 - New, 3 - Old Vary (3 best)")
     parser.add_argument("-E", "--num_epochs", type=int, default=5, help="Total Number of Epochs")
     parser.add_argument("-D", "--num_devices", type=int, default=1, help="Devices used for training")
     parser.add_argument('-LP', '--linear_probing', action=argparse.BooleanOptionalAction, help='For Linear Probing (Train only the lm head)')
-    parser.add_argument("-MT", "--model_type", type=str, default="t", help="T for T5 and B for BART")
+    parser.add_argument("-MT", "--model_type", type=str, default="T", help="T for T5 and B for BART")
     parser.add_argument("-MN", "--model_name", type=str, default="t5-small", help="Variant of the Transformer model for finetuning")
     parser.add_argument("-N", "--run_name", type=str, default="t5-small", help="Name of the Run (Used in storing the model)")
     parser.add_argument('-LC', '--load_checkpoint', action=argparse.BooleanOptionalAction, help='Load Checkpoint for re-finetuning')
@@ -295,33 +296,43 @@ def add_params():
 if __name__ == '__main__':
     args = add_params()
 
-    if args.external_data:
-        story_file = './data/original/source_texts_external.csv'
-        train_file = './data/train_val_split_csv/train_external.csv'
+    if args.fold_learning:
+        train_file = os.path.join('./data/FairytaleQA_story_folds', str(args.fold_number), args.train_file_name)
     else:
-        story_file = './data/original/source_texts.csv'
-        train_file = os.path.join('./data/train_val_split_csv/', args.train_file_name)
-    story_df = pd.read_csv(story_file)
-    # For validation only
-    val_story_file = './data/original/source_texts.csv'
-    val_story_df = pd.read_csv(val_story_file)
+        train_file = os.path.join('./data/FairytaleQA', args.train_file_name)
 
-    # Train-Val split
-    train_df = pd.read_csv(train_file)
-    val_file = './data/train_val_split_csv/val.csv'
-    val_df = pd.read_csv(val_file)
+    train_data = []
+    with open(train_file, 'r') as infile:
+        for line in infile:
+            train_data.append(json.loads(line))
+    
+    val_file = './data/FairytaleQA/valid.json'
+    val_data = []
 
-    train_story, train_answer, train_question = get_parallel_corpus(train_df, story_df)
-    val_story, val_answer, val_question = get_parallel_corpus(val_df, val_story_df)
-    if args.prompt_choice == 3:
-        train_inps = construct_transformer_input_old_vary(train_story, train_answer, args.prefix_choice)
-        val_inps = construct_transformer_input_old_vary(val_story, val_answer, args.prefix_choice)
-    elif args.prompt_choice == 2:
-        train_inps = construct_transformer_input_newer(train_story, train_answer, args.prefix_choice)
-        val_inps = construct_transformer_input_newer(val_story, val_answer, args.prefix_choice)
-    elif args.prompt_choice == 1:
-        train_inps = construct_transformer_input(train_story, train_answer, args.prefix_choice)
-        val_inps = construct_transformer_input(val_story, val_answer, args.prefix_choice)
+    with open(val_file, 'r') as infile:
+        for line in infile:
+            val_data.append(json.loads(line))
+
+    train_story, train_answer, train_question = get_parallel_corpus(train_data)
+    val_story, val_answer, val_question = get_parallel_corpus(val_data)
+
+    if args.model_type == 'T':
+        train_inps = construct_transformer_input_old_vary(train_story, train_question, args.prefix_choice)
+        val_inps = construct_transformer_input_old_vary(val_story, val_question, args.prefix_choice)
+    elif args.model_type == 'B':
+        train_inps = construct_transformer_input_bart(train_story, train_question)
+        val_inps = construct_transformer_input_bart(val_story, val_question)
+
+
+    # if args.prompt_choice == 3:
+    #     train_inps = construct_transformer_input_old_vary(train_story, train_answer, args.prefix_choice)
+    #     val_inps = construct_transformer_input_old_vary(val_story, val_answer, args.prefix_choice)
+    # elif args.prompt_choice == 2:
+    #     train_inps = construct_transformer_input_newer(train_story, train_answer, args.prefix_choice)
+    #     val_inps = construct_transformer_input_newer(val_story, val_answer, args.prefix_choice)
+    # elif args.prompt_choice == 1:
+    #     train_inps = construct_transformer_input(train_story, train_answer, args.prefix_choice)
+    #     val_inps = construct_transformer_input(val_story, val_answer, args.prefix_choice)
 
     # avg_tr_tk_len, max_tr_tk_len = get_token_len_stats(tokenizer, train_inps)
     # avg_val_tk_len, max_val_tk_len = get_token_len_stats(tokenizer, val_inps)
@@ -339,8 +350,8 @@ if __name__ == '__main__':
     else:
         print('Wrong model type - either T or B only')
 
-    train_input_ids, train_attention_mask, train_labels = get_transformer_encoding(tokenizer, train_inps, train_question)
-    val_input_ids, val_attention_mask, val_labels = get_transformer_encoding(tokenizer, val_inps, val_question)
+    train_input_ids, train_attention_mask, train_labels = get_transformer_encoding(tokenizer, train_inps, train_answer)
+    val_input_ids, val_attention_mask, val_labels = get_transformer_encoding(tokenizer, val_inps, val_answer)
     print('Tokenized Data!')
 
     train_dataset = FairyDataset(train_input_ids, train_attention_mask, train_labels)
@@ -357,7 +368,7 @@ if __name__ == '__main__':
 
     # NOTE: Load checkpoint
     if args.load_checkpoint:
-        search_dir = os.path.join('./code/finetune/Checkpoints_new', args.checkpoint_name)
+        search_dir = os.path.join('./code/ans_generation/Checkpoints', args.checkpoint_name)
         for file in os.listdir(search_dir):
             ckpt_file = os.path.join(search_dir, file)
         print('ckpt_file', ckpt_file)
@@ -379,6 +390,9 @@ if __name__ == '__main__':
     if args.external_data:
         save_name = save_name + '_external'
     
+    if args.fold_learning:
+        save_name = save_name + '_fold_' + str(args.fold_number)
+    
     print('Save name:', save_name)
 
     # Trainig code
@@ -399,7 +413,7 @@ if __name__ == '__main__':
 
     lr_monitor = LearningRateMonitor(logging_interval='step')
     
-    save_directory = os.path.join('./code/finetune/Checkpoints_new', save_name)
+    save_directory = os.path.join('./code/ans_generation/Checkpoints_org', save_name)
     save_checkpoint =  ModelCheckpoint(dirpath=save_directory, monitor='validation_loss', save_top_k=1)
 
     if args.training_strategy == 'DP':
@@ -415,7 +429,7 @@ if __name__ == '__main__':
                     logger=logger, 
                     max_epochs=max_epochs,
                     callbacks=[early_stop_callback, lr_monitor, save_checkpoint],
-                    strategy = strategy)
+                    strategy = strategy, accumulate_grad_batches = args.accumulate_gradient_batch)
 
     trainer.fit(model)
 

@@ -1,9 +1,7 @@
 '''
-python -m code.finetune.inference -N t5_small -M t5-small
+python -m code.attribute_predictor.inference -N t5_small -M t5-small
 '''
 
-import random
-import numpy as np
 from tqdm import tqdm
 import GPUtil
 from threading import Thread
@@ -18,6 +16,7 @@ import torch
 from torch.utils.data import Dataset, TensorDataset, DataLoader
 from transformers import T5Tokenizer
 from transformers import BartTokenizer
+from sklearn.metrics import classification_report
 
 from code.utils.create_dataset_split import RAW_DIR, save_csv
 from code.finetune.finetune import FinetuneTransformer
@@ -37,13 +36,13 @@ def clean_str(text):
     return text.strip()
 
 
-def get_parallel_corpus(ip_df, story_df, filetype='train'):
+def get_parallel_corpus(ip_df, story_df):
     # hash stories and sections
     story_sec_hash = defaultdict(dict)
     for i, row in story_df.iterrows():
         story_sec_hash[row['source_title']][row['cor_section']] = clean_str(row['text'])
     
-    story, answer, question = [], [], []
+    story, answer, question, attr = [], [], [], []
     for i, row in ip_df.iterrows():
         sec_nums = row['cor_section'].split(',')
         story_str = ''
@@ -51,81 +50,37 @@ def get_parallel_corpus(ip_df, story_df, filetype='train'):
             story_str += story_sec_hash[row['source_title']][int(sec_num)]
         story.append(story_str)
         answer.append(clean_str(row['answer']))
-        if filetype == 'train':
-            question.append(clean_str(row['question']))
-        else:
-            question.append('None')
+        question.append(clean_str(row['question']))
+        attr.append(clean_str(row['attribute1']))
     
-    return story, answer, question
+    return story, answer, question, attr
 
 # Constrcut transformer input 
-def construct_transformer_input(story, answer, choice=1):
+def construct_transformer_input(story, answer, question, choice=1):
     inps = []
     if choice == 1:
-        prefix = 'Generate question from answer and story: '
+        prefix = 'Generate attriburte from story, answer and question: '
         suffix = ''
     elif choice == 2:
-        prefix = 'Generate question: '
+        prefix = 'Generate attribute: '
         suffix = ''
     elif choice == 3:
         prefix = ''
         suffix = ''
     elif choice == 4:
-        prefix = 'Generate question from answer and story: '
-        suffix = '\nThe question is:'
-    for stry, ans in zip(story, answer):
-        transformer_input = prefix + '\nThe answer is ' + ans + '\nThe story is ' + stry + suffix
+        prefix = 'Generate attribute from story, answer and question: '
+        suffix = '\nThe attribute is:'
+    for stry, ans, ques in zip(story, answer, question):
+        transformer_input = prefix + '\nThe story is ' + stry + '\nThe answer is ' + ans + '\nThe question is ' + ques + suffix
         inps.append(transformer_input)
     return inps
-
-# Constrcut transformer input 
-def construct_transformer_input_newer(story, answer, choice=1):
-    inps = []
-    if choice == 1:
-        prefix = 'Generate question from answer and context: '
-        suffix = ''
-    elif choice == 2:
-        prefix = 'Generate question: '
-        suffix = ''
-    elif choice == 3:
-        prefix = ''
-        suffix = ''
-    elif choice == 4:
-        prefix = 'Generate question from answer and context: '
-        suffix = '\nThe question is:'
-    for stry, ans in zip(story, answer):
-        transformer_input = prefix + '\nAnswer: ' + ans + '\nContext: ' + stry + suffix
-        inps.append(transformer_input)
-    return inps
-
-# Constrcut transformer input 
-def construct_transformer_input_old_vary(story, answer, choice=1):
-    inps = []
-    if choice == 1:
-        prefix = 'Generate question from context and answer: '
-        suffix = ''
-    elif choice == 2:
-        prefix = 'Generate question: '
-        suffix = ''
-    elif choice == 3:
-        prefix = ''
-        suffix = ''
-    elif choice == 4:
-        prefix = 'Generate question from context and answer: '
-        suffix = '\nThe question is:'
-    for stry, ans in zip(story, answer):
-        transformer_input = prefix + '\nContext: ' + stry + '\nAnswer: ' + ans + suffix
-        inps.append(transformer_input)
-    return inps
-
-
 
 # Tokenization
 def get_transformer_encoding(tokenizer, transformer_inputs, question):
     # tokenizer = T5Tokenizer.from_pretrained(model_name)
-    max_source_length, max_target_length = 1024, 128
+    max_source_length, max_target_length = 512, 128
 
-    inp_encoding = tokenizer(transformer_inputs, padding='longest', 
+    inp_encoding = tokenizer(transformer_inputs, padding='longest', # longest 
                         max_length=max_source_length,
                         truncation=True,
                         return_tensors="pt"
@@ -182,7 +137,6 @@ def get_generation(model, val_dataloader, force_words_ids, decoding_strategy='B'
             generation = model.generate(val_input_ids, do_sample=True, max_new_tokens=64,
                                         penalty_alpha=alpha, top_k=K,
                                         num_return_sequences=num_samples)
-
         else:
             generation = model.generate(val_input_ids, temperature=temp, max_new_tokens=64)
         for gen in generation:
@@ -212,25 +166,16 @@ class Monitor(Thread):
     def stop(self):
         self.stopped = True
 
-def set_seed(seed_val = 37):
-    # setting the seed
-    random.seed(seed_val)
-    np.random.seed(seed_val)
-    torch.manual_seed(seed_val)
-    torch.cuda.manual_seed_all(seed_val)
-
 def add_params():
     parser = argparse.ArgumentParser()
     parser.add_argument('-TGU', '--track_gpu_usage', action=argparse.BooleanOptionalAction, help='Track GPU Usage')
-    parser.add_argument('-AVG', '--average_decoding', action=argparse.BooleanOptionalAction, help='Average Decoding')
-    parser.add_argument('-Fold', '--fold_decoding', action=argparse.BooleanOptionalAction, help='Average Decoding')
-    parser.add_argument('-FN', '--fold_number', type=int, default=0, help='Fold Number of validation set')
-    parser.add_argument("-F", "--eval_folder", type=str, default="train_val_split_csv", help="Evaluation Folder where output is saved (testset for testing on test set)")
+    parser.add_argument("-F", "--eval_folder", type=str, default="train_val_split_csv", help="Evaluation Folder where output is saved")
+    parser.add_argument("-EFN", "--eval_file_name", type=str, default="all_augmented_with_question_attribute_parsed.csv", help="Evaluation File Name (Either codex or val.csv)")
     parser.add_argument("-B", "--batch_size", type=int, default=8, help="Batch size for passing through the Transformer Model")
     parser.add_argument("-MT", "--model_type", type=str, default="t", help="T for T5 and B for BART")
     parser.add_argument("-MN", "--model_name", default="t5-small", help="Variant of the Transformer model for finetuning")
     parser.add_argument("-N", "--run_name", type=str, default="t5-small", help="Name of the Run (Used in storing the model)")
-    parser.add_argument('-DS', '--decoding_strategy', type=str, default="G", help='Specify the decoding strategy (B-Beam Search, N-Nucleus sampling, C - Contrsative, G-Greedy)')
+    parser.add_argument('-DS', '--decoding_strategy', type=str, default="G", help='Specify the decoding strategy (B-Beam Search, N-Nucleus sampling, G-Greedy, C-Contrastive)')
     parser.add_argument("-PS", "--p_sampling", type=float, default=0.9, help="Value of P used in the P-sampling")
     parser.add_argument("-T", "--temperature", type=float, default=1, help="Temperature for softmax decoding")
     parser.add_argument("-K", "--top_K", type=int, default=4, help="Value of K used for contrastive decoding")
@@ -252,30 +197,27 @@ if __name__=='__main__':
     # Train-Val split
     train_file = './data/train_val_split_csv/train.csv'
     train_df = pd.read_csv(train_file)
-    if args.eval_folder == 'train_val_split_csv':
-        val_file = './data/train_val_split_csv/val.csv'
-        filetype = 'train'
-    elif args.eval_folder == 'data_augmentation':
-        val_file = './data/train_val_split_csv/train.csv'
-        filetype = 'train'
-    elif args.eval_folder == 'testset':
-        val_file = './data/original/test.csv'
-        filetype = 'test'
+    # if args.eval_folder == 'train_val_split_csv':
+    #     # val_file = './data/train_val_split_csv/all_augmented_with_question_attribute_parsed.csv'
+    #     val_file = './data/train_val_split_csv/val.csv'
+    # elif args.eval_folder == 'data_augmentation':
+    #     val_file = './data/train_val_split_csv/train.csv'
+
     
-    if args.fold_decoding:
-        val_file = './data/score_prediction/qg_model/fold_{:d}/train_val_split_csv/val.csv'.format(args.fold_number)
-        filetype = 'train'
-
-
+    val_file = os.path.join('./data/train_val_split_csv', args.eval_file_name)
+    # Add suffix
+    if args.eval_file_name == 'val.csv':
+        save_name = args.run_name + '_val'
+    else:
+        save_name = args.run_name
     val_df = pd.read_csv(val_file)
 
-
-    train_story, train_answer, train_question = get_parallel_corpus(train_df, story_df)
-    val_story, val_answer, val_question = get_parallel_corpus(val_df, story_df, filetype=filetype)
+    train_story, train_answer, train_question, train_attr = get_parallel_corpus(train_df, story_df)
+    val_story, val_answer, val_question, val_attr = get_parallel_corpus(val_df, story_df)
 
     # %%
-    train_inps = construct_transformer_input_old_vary(train_story, train_answer, args.prefix_choice)
-    val_inps = construct_transformer_input_old_vary(val_story, val_answer, args.prefix_choice)
+    train_inps = construct_transformer_input(train_story, train_answer, train_question, args.prefix_choice)
+    val_inps = construct_transformer_input(val_story, val_answer, val_question, args.prefix_choice)
 
     if args.model_type == 'T':
         tokenizer = T5Tokenizer.from_pretrained(args.model_name)
@@ -285,30 +227,27 @@ if __name__=='__main__':
         print('Wrong model type - either T or B only')
 
     # %%
-    train_input_ids, train_attention_mask, train_labels = get_transformer_encoding(tokenizer, train_inps, train_question)
+    # train_input_ids, train_attention_mask, train_labels = get_transformer_encoding(tokenizer, train_inps, train_question)
     val_input_ids, val_attention_mask, val_labels = get_transformer_encoding(tokenizer, val_inps, val_question)
     print('Tokenized Data!')
 
     # %%
-    train_dataset = FairyDataset(train_input_ids, train_attention_mask, train_labels)
+    # train_dataset = FairyDataset(train_input_ids, train_attention_mask, train_labels)
     val_dataset = FairyDataset(val_input_ids, val_attention_mask, val_labels)
     print('Created Pytorch Dataset')
 
     # %%
     batch_size = args.batch_size
-    train_dataloader = get_dataloader(batch_size, train_dataset)
+    # train_dataloader = get_dataloader(batch_size, train_dataset)
     valid_dataloader = get_dataloader(batch_size, val_dataset, datatype='val')
     print('Loaded Dataloader!')
 
     # %%
     # Load the Generative Head 
     # search for ckpt file
-    search_dir = os.path.join('./code/finetune/Checkpoints_new', args.run_name)
+    search_dir = os.path.join('./code/attribute_predictor/Checkpoints', args.run_name)
     for file in os.listdir(search_dir):
-        name, ext = os.path.splitext(file)
-        if ext == '.ckpt':
-            ckpt_file = os.path.join(search_dir, file)
-
+        ckpt_file = os.path.join(search_dir, file)
     print('ckpt_file', ckpt_file)
     # model_pl = FinetuneTransformer(model_type = args.model_type, model_name = args.model_name)
     model = FinetuneTransformer.load_from_checkpoint(ckpt_file, model_type = args.model_type).model.to(device)
@@ -322,89 +261,55 @@ if __name__=='__main__':
         print('Tracking GPU Usage')
         monitor = Monitor(10)
 
-    # TODO: Implement Average (Multiple) Decoding
-    if args.average_decoding:
-        seed_vals = [37, 49, 105, 1, 25]
+    print('Begining Generation')
+    val_outputs = get_generation(model, valid_dataloader, force_words_ids, 
+                    args.decoding_strategy, args.num_of_beams, 
+                    args.p_sampling, args.temperature, 
+                    args.top_K, args.alpha,
+                    args.num_of_samples)
+    print('Done Generating!')
+
+    if args.track_gpu_usage:
+        monitor.stop()
+
+    print('Begining Decoding')
+    val_preds = get_preds(tokenizer, val_outputs)
+    print('Done Decoding!')
+
+    # NOTE: Saving val_preds
+    val_df['prompt'] = val_inps
+    val_df['question'] = val_question
+    if args.decoding_strategy == 'N':
+        times = [args.num_of_samples for _ in range(len(val_df))]
+        new_val_df = val_df.loc[val_df.index.repeat(times)].reset_index(drop=True)
+        save_csv_name = 'nucleus_{:s}_{:.2f}_{:.2f}_{:d}'.format(save_name, args.p_sampling, args.temperature, args.num_of_samples)
+    elif args.decoding_strategy == 'C':
+        times = [args.num_of_samples for _ in range(len(val_df))]
+        new_val_df = val_df.loc[val_df.index.repeat(times)].reset_index(drop=True)
+        save_csv_name = 'contrastive_{:s}_{:d}_{:.2f}_{:d}'.format(save_name, args.top_K, args.alpha, args.num_of_samples)
     else:
-        seed_vals = [37]
+        new_val_df = val_df
+        save_csv_name = save_name
+    
+    # # NOTE: Report attribute pred statistics
+    # print(classification_report(new_val_df['attribute1'].apply(clean_str), attr_preds))
 
+    # Save predictions
+    preds_df = pd.DataFrame()
+    preds_df['pair_id'] = new_val_df['pair_id']
+    preds_df['attribute1'] = new_val_df['attribute1']
+    preds_df['source_title'] = new_val_df['source_title']
+    preds_df['cor_section'] = new_val_df['cor_section']
+    preds_df['answer'] = new_val_df['answer']
+    if args.eval_folder == 'data_augmentation':
+        preds_df['source_title'] = new_val_df['source_title']
+        preds_df['cor_section'] = new_val_df['cor_section']
+        preds_df['answer'] = new_val_df['answer']
+    preds_df['prompt'] = new_val_df['prompt']
+    preds_df['question'] = new_val_df['question']
+    preds_df['predicted attribute'] = val_preds
 
-    for ctr, seed in enumerate(seed_vals):
-        # Set seed
-        set_seed(seed_val = seed)
-        print('Begining Generation')
-        val_outputs = get_generation(model, valid_dataloader, force_words_ids, 
-                        args.decoding_strategy, args.num_of_beams, 
-                        args.p_sampling, args.temperature, 
-                        args.top_K, args.alpha,
-                        args.num_of_samples)
-        print('Done Generating!')
-
-        if args.track_gpu_usage:
-            monitor.stop()
-
-        print('Begining Decoding')
-        val_preds = get_preds(tokenizer, val_outputs)
-        print('Done Decoding!')
-
-        if args.fold_decoding:
-            split_data = args.run_name.split('/')
-            main_dir, sub_dir = split_data[0], split_data[1]
-            print('main_dir, sub_dir:', main_dir, sub_dir)
-        else:
-            sub_dir = args.run_name
-
-        # NOTE: Saving val_preds
-        if args.eval_folder != 'testset':
-            val_df['prompt'] = val_inps
-            val_df['question'] = val_question
-        if args.decoding_strategy == 'N':
-            times = [args.num_of_samples for _ in range(len(val_df))]
-            new_val_df = val_df.loc[val_df.index.repeat(times)].reset_index(drop=True)
-            save_csv_name = 'nucleus_{:s}_{:.2f}_{:.2f}_{:d}'.format(sub_dir, args.p_sampling, args.temperature, args.num_of_samples)
-        elif args.decoding_strategy == 'C':
-            times = [args.num_of_samples for _ in range(len(val_df))]
-            new_val_df = val_df.loc[val_df.index.repeat(times)].reset_index(drop=True)
-            save_csv_name = 'contrastive_{:s}_{:d}_{:.2f}_{:d}'.format(sub_dir, args.top_K, args.alpha, args.num_of_samples)
-        else:
-            new_val_df = val_df
-            save_csv_name = sub_dir
-
-        # Save predictions
-        preds_df = pd.DataFrame()
-        preds_df['pair_id'] = new_val_df['pair_id']
-        if args.eval_folder != 'testset':
-            preds_df['attribute1'] = new_val_df['attribute1']
-            preds_df['local_or_sum'] = new_val_df['local_or_sum']
-            preds_df['ex_or_im'] = new_val_df['ex_or_im']
-            if args.eval_folder == 'data_augmentation':
-                preds_df['source_title'] = new_val_df['source_title']
-                preds_df['cor_section'] = new_val_df['cor_section']
-                preds_df['answer'] = new_val_df['answer']
-            preds_df['prompt'] = new_val_df['prompt']
-            preds_df['question'] = new_val_df['question']
-        preds_df['generated_question'] = val_preds
-
-        # Create output directory 
-        if args.average_decoding:
-            output_path = os.path.join(RAW_DIR, "results/{}".format(args.eval_folder), save_csv_name) 
-        else:
-            output_path = os.path.join(RAW_DIR, "results/{}".format(args.eval_folder))
-        
-        if not os.path.exists(output_path):
-            os.mkdir(output_path)
-
-        
-        if args.fold_decoding:
-            output_path = os.path.join(output_path, main_dir)
-        
-        if not os.path.exists(output_path):
-            os.mkdir(output_path)
-        
-        print(output_path, save_csv_name)
-        
-        # Save the predictions
-        if args.average_decoding:
-            save_csv(preds_df, str(ctr+1), output_path)
-        else:
-            save_csv(preds_df, save_csv_name, output_path)
+    output_path = os.path.join(RAW_DIR, "results/{}".format(args.eval_folder))
+    if not os.path.exists(output_path):
+        os.mkdir(output_path)
+    save_csv(preds_df, save_csv_name, output_path)

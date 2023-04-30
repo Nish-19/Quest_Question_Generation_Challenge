@@ -26,6 +26,8 @@ from pytorch_lightning.strategies.ddp import DDPStrategy
 from pytorch_lightning.strategies import DeepSpeedStrategy
 from pytorch_lightning.loggers import WandbLogger, CSVLogger
 from pytorch_lightning.callbacks import EarlyStopping, LearningRateMonitor, ModelCheckpoint
+from code.finetune.awp import AWP
+from pdb import set_trace
 
 os.environ['WANDB_NOTEBOOK_NAME'] = 'FinetuneTransformer'
 
@@ -185,7 +187,8 @@ def get_dataloader(batch_size, dataset, datatype='train'):
 
 # %%
 class FinetuneTransformer(pl.LightningModule):
-    def __init__(self, model_type, model_name, lp=False, training_dl=None, valid_dl=None, lr=3e-4, num_train_epochs=5, warmup_steps=1000):
+    def __init__(self, model_type, model_name, lp=False, training_dl=None, valid_dl=None, lr=3e-4, num_train_epochs=5, warmup_steps=1000, 
+                    adv_param='weight', adv_lr=0.1, adv_eps=0.001, awp_start_epoch=1):
         super().__init__()
         if model_type == 'T': # for the t5 model
             self.model = T5ForConditionalGeneration.from_pretrained(model_name)
@@ -193,6 +196,9 @@ class FinetuneTransformer(pl.LightningModule):
             self.model = BartForConditionalGeneration.from_pretrained(model_name)
         else:
             print('Unkown Model Type - T or B options only')
+        # Automatic Optimization
+        self.automatic_optimization = False
+
         # Check Linear Probing
         if lp:
             for name, param in self.model.named_parameters():
@@ -209,6 +215,17 @@ class FinetuneTransformer(pl.LightningModule):
         self.hparams.warmup_steps = warmup_steps
         self.hparams.lr = lr
         self.save_hyperparameters()
+
+        # Manual configuration of optimizer
+        # Use AWP
+        self.scaler = torch.cuda.amp.GradScaler()
+        self.awp = AWP(self.model,
+          adv_param=adv_param,
+          adv_lr=adv_lr,
+          adv_eps=adv_eps,
+          start_epoch=awp_start_epoch, #args.num_train_steps/args.epochs,
+          scaler=self.scaler
+        )
     
     def forward(self, input_ids, attention_mask, labels=None):     
         outputs = self.model(input_ids=input_ids, attention_mask=attention_mask, labels=labels)
@@ -221,7 +238,29 @@ class FinetuneTransformer(pl.LightningModule):
         return loss
     
     def training_step(self, batch, batch_idx):
-        loss = self.common_step(batch, batch_idx)     
+        loss = self.common_step(batch, batch_idx)
+
+        assert(~torch.isnan(loss))
+        # set_trace()
+
+        ###############################
+        # AWP 
+        opt = self.optimizers()
+        scheduler = self.lr_schedulers()
+        opt.zero_grad()
+        self.scaler.scale(loss).backward()
+        # loss.backward()
+        # self.optim.step()
+        self.awp.attack_backward(
+            batch, self.current_epoch, opt) # hardcode to 1 so that AWP always start at beginning
+        torch.nn.utils.clip_grad_norm_(
+            parameters=self.parameters(), max_norm=10
+        )
+        self.scaler.step(opt)
+        self.scaler.update()
+        scheduler.step()
+        ###############################
+     
         # logs metrics for each training_step,
         # and the average across the epoch
         self.log("training_loss", loss)
@@ -277,7 +316,6 @@ def add_params():
     parser.add_argument('-TS', '--training_strategy', type=str, default="DP", help="DP for dataparalle and DS for deepspeed")
     parser.add_argument("-B", "--batch_size", type=int, default=8, help="Batch size for training the Transformer Model")
     parser.add_argument("-L", "--learning_rate", type=float, default=3e-4, help="Learning Rate for training the Transformer Model")
-    parser.add_argument("-PC", "--prompt_choice", type=int, default=3, help="Prompt Choice - 1 Old, 2 - New, 3 - Old Vary (3 best)")
     parser.add_argument("-E", "--num_epochs", type=int, default=5, help="Total Number of Epochs")
     parser.add_argument("-D", "--num_devices", type=int, default=1, help="Devices used for training")
     parser.add_argument('-LP', '--linear_probing', action=argparse.BooleanOptionalAction, help='For Linear Probing (Train only the lm head)')
@@ -287,6 +325,12 @@ def add_params():
     parser.add_argument('-LC', '--load_checkpoint', action=argparse.BooleanOptionalAction, help='Load Checkpoint for re-finetuning')
     parser.add_argument("-CN", "--checkpoint_name", type=str, default="flan_t5_large_codex_0.00_augment", help="Variant of the trained Transformer Base Model")
     parser.add_argument("-P", "--prefix_choice", type=int, default=1, help="Choice of prefix used for the input construction - 1, 2, 3")
+    ## AWP params
+    parser.add_argument('--adv_param', type=str, default='weight')
+    parser.add_argument('--adv_lr', type=float, default=0.1)  
+    parser.add_argument('--adv_eps', type=float, default=0.001)  
+    parser.add_argument('--awp_start_epoch', type=int, default=1)
+
     params = parser.parse_args()
     return params
 
@@ -313,15 +357,9 @@ if __name__ == '__main__':
 
     train_story, train_answer, train_question = get_parallel_corpus(train_df, story_df)
     val_story, val_answer, val_question = get_parallel_corpus(val_df, val_story_df)
-    if args.prompt_choice == 3:
-        train_inps = construct_transformer_input_old_vary(train_story, train_answer, args.prefix_choice)
-        val_inps = construct_transformer_input_old_vary(val_story, val_answer, args.prefix_choice)
-    elif args.prompt_choice == 2:
-        train_inps = construct_transformer_input_newer(train_story, train_answer, args.prefix_choice)
-        val_inps = construct_transformer_input_newer(val_story, val_answer, args.prefix_choice)
-    elif args.prompt_choice == 1:
-        train_inps = construct_transformer_input(train_story, train_answer, args.prefix_choice)
-        val_inps = construct_transformer_input(val_story, val_answer, args.prefix_choice)
+
+    train_inps = construct_transformer_input_old_vary(train_story, train_answer, args.prefix_choice)
+    val_inps = construct_transformer_input_old_vary(val_story, val_answer, args.prefix_choice)
 
     # avg_tr_tk_len, max_tr_tk_len = get_token_len_stats(tokenizer, train_inps)
     # avg_val_tk_len, max_val_tk_len = get_token_len_stats(tokenizer, val_inps)
@@ -369,7 +407,8 @@ if __name__ == '__main__':
         model = FinetuneTransformer(model_type = args.model_type, model_name = args.model_name, 
             lp=args.linear_probing, training_dl=training_dataloader, 
             valid_dl=valid_dataloader, num_train_epochs=max_epochs, 
-            lr=args.learning_rate)
+            lr=args.learning_rate, adv_param=args.adv_param, adv_lr=args.adv_lr,
+            adv_eps=args.adv_eps, awp_start_epoch=args.awp_start_epoch)
         
         save_name = args.run_name
 
@@ -414,7 +453,8 @@ if __name__ == '__main__':
                     default_root_dir=save_directory, 
                     logger=logger, 
                     max_epochs=max_epochs,
-                    callbacks=[early_stop_callback, lr_monitor, save_checkpoint],
+                    # callbacks=[early_stop_callback, lr_monitor, save_checkpoint],
+                    callbacks=[lr_monitor, save_checkpoint],
                     strategy = strategy)
 
     trainer.fit(model)
