@@ -7,7 +7,7 @@ from code.utils.create_dataset_split import load_df, RAW_DIR
 
 def add_params():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-EFD', "--eval_folder", type=str, default="train_val_split_csv", help="Folder containing evaluation file relative to data folder")
+    parser.add_argument('-EFD', "--eval_folder", type=str, default="results_org", help="Folder containing evaluation file relative to data folder")
     parser.add_argument('-EFN', "--eval_filename", type=str, default="val.csv", help="Evaluation filename with timestamp and .csv extension")
 
     params = parser.parse_args()
@@ -45,7 +45,7 @@ def get_pairwise_preds(df_pred):
 
 def main():
     args = add_params()
-    folder = os.path.join(RAW_DIR, "results_org")
+    folder = os.path.join(RAW_DIR, args.eval_folder)
     pred_df = load_df(args.eval_filename, folder)
 
     scorer = rouge_scorer.RougeScorer(['rougeL'], use_stemmer=True)

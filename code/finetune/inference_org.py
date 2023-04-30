@@ -111,9 +111,9 @@ def construct_transformer_input_old_vary(story, answer, choice=1):
 
 
 # Tokenization
-def get_transformer_encoding(tokenizer, transformer_inputs, question):
+def get_transformer_encoding(tokenizer, transformer_inputs, question, source_len=1024, tar_len=128):
     # tokenizer = T5Tokenizer.from_pretrained(model_name)
-    max_source_length, max_target_length = 1024, 128
+    max_source_length, max_target_length = source_len, tar_len
 
     inp_encoding = tokenizer(transformer_inputs, padding='longest', 
                         max_length=max_source_length,
@@ -240,13 +240,17 @@ if __name__=='__main__':
 
     args = add_params()
 
-    test_file = os.path.join('./data', args.eval_folder, args.eval_filename)
+    if args.fold_decoding:
+        test_file = os.path.join('./data/FairytaleQA_story_folds', str(args.fold_number), args.eval_filename)
+    else:
+        test_file = os.path.join('./data', args.eval_folder, args.eval_filename)
+    
     test_data = []
-
     with open(test_file, 'r') as infile:
-        for line in infile:
-            test_data.append(json.loads(line))
-
+        for i, line in enumerate(infile):
+            json_dict = json.loads(line)
+            json_dict['pairID'] = i+1
+            test_data.append(json_dict)
 
     test_story, test_answer, test_question = get_parallel_corpus(test_data)
 
@@ -326,6 +330,8 @@ if __name__=='__main__':
     new_val_df['generated_question'] = val_preds
 
     output_path = os.path.join(RAW_DIR, "results_org")
+    if args.eval_filename != 'test.json':
+        save_csv_name = args.eval_filename.split('.')[0] + '_' + save_csv_name
     save_csv(new_val_df, save_csv_name, output_path)
 
     # for ctr, seed in enumerate(seed_vals):

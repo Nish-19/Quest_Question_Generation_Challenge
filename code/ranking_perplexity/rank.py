@@ -41,7 +41,7 @@ def explode(df, col1, col2):
     return df
 
 
-def rank(df_test):
+def rank(df_test, top_one=False):
     # Add predictions to df_test
     df_test = explode(df_test, "generated_question", "score")
     # Remove duplicates on pair id and normalized generated question
@@ -49,9 +49,12 @@ def rank(df_test):
     df_test = remove_duplicates(df_test, "test")
     df_test = df_test.drop(columns=["generated_question_normalized"])
 
-    # Keep top 10 questions generated according to score predictions for each pair id
-    # ascending=True since we want to keep the lowest perplexity scores
-    df_submission = df_test.groupby("pairID").apply(lambda x: x.sort_values("score", ascending=True).head(10))
+    if top_one:
+        df_submission = df_test.groupby("pairID").apply(lambda x: x.sort_values("score", ascending=True).head(1))
+    else:
+        # Keep top 10 questions generated according to score predictions for each pair id
+        # ascending=True since we want to keep the lowest perplexity scores
+        df_submission = df_test.groupby("pairID").apply(lambda x: x.sort_values("score", ascending=True).head(10))
     print(f"No of test samples after ranking: {len(df_submission)}")
 
     return df_submission, df_test

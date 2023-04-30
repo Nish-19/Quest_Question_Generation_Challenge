@@ -12,7 +12,7 @@ import time
 from transformers import T5Tokenizer, BartTokenizer
 
 from code.finetune.finetune import FinetuneTransformer
-from code.ranking.rank import rank
+from code.ranking_perplexity.rank import rank
 from code.finetune.inference_org import get_parallel_corpus, construct_transformer_input_old_vary, get_transformer_encoding, FairyDataset, get_dataloader
 from code.utils.create_dataset_split import load_df, RAW_DIR, save_csv
 
@@ -37,6 +37,7 @@ def add_params():
     
     parser.add_argument('-D', '--debug', action='store_true', help='Debug mode evaluating on a small subset of 5 samples')
     parser.add_argument('-S', '--seeds', default="37", type=str, help='Random seed') 
+    parser.add_argument('-TO', '--top_one', action=argparse.BooleanOptionalAction, help='Get top one based on perplexity')
     
     params = parser.parse_args()
     
@@ -166,32 +167,41 @@ def main():
             json_dict['pairID'] = i+1
             test_data.append(json_dict)
     test_df = pd.DataFrame(test_data)
-    
-    # Load model type
-    if args.model_type == 'T':
-        tokenizer = T5Tokenizer.from_pretrained(args.model_name)
-    elif args.model_type == 'B':
-        tokenizer = BartTokenizer.from_pretrained(args.model_name)
-    else:
-        print('Wrong model type - either T or B only')
 
-    device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')    
-    model, tokenizer = load_model(args, device)
-    test_dataloader = load_data(args, test_data, tokenizer)
-    test_df = generate_wrapper(model, tokenizer, test_dataloader, test_df, args, device)
-
-    # Get top-10 generated questions according to scores for each pair id
-    df_ranked, df_test = rank(test_df)
-    # Save top-10 generated questions for each pair id in submission format
     output_path = os.path.join(RAW_DIR, "results_rank")
-
     if args.decoding_strategies == 'N':
         save_csv_name = 'nucleus_{:s}_{:.2f}_{:.2f}_{:d}'.format(args.run_name, args.p_sampling, args.temperature, args.num_of_samples)
     elif args.decoding_strategies == 'C':
         save_csv_name = 'contrastive_{:s}_{:d}_{:.2f}_{:d}'.format(args.run_name, args.top_K, args.alpha, args.num_of_samples)
     else:
         save_csv_name = args.run_name
+    
+    save_csv_path = os.path.join(output_path, save_csv_name + '.csv')
+    print(save_csv_path)
 
+    # check if results file exists
+    if os.path.exists(save_csv_path):
+        test_df = pd.read_csv(save_csv_path)
+        print('Output file already exists')
+    else: # else produce results
+        # Load model type
+        if args.model_type == 'T':
+            tokenizer = T5Tokenizer.from_pretrained(args.model_name)
+        elif args.model_type == 'B':
+            tokenizer = BartTokenizer.from_pretrained(args.model_name)
+        else:
+            print('Wrong model type - either T or B only')
+
+        device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')    
+        model, tokenizer = load_model(args, device)
+        test_dataloader = load_data(args, test_data, tokenizer)
+        test_df = generate_wrapper(model, tokenizer, test_dataloader, test_df, args, device)
+
+    # Get top-k generated questions according to scores for each pair id
+    df_ranked, df_test = rank(test_df, top_one = args.top_one)
+    # Save top-k generated questions for each pair id in submission format
+    if args.top_one:
+        save_csv_name = save_csv_name + '_top_1'
     save_csv(df_ranked, save_csv_name, output_path)
 
 

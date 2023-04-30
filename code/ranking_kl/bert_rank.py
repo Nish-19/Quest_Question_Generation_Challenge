@@ -26,16 +26,24 @@ def append_rouge_score(df):
         all_scores.append(score['rougeL'].fmeasure)
     df['Rouge_L'] = all_scores
 
-def get_transformer_input(df, choice=1, use_attr=False):
+def get_transformer_input(df, choice=1, use_attr=False, use_ex_im=False):
     context_ans, question = [], []
     for i, row in df.iterrows():
         if choice == 1:
-            if use_attr:
+            if use_ex_im and use_attr:
+                context_ans_str = 'Ex_Im: {:s}\tAttribute: {:s}\tContext: {:s}\tAnswer: {:s}'.format(row['ex_or_im'], row['attribute'], row['content'], row['answer'])
+            elif use_ex_im:
+                context_ans_str = 'Ex_Im: {:s}\tContext: {:s}\tAnswer: {:s}'.format(row['ex_or_im'], row['content'], row['answer'])
+            elif use_attr:
                 context_ans_str = 'Attribute: {:s}\tContext: {:s}\tAnswer: {:s}'.format(row['attribute'], row['content'], row['answer'])
             else:
                 context_ans_str = 'Context: {:s}\tAnswer: {:s}'.format(row['content'], row['answer'])
         elif choice == 2:
-            if use_attr:
+            if use_ex_im and use_attr:
+                context_ans_str = 'Attribute: {:s}\tEx_Im: {:s}\tAnswer: {:s}\tContext: {:s}'.format(row['attribute'], row['ex_or_im'], row['answer'], row['content'])
+            elif use_ex_im:
+                context_ans_str = 'Ex_Im: {:s}\tAnswer: {:s}\tContext: {:s}'.format(row['ex_or_im'], row['answer'], row['content'])
+            elif use_attr:
                 context_ans_str = 'Attribute: {:s}\tAnswer: {:s}\tContext: {:s}'.format(row['attribute'], row['answer'], row['content'])
             else:
                 context_ans_str = 'Answer: {:s}\tContext: {:s}'.format(row['answer'], row['content'])
@@ -43,11 +51,11 @@ def get_transformer_input(df, choice=1, use_attr=False):
         question.append(row['generated_question'])
     return context_ans, question
 
-def tokenize(tokenizer, context_ans, question):
+def tokenize(tokenizer, context_ans, question, max_len=512):
     tokenize_input = [(ca, q) for ca, q in zip(context_ans, question)]
     encode_dict = tokenizer.batch_encode_plus(tokenize_input, 
                                               # pad_to_max_length = True,
-                                              # max_length = 512, 
+                                              max_length = max_len, 
                                               padding = 'longest',
                                               truncation = 'only_first',
                                               return_tensors='pt',
@@ -142,15 +150,17 @@ def train(use_wandb, no_token_type, epochs, model, device, train_dataloader, val
             # NOTE: KL Loss Calculation
             scores_log_softmax = F.log_softmax(alpha1 * scores, dim=0)
             rouge_softmax = F.softmax(alpha2 * b_rs, dim=0)
-            kl_loss_batch = kl_loss(scores_log_softmax, rouge_softmax)
+            kl_loss_batch = kl_loss(scores_log_softmax, rouge_softmax) # divide by graident accumulation
             if step % 1000 == 0:
                 print(f'Step {step} loss: {kl_loss_batch}')
             # import pdb; pdb.set_trace()
 
-            # Summarize and Update 
+            # NOTE: Implement Graident accumulation 
+            # https://huggingface.co/docs/accelerate/usage_guides/gradient_accumulation
             total_loss += kl_loss_batch.item()
             kl_loss_batch.backward()
-            optimizer.step()
+            # Parameter Update
+            optimizer.step() 
             scheduler.step()
 
         avg_train_loss = total_loss / len(train_dataloader)
@@ -178,10 +188,9 @@ def train(use_wandb, no_token_type, epochs, model, device, train_dataloader, val
                 kl_loss_batch_val = kl_loss(scores_log_softmax_val, rouge_softmax_val)
                 tot_val_loss += kl_loss_batch_val
             
-            avg_val_loss = tot_val_loss / len(val_dataloader)
-            if val_step % 1000 == 0:
-                print(" Average validation loss: {0:.6f}".format(avg_val_loss))
-            epochwise_val_losses.append(avg_val_loss)
+        avg_val_loss = tot_val_loss / len(val_dataloader)
+        print(" Average validation loss: {0:.6f}".format(avg_val_loss))
+        epochwise_val_losses.append(avg_val_loss)
         
         if avg_val_loss < least_val_loss:
             cur_least_epoch = epoch_i
@@ -201,11 +210,14 @@ def add_params():
     parser.add_argument('-W', '--wandb', action=argparse.BooleanOptionalAction, help='For Wandb logging')
     parser.add_argument('-NTT', '--no_token_type', action=argparse.BooleanOptionalAction, help='If model does not have token type ids')
     parser.add_argument('-Attr', '--use_attr', action=argparse.BooleanOptionalAction, help='Use attribute')
+    parser.add_argument('-ExIm', '--use_ex_im', action=argparse.BooleanOptionalAction, help='Use explicit implict tag')
     parser.add_argument("-PC", "--prefix_choice", type=int, default=1, help="Style of input construction to the model")
     parser.add_argument("-MN", "--model_name", type=str, default="bert-base-uncased", help="Variant of the Transformer model for finetuning")
     parser.add_argument("-SN", "--save_name", type=str, default="bert_org_10_0.1_0.1", help="Model name for saving")
+    parser.add_argument("-ML", "--max_len", type=int, default=512, help="max length for tokenizers")
     parser.add_argument("-HD", "--hidden_dim", type=int, default=768, help="Hidden dimension of the model output")
     parser.add_argument("-B", "--batch_size", type=int, default=10, help="Batch size (should be equal to the number of questions generated)")
+    # parser.add_argument("-ACG", "--accumulate_gradients", type=int, default=1, help="Gradient Accumulation")
     parser.add_argument("-alpha1", "--alpha1", type=float, default=0.1, help="Hyperparameter multiplied with the distribution of model loss for each question")
     parser.add_argument("-alpha2", "--alpha2", type=float, default=0.1, help="Hyperparameter multiplied with the distribution of the rouge scores")
     parser.add_argument('-TFN', '--train_file_name', type=str, default="train_nucleus_flan_t5_large_org_16_sa_0.95_1.00_10.csv", help="Training File name")
@@ -240,13 +252,13 @@ def main():
         val_df.to_csv(os.path.join(input_dir, args.valid_file_name), index=False)
 
     # get input
-    train_context_ans, train_question = get_transformer_input(train_df, args.prefix_choice, args.use_attr)
-    val_context_ans, val_question = get_transformer_input(val_df, args.prefix_choice, args.use_attr)
+    train_context_ans, train_question = get_transformer_input(train_df, args.prefix_choice, args.use_attr, args.use_ex_im)
+    val_context_ans, val_question = get_transformer_input(val_df, args.prefix_choice, args.use_attr, args.use_ex_im)
 
     # get tokenizer
     tokenizer = AutoTokenizer.from_pretrained(args.model_name)
-    train_tokenized_dict = tokenize(tokenizer, train_context_ans, train_question)
-    val_tokenized_dict = tokenize(tokenizer, val_context_ans, val_question)
+    train_tokenized_dict = tokenize(tokenizer, train_context_ans, train_question, max_len=args.max_len)
+    val_tokenized_dict = tokenize(tokenizer, val_context_ans, val_question, max_len=args.max_len)
     print('Tokenized the input!')
     print('Length of sequence encoded:', train_tokenized_dict['input_ids'].shape[1])
 

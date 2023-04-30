@@ -271,6 +271,9 @@ def add_params():
     parser = argparse.ArgumentParser()
     parser.add_argument('-W', '--wandb', action=argparse.BooleanOptionalAction, help='For Wandb logging')
     parser.add_argument('-EXT', '--external_data', action=argparse.BooleanOptionalAction, help='For Using External Data')
+    parser.add_argument("-CF", "--checkpoint_folder", type=str, default="Checkpoints_new", help="Folder where the checkpoint is stored")
+    parser.add_argument('-Fold', '--fold_learning', action=argparse.BooleanOptionalAction, help='Fold Learning')
+    parser.add_argument('-FN', '--fold_number', type=int, default=1, help='Fold Number of train set')
     parser.add_argument('-TFN', '--train_file_name', type=str, default="train.json", help="Training File name")
     parser.add_argument('-TS', '--training_strategy', type=str, default="DP", help="DP for dataparalle and DS for deepspeed")
     parser.add_argument("-B", "--batch_size", type=int, default=8, help="Batch size for training the Transformer Model")
@@ -294,7 +297,10 @@ def add_params():
 if __name__ == '__main__':
     args = add_params()
 
-    train_file = os.path.join('./data/FairytaleQA', args.train_file_name)
+    if args.fold_learning:
+        train_file_path = os.path.join('./data/FairytaleQA_story_folds', str(args.fold_number), args.train_file_name)
+    else:
+        train_file = os.path.join('./data/FairytaleQA', args.train_file_name)
     train_data = []
 
     with open(train_file, 'r') as infile:
@@ -363,7 +369,7 @@ if __name__ == '__main__':
 
     # NOTE: Load checkpoint
     if args.load_checkpoint:
-        search_dir = os.path.join('./code/finetune/Checkpoints_new', args.checkpoint_name)
+        search_dir = os.path.join('./code/finetune/', args.checkpoint_folder, args.checkpoint_name)
         for file in os.listdir(search_dir):
             ckpt_file = os.path.join(search_dir, file)
         print('ckpt_file', ckpt_file)
@@ -385,6 +391,9 @@ if __name__ == '__main__':
     if args.external_data:
         save_name = save_name + '_external'
     
+    if args.fold_learning:
+        save_name = save_name + '_fold_' + str(args.fold_number)
+
     print('Save name:', save_name)
 
     # Trainig code

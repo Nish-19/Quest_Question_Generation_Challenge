@@ -74,6 +74,8 @@ def add_params():
     parser.add_argument("-SN", "--save_name", type=str, default="bert_org_10_0.1_0.1", help="Model name for saving")
     parser.add_argument('-TFN', '--test_file_name', type=str, default="nucleus_flan_t5_large_org_16_sa_0.90_1.00_10.csv", help="Test File name")
     parser.add_argument('-Attr', '--use_attr', action=argparse.BooleanOptionalAction, help='Use attribute')
+    parser.add_argument('-ExIm', '--use_ex_im', action=argparse.BooleanOptionalAction, help='Use explicit implict tag')
+    parser.add_argument("-ML", "--max_len", type=int, default=512, help="max length for tokenizers")
     parser.add_argument("-PC", "--perfix_choice", type=int, default=1, help="Style of input construction to the model")
     parser.add_argument("-B", "--batch_size", type=int, default=10, help="Batch size (should be equal to the number of questions generated)")
     params = parser.parse_args()
@@ -88,11 +90,11 @@ def main():
     test_df = pd.read_csv(os.path.join(test_dir, args.test_file_name))
 
     # get input
-    test_context_ans, test_question = get_transformer_input(test_df, choice=args.perfix_choice, use_attr=args.use_attr)
+    test_context_ans, test_question = get_transformer_input(test_df, choice=args.perfix_choice, use_attr=args.use_attr, use_ex_im=args.use_ex_im)
 
     # get tokenizer
     tokenizer = AutoTokenizer.from_pretrained(args.model_name)
-    test_tokenized_dict = tokenize(tokenizer, test_context_ans, test_question)
+    test_tokenized_dict = tokenize(tokenizer, test_context_ans, test_question, max_len=args.max_len)
     print('Tokenized the input!')
 
     # get data loader 
