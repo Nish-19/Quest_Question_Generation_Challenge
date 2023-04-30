@@ -30,14 +30,14 @@ The csv file containing the generations are saved in ```results_org```
 python -m code.ranking_kl.bert_rank \
     -W -Attr -ExIm -MN YituTech/conv-bert-base \
     -SN convbert_org_10_0.001_0.01 \
-    -alpha1 0.001 -alpha2 0.01 \
+    -alpha1 0.001 -alpha2 0.01
 ```
 
 ## Predictions from Distribution Ranking-Based Model
 ```
 python -m code.ranking_kl.bert_rank_inference \
     -Attr -ExIm -MN YituTech/conv-bert-base \
-    -SN convbert_org_10_0.001_0.01 \
+    -SN convbert_org_10_0.001_0.01
 ```
 
 The csv file containing the generations are saved in ```results_rank_kl```
