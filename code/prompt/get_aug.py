@@ -14,12 +14,13 @@ from openai.error import RateLimitError, Timeout, APIError, ServiceUnavailableEr
 
 # set api keys
 def set_api_keys():
-    os.environ['OPENAI_API_KEY_1'] = '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'
-    os.environ['OPENAI_API_KEY_2'] = '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'
-    os.environ['OPENAI_API_KEY_3'] = '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'
-    os.environ['OPENAI_API_KEY_4'] = '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'
-    os.environ['OPENAI_API_KEY_5'] = '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'
-    os.environ['OPENAI_API_KEY_6'] = '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'
+    # TODO: Replace with your API keys
+    os.environ['OPENAI_API_KEY_1'] = 'Replace with key-1'
+    os.environ['OPENAI_API_KEY_2'] = 'Replace with key-2'
+    os.environ['OPENAI_API_KEY_3'] = 'Replace with key-3'
+    os.environ['OPENAI_API_KEY_4'] = 'Replace with key-4'
+    os.environ['OPENAI_API_KEY_5'] = 'Replace with key-5'
+    os.environ['OPENAI_API_KEY_6'] = 'Replace with key-6'
 
 
 # Collect api keys
