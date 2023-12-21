@@ -1,3 +1,5 @@
+NOTE: This repository is outdated and no longer maintained. For updates please check out - https://github.com/umass-ml4ed/question-gen-aug-ranking
+
 ## Finetuning
 
 To finetune an encoder-decoder model (T5/BART):
